@@ -40,10 +40,10 @@ public class TestUserService {
 	}
 	
 	@Test
-	public void testAddCustomer() {
-		User customer = new User("Scott", "", "479-123-4567");
-		customer.setGender(Gender.MALE);
-		userService.save(customer);
+	public void testAddUser() {
+		User user = new User("Scott", "", "479-123-4567");
+		user.setGender(Gender.MALE);
+		userService.save(user);
 		
 		List<User> list = userService.byMobilePhone("479-123-4567");
 		assertEquals(1, list.size());

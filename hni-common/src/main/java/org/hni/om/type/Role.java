@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.hni.om.IdProvider;
+import org.hni.om.Persistable;
 
 //TODO: These roles should be in a table...
 
@@ -17,7 +17,7 @@ import org.hni.om.IdProvider;
  * @author jeff3parker
  *
  */
-public class Role implements IdProvider, Serializable {
+public class Role implements Persistable, Serializable {
 	private static final long serialVersionUID = -6502032699744741374L;
 
 	public static final Role SUPER_USER = new Role(1L, "super-user", "Super User"); // everything

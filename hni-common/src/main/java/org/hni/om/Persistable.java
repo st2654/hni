@@ -1,5 +1,5 @@
 package org.hni.om;
 
-public interface IdProvider {
+public interface Persistable {
 	Object getId();
 }

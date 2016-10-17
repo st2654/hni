@@ -8,7 +8,8 @@ CREATE TABLE users (
   firstName varchar(64) NOT NULL,
   lastName varchar(64) NOT NULL,
   genderCode varchar(1),
-  mobilePhone varchar(16)  
+  mobilePhone varchar(16),
+  deleted int
 );
 
 CREATE TABLE user_organization_role (

@@ -8,11 +8,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.hni.om.IdProvider;
+import org.hni.om.Persistable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractDAO<T extends IdProvider> implements BaseDAO<T> {
+public abstract class AbstractDAO<T extends Persistable> implements BaseDAO<T> {
 	protected final static Logger logger = LoggerFactory.getLogger(AbstractDAO.class);
 	
 	protected Class<T> clazz;
@@ -31,21 +31,6 @@ public abstract class AbstractDAO<T extends IdProvider> implements BaseDAO<T> {
 		this.em = entityManager;
 	}
 	
-/*	@Inject
-	public void setMetricRegistry(MetricRegistry metrics) {
-		if ( null != this.entityManager ) {
-			this.em = new MeasuredEntityManager(entityManager, metrics);
-		}
-	}
-
-	@PostConstruct
-	public void initMetrics() {
-		if (null != this.metrics) {
-			this.em = new MeasuredEntityManager(entityManager, metrics);
-		}
-
-	}
-*/	
 	public Class<T> getClazz() {
 		return clazz;
 	}
@@ -118,9 +103,9 @@ public abstract class AbstractDAO<T extends IdProvider> implements BaseDAO<T> {
 		
 	}
 
-	protected List<Long> convertToLongIds(List<IdProvider> list) {
+	protected List<Long> convertToLongIds(List<Persistable> list) {
 		List<Long> set = new ArrayList<Long>();
-		for(IdProvider obj : list) {
+		for(Persistable obj : list) {
 			set.add((Long)obj.getId());
 		}
 		return set;

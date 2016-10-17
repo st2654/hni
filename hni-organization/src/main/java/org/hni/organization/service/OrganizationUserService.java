@@ -1,5 +1,7 @@
 package org.hni.organization.service;
 
+import java.util.List;
+
 import org.hni.om.type.Role;
 import org.hni.organization.om.Organization;
 import org.hni.user.om.User;
@@ -14,7 +16,7 @@ public interface OrganizationUserService extends UserService {
 	 * @param role
 	 * @return
 	 */
-	User save(User user, Organization org, Role role);
+	User save(User user, Organization org);
 
 	/**
 	 * Removes the user and all their data from the organization.
@@ -33,5 +35,7 @@ public interface OrganizationUserService extends UserService {
 	 * @return
 	 */
 	User archive(User user, Organization org);
+
+	List<User> getAllUsers(Organization org);
 
 }

@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hni.om.IdProvider;
+import org.hni.om.Persistable;
 
 /**
  * An organization is an entity that provides customer support
@@ -22,7 +22,7 @@ import org.hni.om.IdProvider;
  */
 @Entity
 @Table(name = "organizations")
-public class Organization implements IdProvider, Serializable {
+public class Organization implements Persistable, Serializable {
 	private static final long serialVersionUID = 2775752378663345293L;
 
 	@Id

@@ -5,6 +5,9 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.hni.om.type.Role;
+import org.hni.user.om.User;
+
 /**
  * Allows the system to associate any user to any organization with any role
  * @author jeff3parker
@@ -24,6 +27,9 @@ public class UserOrganizationRolePK implements Serializable {
 		this.userId = userId;
 		this.orgId = orgId;
 		this.roleId = roleId;
+	}
+	public UserOrganizationRolePK(User user, Organization org, Role role) {
+		this(user.getId(), org.getId(), role.getId());
 	}
 	public Long getUserId() {
 		return userId;

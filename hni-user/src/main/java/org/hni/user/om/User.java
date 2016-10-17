@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hni.om.IdProvider;
+import org.hni.om.Persistable;
 import org.hni.user.om.type.Gender;
 
 /**
@@ -23,7 +23,7 @@ import org.hni.user.om.type.Gender;
  */
 @Entity
 @Table(name = "users")
-public class User implements IdProvider, Serializable {
+public class User implements Persistable, Serializable {
 	private static final long serialVersionUID = 7553475738921092329L;
 
 	@Id

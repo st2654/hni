@@ -1,8 +1,8 @@
-insert into users values(1,'Freddy','Fikes','M','479-555-1212');
-insert into users values(2,'Mikey','Multiphone','M','479-555-4321');
-insert into users values(3,'Mikey','Multiphone','M','479-555-5678');
-insert into users values(4, 'Ericka', 'Energy', 'F', '123-456-7830');
-insert into users values(5, 'Barbara', 'Bollingsworth', 'F', '123-456-7830');
+insert into users values(1,'Freddy','Fikes','M','479-555-1212',0);
+insert into users values(2,'Mikey','Multiphone','M','479-555-4321',0);
+insert into users values(3,'Mikey','Multiphone','M','479-555-5678',0);
+insert into users values(4, 'Ericka', 'Energy', 'F', '123-456-7830',0);
+insert into users values(5, 'Barbara', 'Bollingsworth', 'F', '123-456-7830',0);
 
 insert into organizations values(1, 'Not Impossible');
 insert into organizations values(2, 'Samaritan House');

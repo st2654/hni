@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public abstract class AbstractService<T> implements BaseService<T> {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractService.class);
-	protected BaseDAO<T> dao;
+	private BaseDAO<T> dao;
 
 	public AbstractService(BaseDAO<T> dao) {
 		setDao(dao);
