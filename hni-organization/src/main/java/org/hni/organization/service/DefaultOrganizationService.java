@@ -1,8 +1,8 @@
-package org.hni.organization.delegate;
+package org.hni.organization.service;
 
 import javax.inject.Inject;
 
-import org.hni.common.delegate.AbstractDelegate;
+import org.hni.common.service.AbstractService;
 import org.hni.organization.dao.OrganizationDAO;
 import org.hni.organization.om.Organization;
 import org.slf4j.Logger;
@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-public class DefaultOrganizationDelegate extends AbstractDelegate<Organization> implements OrganizationDelegate {
-	private static final Logger logger = LoggerFactory.getLogger(OrganizationDelegate.class);
+public class DefaultOrganizationService extends AbstractService<Organization> implements OrganizationService {
+	private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
 	private OrganizationDAO organizationDao;
 	
 	@Inject
-	public DefaultOrganizationDelegate(OrganizationDAO organizationDao) {
+	public DefaultOrganizationService(OrganizationDAO organizationDao) {
 		super(organizationDao);
 		this.organizationDao = organizationDao;
 	}

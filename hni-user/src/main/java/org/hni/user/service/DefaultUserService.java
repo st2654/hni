@@ -1,10 +1,10 @@
-package org.hni.user.delegate;
+package org.hni.user.service;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.hni.common.delegate.AbstractDelegate;
+import org.hni.common.service.AbstractService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-public class DefaultUserDelegate extends AbstractDelegate<User> implements UserDelegate {
-	private static final Logger logger = LoggerFactory.getLogger(UserDelegate.class);
+public class DefaultUserService extends AbstractService<User> implements UserService {
+	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 	private UserDAO userDao;
 
 	@Inject
-	public DefaultUserDelegate(UserDAO userDao) {
+	public DefaultUserService(UserDAO userDao) {
 		super(userDao);
 		this.userDao = userDao;
 	}

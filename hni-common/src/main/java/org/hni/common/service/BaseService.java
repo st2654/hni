@@ -1,8 +1,8 @@
-package org.hni.common.delegate;
+package org.hni.common.service;
 
 import java.util.List;
 
-public interface BaseDelegate<T> {
+public interface BaseService<T> {
 	T get(Object id);
 	T insert(T obj);
 	T update(T obj);

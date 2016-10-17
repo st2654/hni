@@ -1,4 +1,4 @@
-package org.hni.common.delegate;
+package org.hni.common.service;
 
 import java.util.List;
 
@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-public abstract class AbstractDelegate<T> implements BaseDelegate<T> {
-	private static final Logger logger = LoggerFactory.getLogger(AbstractDelegate.class);
+public abstract class AbstractService<T> implements BaseService<T> {
+	private static final Logger logger = LoggerFactory.getLogger(AbstractService.class);
 	protected BaseDAO<T> dao;
 
-	public AbstractDelegate(BaseDAO<T> dao) {
+	public AbstractService(BaseDAO<T> dao) {
 		setDao(dao);
 	}
 	

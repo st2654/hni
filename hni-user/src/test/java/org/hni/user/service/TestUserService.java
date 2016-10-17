@@ -1,4 +1,4 @@
-package org.hni.user.delegate;
+package org.hni.user.service;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,9 +7,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.log4j.BasicConfigurator;
-import org.hni.user.delegate.UserDelegate;
 import org.hni.user.om.User;
 import org.hni.user.om.type.Gender;
+import org.hni.user.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,23 +19,23 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:test-applicationContext.xml"} )
 @Transactional
-public class TestUserDelegate {
+public class TestUserService {
 
-	@Inject private UserDelegate userDelegate;
+	@Inject private UserService userService;
 	
-	public TestUserDelegate() {
+	public TestUserService() {
 		BasicConfigurator.configure();
 	}
 	
 	@Test
 	public void testLookupByPhone() {
-		List<User> list = userDelegate.byMobilePhone("479-555-1212");
+		List<User> list = userService.byMobilePhone("479-555-1212");
 		assertEquals(1, list.size());
 	}
 
 	@Test
 	public void testLookupByLastName() {
-		List<User> list = userDelegate.byLastName("Multiphone");
+		List<User> list = userService.byLastName("Multiphone");
 		assertEquals(2, list.size());
 	}
 	
@@ -43,9 +43,9 @@ public class TestUserDelegate {
 	public void testAddCustomer() {
 		User customer = new User("Scott", "", "479-123-4567");
 		customer.setGender(Gender.MALE);
-		userDelegate.save(customer);
+		userService.save(customer);
 		
-		List<User> list = userDelegate.byMobilePhone("479-123-4567");
+		List<User> list = userService.byMobilePhone("479-123-4567");
 		assertEquals(1, list.size());
 		User cust = list.get(0);
 		assertEquals("Scott", cust.getFirstName());

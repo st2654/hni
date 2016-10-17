@@ -1,4 +1,4 @@
-package org.hni.common.delegate;
+package org.hni.common;
 
 public class HniException extends Exception {
 

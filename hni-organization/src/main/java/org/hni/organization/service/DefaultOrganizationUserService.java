@@ -1,14 +1,14 @@
-package org.hni.organization.delegate;
+package org.hni.organization.service;
 
 import org.hni.om.type.Role;
 import org.hni.organization.om.Organization;
 import org.hni.user.dao.UserDAO;
-import org.hni.user.delegate.DefaultUserDelegate;
 import org.hni.user.om.User;
+import org.hni.user.service.DefaultUserService;
 
-public class DefaultOrganizationUserDelegate extends DefaultUserDelegate implements OrganizationUserDelegate {
+public class DefaultOrganizationUserService extends DefaultUserService implements OrganizationUserService {
 
-	public DefaultOrganizationUserDelegate(UserDAO userDao) {
+	public DefaultOrganizationUserService(UserDAO userDao) {
 		super(userDao);
 	}
 

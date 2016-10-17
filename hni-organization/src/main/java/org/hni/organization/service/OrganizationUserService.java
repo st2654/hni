@@ -1,11 +1,11 @@
-package org.hni.organization.delegate;
+package org.hni.organization.service;
 
 import org.hni.om.type.Role;
 import org.hni.organization.om.Organization;
-import org.hni.user.delegate.UserDelegate;
 import org.hni.user.om.User;
+import org.hni.user.service.UserService;
 
-public interface OrganizationUserDelegate extends UserDelegate {
+public interface OrganizationUserService extends UserService {
 
 	/**
 	 * Adds a user to the specified organization with the given role
