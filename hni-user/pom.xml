@@ -10,7 +10,7 @@
   </parent>
   <artifactId>hni-user</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>hni-customer</name>
+  <name>hni-user</name>
   <url>http://hni.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

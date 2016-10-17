@@ -31,6 +31,11 @@ public class Organization implements Persistable, Serializable {
 	protected Long id;
 	
 	@Column(name="name") private String name;
+	@Column(name="addressLine1") private String addressLine1;
+	@Column(name="addressLine2") private String addressLine2;
+	@Column(name="city") private String city;
+	@Column(name="state") private String state;
+	@Column(name="zip") private String zip;
 
 	public Organization() {}
 	

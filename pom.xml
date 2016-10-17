@@ -51,6 +51,7 @@
     <module>hni-order</module>
     <module>hni-security</module>
 -->
+    <module>hni-schema</module>
   </modules>
 	<build>
 		<plugins>

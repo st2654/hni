@@ -35,6 +35,7 @@ public class User implements Persistable, Serializable {
 	@Column(name="lastName") private String lastName;
 	@Column(name="genderCode") private String genderCode;
 	@Column(name="mobilePhone") private String mobilePhone;
+	@Column(name="email") private String email;
 	@Column(name="deleted") private boolean deleted;
 	
 	public User() {}
@@ -92,6 +93,12 @@ public class User implements Persistable, Serializable {
 	}
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	
