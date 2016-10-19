@@ -52,7 +52,8 @@
     <module>hni-security</module>
 -->
     <module>hni-schema</module>
-  </modules>
+    <module>hni-controller</module>
+	</modules>
 	<build>
 		<plugins>
 			<plugin>
