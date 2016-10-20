@@ -39,6 +39,9 @@ public class User implements Persistable, Serializable {
 	@Column(name="deleted") private boolean deleted;
 	
 	public User() {}
+	public User(Long id) {
+		this.id = id;
+	}
 	public User(String firstName, String lastName, String mobilePhone) {
 		this.firstName = firstName;
 		this.lastName = lastName;
