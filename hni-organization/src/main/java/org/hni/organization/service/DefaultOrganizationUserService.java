@@ -39,18 +39,34 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	}
 	
 	@Override
-	public List<User> getAllUsers(Organization org) {
+	public List<User> getByRole(Organization org, Role role) {
 		Set<User> set = new HashSet<>();
-		List<UserOrganizationRole> userRolesList = uorDao.getByRole(org, Role.USER);
+		List<UserOrganizationRole> userRolesList = uorDao.getByRole(org, role);
 		for(UserOrganizationRole uor : userRolesList) {
 			set.add(super.get(((UserOrganizationRolePK)uor.getId()).getUserId()));
 		}
 		return new ArrayList<User>(set);
 	}
+
 	@Override
-	public User delete(User user, Organization org) {
+	public UserOrganizationRole associate(User user, Organization org, Role role) {
+		return uorDao.save(new UserOrganizationRole(user, org, role));
+	}
+	
+	@Override
+	public List<User> getAllUsers(Organization org) {
+		return getByRole(org, Role.USER);
+	}
+	
+	@Override
+	public void delete(User user, Organization org) {
 		// TODO
-		return user;
+		
+	}
+
+	@Override
+	public void delete(User user, Organization org, Role role) {
+		uorDao.delete(new UserOrganizationRole(user, org, role));
 	}
 
 	@Override

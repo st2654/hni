@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hni.om.type.Role;
 import org.hni.organization.om.Organization;
+import org.hni.organization.om.UserOrganizationRole;
 import org.hni.user.om.User;
 import org.hni.user.service.UserService;
 
@@ -25,7 +26,8 @@ public interface OrganizationUserService extends UserService {
 	 * @param org
 	 * @return
 	 */
-	User delete(User user, Organization org);
+	void delete(User user, Organization org);
+	void delete(User user, Organization org, Role role);
 
 	/**
 	 * Archives the user in the given organization.  They are still associated with the org
@@ -35,7 +37,29 @@ public interface OrganizationUserService extends UserService {
 	 * @return
 	 */
 	User archive(User user, Organization org);
-
+	
+	/**
+	 * Returns the users in the organization
+	 * @param org
+	 * @return
+	 */
 	List<User> getAllUsers(Organization org);
+
+	/**
+	 * Returns the set of users who play the given role in the organization
+	 * @param org
+	 * @param role
+	 * @return
+	 */
+	List<User> getByRole(Organization org, Role role);
+
+	/**
+	 * Associates a user to an organization with the given role
+	 * @param user
+	 * @param org
+	 * @param role
+	 * @return 
+	 */
+	UserOrganizationRole associate(User user, Organization org, Role role);
 
 }

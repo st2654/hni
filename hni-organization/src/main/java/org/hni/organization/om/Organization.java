@@ -38,7 +38,9 @@ public class Organization implements Persistable, Serializable {
 	@Column(name="zip") private String zip;
 
 	public Organization() {}
-	
+	public Organization(Long id) {
+		this.id = id;
+	}
 	public Long getId() {
 		return id;
 	}
