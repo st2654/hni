@@ -1,6 +1,7 @@
 package org.hni.user.om;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,12 +32,15 @@ public class User implements Persistable, Serializable {
 	@Column(name = "id")
 	protected Long id;
 	
-	@Column(name="firstName") private String firstName;
-	@Column(name="lastName") private String lastName;
-	@Column(name="genderCode") private String genderCode;
-	@Column(name="mobilePhone") private String mobilePhone;
+	@Column(name="first_name") private String firstName;
+	@Column(name="last_name") private String lastName;
+	@Column(name="gender_code") private String genderCode;
+	@Column(name="mobile_phone") private String mobilePhone;
 	@Column(name="email") private String email;
 	@Column(name="deleted") private boolean deleted;
+	@Column(name="password") private String password;
+	@Column(name="salt") private String salt;
+	@Column(name="created") private Date created;
 	
 	public User() {}
 	public User(Long id) {
@@ -102,6 +106,24 @@ public class User implements Persistable, Serializable {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getSalt() {
+		return salt;
+	}
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+	public Date getCreated() {
+		return created;
+	}
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 	
 	

@@ -32,7 +32,7 @@
 	</bean>
 
 	<!-- Create an embedded database to run with tests -->
-	<jdbc:embedded-database id="dataSource">
+	<jdbc:embedded-database id="dataSource" type="H2">
 		<jdbc:script location="classpath:hsql/schema.sql" />
 		<jdbc:script location="classpath:hsql/test-data.sql" />
 	</jdbc:embedded-database>
