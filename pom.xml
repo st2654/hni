@@ -52,9 +52,10 @@
     <module>hni-security</module>
 -->
     <module>hni-schema</module>
-    <module>hni-controller</module>
+<!--    <module>hni-controller</module> -->
     <module>hni-admin-service</module>
-	</modules>
+    <module>hni-provider</module>
+  </modules>
 	<build>
 		<plugins>
 			<plugin>

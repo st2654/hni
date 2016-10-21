@@ -1,7 +1,9 @@
-package org.hni.organization.om;
+package org.hni.provider.om;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -19,19 +21,11 @@ import javax.persistence.Table;
 import org.hni.om.Persistable;
 import org.hni.user.om.Address;
 
-/**
- * An organization is an entity that provides customer support
- * e.g. NI Personnel, NGO's, Schools, etc
- * 
- * All users are aligned to an organization in some way via a Role
- * 
- * @author jeff3parker
- *
- */
 @Entity
-@Table(name = "organizations")
-public class Organization implements Persistable, Serializable {
-	private static final long serialVersionUID = 2775752378663345293L;
+@Table(name="providers")
+public class Provider implements Serializable, Persistable {
+
+	private static final long serialVersionUID = -6983145009930349810L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,21 +33,16 @@ public class Organization implements Persistable, Serializable {
 	protected Long id;
 	
 	@Column(name="name") private String name;
+	@Column(name="created") private Date created;
+	@Column(name="created_by") private Long createdById;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "organization_addresses", joinColumns = { @JoinColumn(name = "organization_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
+	@JoinTable(name = "provider_addresses", joinColumns = { @JoinColumn(name = "provider_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
 	protected Set<Address> addresses = new HashSet<Address>();
 
-	public Organization() {}
-	public Organization(Long id) {
-		this.id = id;
-	}
+	@Override
 	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+		return this.id;
 	}
 
 	public String getName() {
@@ -63,13 +52,34 @@ public class Organization implements Persistable, Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Long getCreatedById() {
+		return createdById;
+	}
+
+	public void setCreatedById(Long createdById) {
+		this.createdById = createdById;
+	}
+
 	public Set<Address> getAddresses() {
 		return addresses;
 	}
+
 	public void setAddresses(Set<Address> addresses) {
 		this.addresses = addresses;
 	}
 
-	
+	public void setId(Long id) {
+		this.id = id;
+	}
 
+	
 }
