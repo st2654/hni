@@ -1,6 +1,6 @@
 SET MODE MySQL;
-
 -- MySQL Workbench Forward Engineering
+
 
 -- -----------------------------------------------------
 -- Schema mydb
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_name` VARCHAR(255) NULL,
   `gender_code` VARCHAR(1) NULL,
   `mobile_phone` VARCHAR(45) NULL,
-  `email` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NULL,
   `deleted` INT NULL,
   `password` VARCHAR(255) NULL,
   `salt` VARCHAR(255) NULL,
@@ -30,22 +30,16 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
-  `address_line1` VARCHAR(255) NULL,
-  `address_line2` VARCHAR(255) NULL,
-  `city` VARCHAR(45) NULL,
-  `state` VARCHAR(2) NULL,
-  `zip` VARCHAR(15) NULL,
   `created` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
-  `timezone` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `role`
+-- Table `roles`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `role` (
+CREATE TABLE IF NOT EXISTS `roles` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
@@ -89,9 +83,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `customer_orders`
+-- Table `orders`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `customer_orders` (
+CREATE TABLE IF NOT EXISTS `orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `provider_location_id` INT NOT NULL,
@@ -133,15 +127,14 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `customer_order_items`
+-- Table `order_items`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `customer_order_items` (
+CREATE TABLE IF NOT EXISTS `order_items` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `customer_order_id` INT NOT NULL,
+  `order_id` INT NOT NULL,
   `menu_item_id` INT NOT NULL,
   `quantity` INT NOT NULL,
   `amount` DECIMAL(10,2) NULL,
-  `sub_total` DECIMAL(10,2) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -160,7 +153,6 @@ CREATE TABLE IF NOT EXISTS `addresses` (
   `longitude` VARCHAR(45) NULL,
   `latitude` VARCHAR(45) NULL,
   `timezone` VARCHAR(45) NULL,
-  `ref_name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -228,4 +220,3 @@ CREATE TABLE IF NOT EXISTS `provider_location_hours` (
   `close_hour_secs` INT NULL COMMENT 'close hour in seconds since midnight',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
-

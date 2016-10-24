@@ -38,8 +38,8 @@ public class TestOrganizationUserService {
 		
 		orgUserService.save(user, org);
 		
-		Collection<User> users = orgUserService.getAllUsers(org);
-		assertEquals(2, users.size());
+		Collection<User> users = orgUserService.getAllUsers(org); // the USER role
+		assertEquals(3, users.size());
 	}
 
 }
