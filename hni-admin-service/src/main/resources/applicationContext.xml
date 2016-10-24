@@ -17,7 +17,7 @@
         <import resource="dao.xml"/>
 
         <!-- In Memory Database Configuration -->
-        <jdbc:embedded-database id="dataSource" type="HSQL">
+        <jdbc:embedded-database id="dataSource" type="H2">
             <jdbc:script location="classpath:hsql/schema.sql"/>
             <jdbc:script location="classpath:hsql/test-data.sql"/>
         </jdbc:embedded-database>
