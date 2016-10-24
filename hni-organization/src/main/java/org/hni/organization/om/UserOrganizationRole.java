@@ -33,7 +33,7 @@ public class UserOrganizationRole implements Persistable, Serializable {
 		this(new UserOrganizationRolePK(user, org, role));
 	}
 	@Override
-	public Object getId() {
+	public UserOrganizationRolePK getId() {
 		return this.id;
 	}
 

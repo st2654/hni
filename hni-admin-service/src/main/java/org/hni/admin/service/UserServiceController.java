@@ -1,5 +1,6 @@
 package org.hni.admin.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -67,7 +68,7 @@ public class UserServiceController {
 	@GET
 	@Path("/users/org/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
-	public List<User> getOrgUsers(@PathParam("id") Long id) {
+	public Collection<User> getOrgUsers(@PathParam("id") Long id) {
 		Organization org = new Organization(id);
 		return orgUserService.getAllUsers(org);
 	}
@@ -75,7 +76,7 @@ public class UserServiceController {
 	@GET
 	@Path("/clients/org/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
-	public List<User> getOrgClients(@PathParam("id") Long id) {
+	public Collection<User> getOrgClients(@PathParam("id") Long id) {
 		Organization org = new Organization(id);
 		return orgUserService.getByRole(org, Role.get(Constants.CLIENT));
 	}

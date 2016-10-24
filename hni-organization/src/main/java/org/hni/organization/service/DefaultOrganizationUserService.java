@@ -1,6 +1,7 @@
 package org.hni.organization.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,9 +43,9 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	}
 	
 	@Override
-	public List<User> getByRole(Organization org, Role role) {
+	public Collection<User> getByRole(Organization org, Role role) {
 		Set<User> set = new HashSet<>();
-		List<UserOrganizationRole> userRolesList = uorDao.getByRole(org, role);
+		Collection<UserOrganizationRole> userRolesList = uorDao.getByRole(org, role);
 		for(UserOrganizationRole uor : userRolesList) {
 			set.add(super.get(((UserOrganizationRolePK)uor.getId()).getUserId()));
 		}
@@ -57,7 +58,7 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	}
 	
 	@Override
-	public List<User> getAllUsers(Organization org) {
+	public Collection<User> getAllUsers(Organization org) {
 		return getByRole(org, Role.get(USER));
 	}
 	
@@ -76,6 +77,15 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	public User archive(User user, Organization org) {
 		//TODO
 		return user;
+	}
+
+	@Override
+	public Collection<Organization> get(User user) {
+		Collection<Organization> orgs = new HashSet<>();
+		for(UserOrganizationRole uor : uorDao.get(user)) {
+			orgs.add(orgService.get(uor.getId().getOrgId()));
+		}
+		return orgs;
 	}
 
 }

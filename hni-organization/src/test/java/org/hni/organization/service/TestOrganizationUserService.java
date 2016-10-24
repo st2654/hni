@@ -1,7 +1,8 @@
 package org.hni.organization.service;
 
 import static org.junit.Assert.assertEquals;
-import java.util.List;
+
+import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -37,7 +38,7 @@ public class TestOrganizationUserService {
 		
 		orgUserService.save(user, org);
 		
-		List<User> users = orgUserService.getAllUsers(org);
+		Collection<User> users = orgUserService.getAllUsers(org);
 		assertEquals(2, users.size());
 	}
 
