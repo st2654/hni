@@ -30,7 +30,7 @@ public class Provider implements Serializable, Persistable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
-	protected Long id;
+	private Long id;
 	
 	@Column(name="name") private String name;
 	@Column(name="created") private Date created;
@@ -38,7 +38,7 @@ public class Provider implements Serializable, Persistable {
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "provider_addresses", joinColumns = { @JoinColumn(name = "provider_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
-	protected Set<Address> addresses = new HashSet<Address>();
+	private Set<Address> addresses = new HashSet<Address>();
 
 	@Override
 	public Long getId() {

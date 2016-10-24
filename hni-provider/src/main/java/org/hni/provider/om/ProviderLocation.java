@@ -3,7 +3,6 @@ package org.hni.provider.om;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hni.om.Persistable;
@@ -30,17 +31,23 @@ public class ProviderLocation implements Persistable, Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
-	protected Long id;
+	private Long id;
 	
 	@Column(name="name") private String name;
 	@Column(name="created") private Date created;
 	@Column(name="created_by") private Long createdById;
-	@Column(name="hours") private String hours; // TODO this probably isn't good enough for open hours
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "provider_location_addresses", joinColumns = { @JoinColumn(name = "provider_location_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
-	protected Set<Address> addresses = new HashSet<Address>();
+	private Set<Address> addresses = new HashSet<Address>();
 
+	@ManyToOne
+	@JoinColumn(name="provider_id", referencedColumnName = "id")
+	private Provider provider;
+	
+    @OneToMany(fetch=FetchType.EAGER, mappedBy="providerlocation", cascade = {CascadeType.ALL}, orphanRemoval=true)
+    private Set<ProviderLocationHour> eventActivities = new HashSet<ProviderLocationHour>();
+    
 	@Override
 	public Long getId() {
 		return this.id;
@@ -68,14 +75,6 @@ public class ProviderLocation implements Persistable, Serializable {
 
 	public void setCreatedById(Long createdById) {
 		this.createdById = createdById;
-	}
-
-	public String getHours() {
-		return hours;
-	}
-
-	public void setHours(String hours) {
-		this.hours = hours;
 	}
 
 	public Set<Address> getAddresses() {
