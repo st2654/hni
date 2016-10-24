@@ -1,6 +1,7 @@
 package org.hni.organization.om;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +40,9 @@ public class Organization implements Persistable, Serializable {
 	protected Long id;
 	
 	@Column(name="name") private String name;
-
+	@Column(name="created") private Date created;
+	@Column(name="created_by") private Long createdById;
+	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "organization_addresses", joinColumns = { @JoinColumn(name = "organization_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
 	protected Set<Address> addresses = new HashSet<Address>();
@@ -68,6 +71,18 @@ public class Organization implements Persistable, Serializable {
 	}
 	public void setAddresses(Set<Address> addresses) {
 		this.addresses = addresses;
+	}
+	public Date getCreated() {
+		return created;
+	}
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+	public Long getCreatedById() {
+		return createdById;
+	}
+	public void setCreatedById(Long createdById) {
+		this.createdById = createdById;
 	}
 
 	

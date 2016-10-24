@@ -7,7 +7,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.hni.om.type.Role;
+import org.hni.common.Constants;
+import org.hni.om.Role;
 import org.hni.organization.dao.UserOrganizationRoleDAO;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Component;
 @Component("orgUserService")
 public class DefaultOrganizationUserService extends DefaultUserService implements OrganizationUserService {
 
+	public static final Long USER = 5L;
+	
 	private OrganizationService orgService;
 	private UserOrganizationRoleDAO uorDao;
 	@Inject
@@ -33,7 +36,7 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	public User save(User user, Organization org) {	
 		super.save(user);
 		
-		UserOrganizationRole uor = new UserOrganizationRole(user, org, Role.USER);
+		UserOrganizationRole uor = new UserOrganizationRole(user, org, Role.get(Constants.USER));
 		uorDao.save(uor);
 		return user;
 	}
@@ -55,7 +58,7 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	
 	@Override
 	public List<User> getAllUsers(Organization org) {
-		return getByRole(org, Role.USER);
+		return getByRole(org, Role.get(USER));
 	}
 	
 	@Override
