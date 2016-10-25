@@ -1,12 +1,13 @@
 package org.hni.order.dao;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.hni.common.DateUtils;
 import org.hni.common.dao.AbstractDAO;
 import org.hni.order.om.Order;
 import org.hni.user.om.User;
@@ -23,12 +24,12 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 	}
 
 	@Override
-	public Collection<Order> get(User user, Date startDate, Date endDate) {
+	public Collection<Order> get(User user, LocalDateTime startDate, LocalDateTime endDate) {
 		try {
-			Query q = em.createQuery("SELECT x FROM Order x WHERE x.userId = :userId AND x.orderDate BETWEEN :startDate AND :endDate")
+			Query q = em.createQuery("SELECT x FROM Order x WHERE x.clientId = :userId AND x.orderDate BETWEEN :startDate AND :endDate")
 				.setParameter("userId", user.getId())
-				.setParameter("startDate", startDate)
-				.setParameter("endDate", endDate);
+				.setParameter("startDate", DateUtils.asDate(startDate))
+				.setParameter("endDate", DateUtils.asDate(endDate));
 			return q.getResultList();
 		} catch(NoResultException e) {
 			return Collections.emptyList();

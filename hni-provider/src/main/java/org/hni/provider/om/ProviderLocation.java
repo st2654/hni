@@ -45,8 +45,13 @@ public class ProviderLocation implements Persistable, Serializable {
 	@JoinColumn(name="provider_id", referencedColumnName = "id")
 	private Provider provider;
 	
-    @OneToMany(fetch=FetchType.EAGER, mappedBy="providerlocation", cascade = {CascadeType.ALL}, orphanRemoval=true)
-    private Set<ProviderLocationHour> eventActivities = new HashSet<ProviderLocationHour>();
+    @OneToMany(fetch=FetchType.EAGER, mappedBy="providerLocation", cascade = {CascadeType.ALL}, orphanRemoval=true)
+    private Set<ProviderLocationHour> providerLocationHours = new HashSet<ProviderLocationHour>();
+    
+    public ProviderLocation() {}
+    public ProviderLocation(Long id) {
+    	this.id = id;
+    }
     
 	@Override
 	public Long getId() {
@@ -87,6 +92,18 @@ public class ProviderLocation implements Persistable, Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public Provider getProvider() {
+		return provider;
+	}
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
+	public Set<ProviderLocationHour> getProviderLocationHours() {
+		return providerLocationHours;
+	}
+	public void setProviderLocationHours(Set<ProviderLocationHour> providerLocationHours) {
+		this.providerLocationHours = providerLocationHours;
 	}
 
 	

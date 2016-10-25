@@ -40,8 +40,9 @@ public class Organization implements Persistable, Serializable {
 	protected Long id;
 	
 	@Column(name="name") private String name;
-	@Column(name="main_phone") private String mainPhone;
+	@Column(name="phone") private String phone;
 	@Column(name="website") private String website;
+	@Column(name="logo") private String logo;
 	@Column(name="created") private Date created;
 	@Column(name="created_by") private Long createdById;
 
@@ -75,11 +76,11 @@ public class Organization implements Persistable, Serializable {
 		this.addresses = addresses;
 	}
 
-	public String getMainPhone() {
-		return mainPhone;
+	public String getPhone() {
+		return phone;
 	}
-	public void setMainPhone(String mainPhone) {
-		this.mainPhone = mainPhone;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 	public String getWebsite() {
 		return website;
@@ -99,6 +100,12 @@ public class Organization implements Persistable, Serializable {
 	}
 	public void setCreatedById(Long createdById) {
 		this.createdById = createdById;
+	}
+	public String getLogo() {
+		return logo;
+	}
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 	

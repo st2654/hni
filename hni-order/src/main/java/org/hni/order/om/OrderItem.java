@@ -25,7 +25,7 @@ public class OrderItem implements Persistable, Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name="order_id") private Long order_id;
+	//@Column(name="order_id") private Long order_id;
 	@Column(name="quantity") private Long quantity;
 	@Column(name="amount") private Double amount;
 
@@ -33,9 +33,60 @@ public class OrderItem implements Persistable, Serializable {
 	@JoinColumn(name="menu_item_id", referencedColumnName = "id")
 	private MenuItem menuItem;
 
+	@ManyToOne
+	@JoinColumn(name="order_id", referencedColumnName = "id")
+	private Order order;
+	
+	public OrderItem() {}
+	public OrderItem(Long id) {
+		this.id = id; 
+	}
+	public OrderItem(Long quantity, Double amount, MenuItem menuItem) {
+		this.quantity = quantity;
+		this.amount = amount;
+		this.menuItem = menuItem;
+	}
+	
 	@Override
 	public Long getId() {
 		return this.id;
 	}
 
+	public Long getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Long quantity) {
+		this.quantity = quantity;
+	}
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public MenuItem getMenuItem() {
+		return menuItem;
+	}
+
+	public void setMenuItem(MenuItem menuItem) {
+		this.menuItem = menuItem;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	
 }

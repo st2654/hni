@@ -24,6 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(value = "/organization", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
 @Path("/user")
 public class UserServiceController {
@@ -34,6 +38,10 @@ public class UserServiceController {
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the user with the given id"
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
 	public User getUser(@PathParam("id") Long id) {
 		return orgUserService.get(id);
 	}
@@ -42,6 +50,10 @@ public class UserServiceController {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Creates a new user and returns it"
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
 	public User addOrSaveUser(User user) {
 		return orgUserService.save(user);
 	}
@@ -49,6 +61,10 @@ public class UserServiceController {
 	@DELETE
 	@Path("/{id}/org/{orgId}/role/{roleId}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Removes a user's role from the given organization"
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
 	public String deleteUser(@PathParam("id") Long id, @PathParam("orgId") Long orgId, @PathParam("roleId") Long roleId) {
 		User user = new User(id);
 		Organization org = new Organization(orgId);
@@ -59,6 +75,10 @@ public class UserServiceController {
 	@PUT
 	@Path("/{id}/org/{orgId}/role/{roleId}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Adds the user to an organization with a specific role"
+	, notes = ""
+	, response = UserOrganizationRole.class
+	, responseContainer = "")
 	public UserOrganizationRole addUserToOrg(@PathParam("id") Long id, @PathParam("orgId") Long orgId, @PathParam("roleId") Long roleId) {
 		User user = new User(id);
 		Organization org = new Organization(orgId);
@@ -68,6 +88,10 @@ public class UserServiceController {
 	@GET
 	@Path("/users/org/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns a collection of users for the given organization with the USER role."
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
 	public Collection<User> getOrgUsers(@PathParam("id") Long id) {
 		Organization org = new Organization(id);
 		return orgUserService.getAllUsers(org);
@@ -76,6 +100,10 @@ public class UserServiceController {
 	@GET
 	@Path("/clients/org/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns a collection of users for the given organization with the CLIENT role."
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
 	public Collection<User> getOrgClients(@PathParam("id") Long id) {
 		Organization org = new Organization(id);
 		return orgUserService.getByRole(org, Role.get(Constants.CLIENT));

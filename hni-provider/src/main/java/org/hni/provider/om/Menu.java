@@ -30,8 +30,8 @@ public class Menu implements Persistable, Serializable {
 	protected Long id;
 	
 	@Column(name="name") private String name;
-	@Column(name="start_hour_avail") private Long startHourAvailable;
-	@Column(name="end_hour_avail") private Long endHourAvailable;
+	@Column(name="start_hour") private Long startHourAvailable;
+	@Column(name="end_hour") private Long endHourAvailable;
 
 	@OneToMany(cascade={CascadeType.ALL}, mappedBy="menu", fetch=FetchType.EAGER)
 	private Set<MenuItem> menuItems = new HashSet<MenuItem>();

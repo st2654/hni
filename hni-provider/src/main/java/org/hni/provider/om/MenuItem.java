@@ -34,6 +34,10 @@ public class MenuItem implements Persistable, Serializable {
 	@JoinColumn(name="menu_id", referencedColumnName = "id")
 	private Menu menu;	
 
+	public MenuItem(Long id) {
+		this.id = id;
+	}
+	
 	@Override
 	public Object getId() {
 		return this.id;

@@ -30,8 +30,9 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
-  `main_phone` VARCHAR(32) NULL,
+  `phone` VARCHAR(32) NULL,
   `website` VARCHAR(255) NULL,
+  `logo` VARCHAR(255) NULL,  
   `created` DATETIME NULL,
   `created_by` INT NULL,
   PRIMARY KEY (`id`))
@@ -89,12 +90,12 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NOT NULL,
+  `client_id` INT NOT NULL,
   `provider_location_id` INT NOT NULL,
   `order_date` DATETIME NOT NULL,
   `ready_date` DATETIME NULL,
   `pickup_date` DATETIME NULL,
-  `sub_total` DECIMAL(10,2) NULL,
+  `subtotal` DECIMAL(10,2) NULL,
   `tax` DECIMAL(10,2) NULL,
   `created_by` INT NULL COMMENT 'surrogate to users',
   PRIMARY KEY (`id`))
@@ -108,8 +109,8 @@ CREATE TABLE IF NOT EXISTS `menus` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `provider_id` INT NOT NULL,
-  `start_hour_secs` INT NULL COMMENT 'starting hour item is available in secs since midnight',
-  `end_hour_secs` INT NULL COMMENT 'ending hour item is available in secs since midnight',
+  `start_hour` INT NULL COMMENT 'starting hour item is available in 24hr',
+  `end_hour` INT NULL COMMENT 'ending hour item is available in 24hr',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
