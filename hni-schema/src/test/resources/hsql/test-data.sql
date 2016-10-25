@@ -5,8 +5,8 @@ insert into users values(4,'Mikey','Multiphone','M','479-555-5678', '', 0, '', '
 insert into users values(5, 'Ericka', 'Energy', 'F', '123-456-7830', '' ,0, '', '', now());
 insert into users values(6, 'Barbara', 'Bollingsworth', 'F', '123-456-7830', '' ,0, '', '', now());
 
-insert into organizations values(1, 'Not Impossible', now(), 1);
-insert into organizations values(2, 'Samaritan House', now(), 1);
+insert into organizations values(1, 'Not Impossible', '', '', now(), 1);
+insert into organizations values(2, 'Samaritan House', '', '', now(), 1);
 
 insert into user_organization_role values(2, 2, 7);
 insert into user_organization_role values(3, 2, 7);
