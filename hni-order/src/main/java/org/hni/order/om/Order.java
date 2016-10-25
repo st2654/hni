@@ -31,6 +31,7 @@ public class Order implements Persistable, Serializable {
 	@Column(name = "id")
 	private Long id;
 
+	@Column(name="client_id") private Long clientId;
 	@Column(name="order_date") private Date orderDate;
 	@Column(name="ready_date") private Date readyDate;
 	@Column(name="pickup_date") private Date pickupDate;
@@ -52,6 +53,14 @@ public class Order implements Persistable, Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(Long clientId) {
+		this.clientId = clientId;
 	}
 
 	public Date getOrderDate() {

@@ -90,7 +90,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NOT NULL,
+  `client_id` INT NOT NULL,
   `provider_location_id` INT NOT NULL,
   `order_date` DATETIME NOT NULL,
   `ready_date` DATETIME NULL,
@@ -109,8 +109,8 @@ CREATE TABLE IF NOT EXISTS `menus` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `provider_id` INT NOT NULL,
-  `start_hour_secs` INT NULL COMMENT 'starting hour item is available in secs since midnight',
-  `end_hour_secs` INT NULL COMMENT 'ending hour item is available in secs since midnight',
+  `start_hour` INT NULL COMMENT 'starting hour item is available in 24hr',
+  `end_hour` INT NULL COMMENT 'ending hour item is available in 24hr',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 

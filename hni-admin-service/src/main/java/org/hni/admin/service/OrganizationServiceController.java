@@ -9,6 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.hni.order.om.Order;
 import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationService;
 import org.hni.organization.service.OrganizationUserService;
@@ -17,6 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(value = "/organization", description = "Operations on Organizations")
 @Component
 @Path("/org")
 public class OrganizationServiceController {
@@ -28,6 +33,10 @@ public class OrganizationServiceController {
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the organization with the given id"
+	, notes = ""
+	, response = Organization.class
+	, responseContainer = "")
 	public Organization getUser(@PathParam("id") Long id) {
 		return orgService.get(id);
 	}
@@ -35,6 +44,10 @@ public class OrganizationServiceController {
 	@GET
 	@Path("/orgs/user/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the organizations that the given user is related to"
+	, notes = ""
+	, response = Organization.class
+	, responseContainer = "")
 	public Collection<Organization> getAllForUser(@PathParam("id") Long id) {
 		User user = new User(id);
 		return orgUserService.get(user);
