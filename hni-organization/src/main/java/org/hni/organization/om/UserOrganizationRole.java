@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hni.om.Persistable;
-import org.hni.om.type.Role;
+import org.hni.om.Role;
 import org.hni.user.om.User;
 
 /**
@@ -33,7 +33,7 @@ public class UserOrganizationRole implements Persistable, Serializable {
 		this(new UserOrganizationRolePK(user, org, role));
 	}
 	@Override
-	public Object getId() {
+	public UserOrganizationRolePK getId() {
 		return this.id;
 	}
 

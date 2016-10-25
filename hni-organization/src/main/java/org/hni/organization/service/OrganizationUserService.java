@@ -1,8 +1,9 @@
 package org.hni.organization.service;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.hni.om.type.Role;
+import org.hni.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.user.om.User;
@@ -43,7 +44,7 @@ public interface OrganizationUserService extends UserService {
 	 * @param org
 	 * @return
 	 */
-	List<User> getAllUsers(Organization org);
+	Collection<User> getAllUsers(Organization org);
 
 	/**
 	 * Returns the set of users who play the given role in the organization
@@ -51,7 +52,7 @@ public interface OrganizationUserService extends UserService {
 	 * @param role
 	 * @return
 	 */
-	List<User> getByRole(Organization org, Role role);
+	Collection<User> getByRole(Organization org, Role role);
 
 	/**
 	 * Associates a user to an organization with the given role
@@ -62,4 +63,11 @@ public interface OrganizationUserService extends UserService {
 	 */
 	UserOrganizationRole associate(User user, Organization org, Role role);
 
+	/**
+	 * Returns a set of all the organizations a user belongs to.
+	 * @param user
+	 * @return
+	 */
+	Collection<Organization> get(User user);
+	
 }

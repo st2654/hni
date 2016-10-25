@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.hni.om.type.Role;
+import org.hni.om.Role;
 import org.hni.user.om.User;
 
 /**
@@ -19,7 +19,7 @@ public class UserOrganizationRolePK implements Serializable {
 	private static final long serialVersionUID = 8903197877766551557L;
 
 	@Column(name="user_id")	private Long userId;
-	@Column(name="org_id")	private Long orgId;
+	@Column(name="organization_id")	private Long orgId;
 	@Column(name="role_id")	private Long roleId;
 
 	public UserOrganizationRolePK() {}

@@ -1,5 +1,6 @@
 package org.hni.admin.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -13,7 +14,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.hni.om.type.Role;
+import org.hni.common.Constants;
+import org.hni.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
@@ -66,17 +68,17 @@ public class UserServiceController {
 	@GET
 	@Path("/users/org/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
-	public List<User> getOrgUsers(@PathParam("id") Long id) {
+	public Collection<User> getOrgUsers(@PathParam("id") Long id) {
 		Organization org = new Organization(id);
 		return orgUserService.getAllUsers(org);
 	}
 	
 	@GET
-	@Path("/customers/org/{id}")
+	@Path("/clients/org/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
-	public List<User> getOrgCustomers(@PathParam("id") Long id) {
+	public Collection<User> getOrgClients(@PathParam("id") Long id) {
 		Organization org = new Organization(id);
-		return orgUserService.getByRole(org, Role.CUSTOMER);
+		return orgUserService.getByRole(org, Role.get(Constants.CLIENT));
 	}
 	
 	
