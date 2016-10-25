@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hni.om.Persistable;
@@ -21,10 +23,13 @@ public class ProviderLocationHour implements Serializable, Persistable {
 	@Column(name = "id")
 	protected Long id;
 	
-	@Column(name="provider_location_id") private Long providerLocationId;
 	@Column(name="dow") private String dow;
 	@Column(name="open_hour_secs") private Long openHourSeconds;
 	@Column(name="close_hour_secs") private Long closeHourSeconds;
+	
+	@ManyToOne
+	@JoinColumn(name="provider_location_id", referencedColumnName = "id")
+	private ProviderLocation providerLocation;
 	
 	@Override
 	public Long getId() {
@@ -35,14 +40,6 @@ public class ProviderLocationHour implements Serializable, Persistable {
 		this.id = id;
 	}
 	
-	public Long getProviderLocationId() {
-		return providerLocationId;
-	}
-
-	public void setProviderLocationId(Long providerLocationId) {
-		this.providerLocationId = providerLocationId;
-	}
-
 	public String getDow() {
 		return dow;
 	}
@@ -66,4 +63,14 @@ public class ProviderLocationHour implements Serializable, Persistable {
 	public void setCloseHourSeconds(Long closeHourSeconds) {
 		this.closeHourSeconds = closeHourSeconds;
 	}
+
+	public ProviderLocation getProviderLocation() {
+		return providerLocation;
+	}
+
+	public void setProviderLocation(ProviderLocation providerLocation) {
+		this.providerLocation = providerLocation;
+	}
+	
+	
 }

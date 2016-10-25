@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `order_date` DATETIME NOT NULL,
   `ready_date` DATETIME NULL,
   `pickup_date` DATETIME NULL,
-  `sub_total` DECIMAL(10,2) NULL,
+  `subtotal` DECIMAL(10,2) NULL,
   `tax` DECIMAL(10,2) NULL,
   `created_by` INT NULL COMMENT 'surrogate to users',
   PRIMARY KEY (`id`))

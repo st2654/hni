@@ -2,14 +2,19 @@ package org.hni.order.om;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hni.om.Persistable;
@@ -37,6 +42,9 @@ public class Order implements Persistable, Serializable {
 	@JoinColumn(name="provider_location_id", referencedColumnName = "id")
 	private ProviderLocation providerLocation;
 
+	@OneToMany(fetch=FetchType.EAGER, mappedBy="order", cascade = {CascadeType.ALL}, orphanRemoval=true)
+	private Set<OrderItem> orderItems = new HashSet<>();
+	
 	@Override
 	public Long getId() {
 		return this.id;
@@ -105,4 +113,14 @@ public class Order implements Persistable, Serializable {
 	public Double getTotal() {
 		return this.subTotal + this.tax;
 	}
+
+	public Set<OrderItem> getOrderItems() {
+		return orderItems;
+	}
+
+	public void setOrderItems(Set<OrderItem> orderItems) {
+		this.orderItems = orderItems;
+	}
+	
+	
 }
