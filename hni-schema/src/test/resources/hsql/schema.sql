@@ -30,8 +30,9 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
-  `main_phone` VARCHAR(32) NULL,
+  `phone` VARCHAR(32) NULL,
   `website` VARCHAR(255) NULL,
+  `logo` VARCHAR(255) NULL,  
   `created` DATETIME NULL,
   `created_by` INT NULL,
   PRIMARY KEY (`id`))
