@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(value = "/organization", description = "Operations on Users and to manage Users relationships to organiations")
+@Api(value = "/user", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
 @Path("/user")
 public class UserServiceController {
@@ -47,7 +47,6 @@ public class UserServiceController {
 	}
 
 	@POST
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Creates a new user and returns it"

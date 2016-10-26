@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import org.hni.om.Persistable;
 import org.hni.provider.om.MenuItem;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "order_items")
 public class OrderItem implements Persistable, Serializable {
@@ -76,6 +78,7 @@ public class OrderItem implements Persistable, Serializable {
 		this.menuItem = menuItem;
 	}
 
+	@JsonIgnore
 	public Order getOrder() {
 		return order;
 	}

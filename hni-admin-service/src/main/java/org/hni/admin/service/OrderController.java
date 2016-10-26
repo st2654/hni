@@ -2,12 +2,14 @@ package org.hni.admin.service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.hni.order.om.Order;
@@ -22,7 +24,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/order", description = "Operations on Orders and OrderItems")
 @Component
-@Path("/order")
+@Path("/orders")
 public class OrderController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	
@@ -41,13 +43,13 @@ public class OrderController {
 
 	// TODO: add date
 	@GET
-	@Path("/user/{id}/since")
+	@Path("/users/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Returns a collection of orders for the given user for the past 3 days"
 	, notes = "will add a date param to this in the future"
 	, response = Order.class
 	, responseContainer = "")
-	public Collection<Order> getUserOrdersSinceADate(@PathParam("id") Long id /*, @PathParam("startDate") Date startDate*/) {
+	public Collection<Order> getUserOrdersSinceADate(@PathParam("id") Long id, @QueryParam("startDate") Date startDate) {
 		LocalDateTime startDatex = LocalDateTime.now().minusDays(3);
 		return orderService.get(new User(id), startDatex);
 	}

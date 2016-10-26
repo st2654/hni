@@ -14,6 +14,8 @@ import javax.persistence.Table;
 
 import org.hni.om.Persistable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="menu_items")
 public class MenuItem implements Persistable, Serializable {
@@ -34,6 +36,7 @@ public class MenuItem implements Persistable, Serializable {
 	@JoinColumn(name="menu_id", referencedColumnName = "id")
 	private Menu menu;	
 
+	public MenuItem() {}
 	public MenuItem(Long id) {
 		this.id = id;
 	}
@@ -79,6 +82,7 @@ public class MenuItem implements Persistable, Serializable {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public Menu getMenu() {
 		return menu;
 	}
