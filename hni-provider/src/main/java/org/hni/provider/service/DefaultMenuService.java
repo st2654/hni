@@ -8,7 +8,12 @@ import org.hni.common.service.AbstractService;
 import org.hni.provider.dao.MenuDAO;
 import org.hni.provider.om.Menu;
 import org.hni.provider.om.Provider;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+@Component
+@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class DefaultMenuService extends AbstractService<Menu> implements MenuService {
 
 	private MenuDAO menuDao;
