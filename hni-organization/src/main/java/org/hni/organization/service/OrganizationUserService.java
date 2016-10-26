@@ -3,9 +3,9 @@ package org.hni.organization.service;
 import java.util.Collection;
 import java.util.List;
 
-import org.hni.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
+import org.hni.user.om.Role;
 import org.hni.user.om.User;
 import org.hni.user.service.UserService;
 

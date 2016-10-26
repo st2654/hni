@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hni.om.Persistable;
-import org.hni.om.Role;
+import org.hni.user.om.Role;
 import org.hni.user.om.User;
 
 /**

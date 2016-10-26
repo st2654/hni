@@ -46,6 +46,10 @@ public class Order implements Persistable, Serializable {
 	@OneToMany(fetch=FetchType.EAGER, mappedBy="order", cascade = {CascadeType.ALL}, orphanRemoval=true)
 	private Set<OrderItem> orderItems = new HashSet<>();
 	
+	public Order() {}
+	public Order(Long id) {
+		this.id = id;
+	}
 	@Override
 	public Long getId() {
 		return this.id;

@@ -1,8 +1,8 @@
 package org.hni.order.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -29,12 +29,12 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	}
 
 	@Override
-	public Collection<Order> get(User user, LocalDateTime startDate) {
-		return get(user, startDate, LocalDateTime.now());
+	public Collection<Order> get(User user, LocalDate startDate) {
+		return get(user, startDate, LocalDate.now());
 	}
 
 	@Override
-	public Collection<Order> get(User user, LocalDateTime startDate, LocalDateTime endDate) {
+	public Collection<Order> get(User user, LocalDate startDate, LocalDate endDate) {
 		return this.orderDao.get(user,  startDate, endDate);
 	}
 }

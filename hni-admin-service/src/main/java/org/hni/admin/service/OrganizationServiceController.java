@@ -3,13 +3,15 @@ package org.hni.admin.service;
 import java.util.Collection;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.hni.order.om.Order;
 import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationService;
 import org.hni.organization.service.OrganizationUserService;
@@ -21,9 +23,9 @@ import org.springframework.stereotype.Component;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(value = "/organization", description = "Operations on Organizations")
+@Api(value = "/organizations", description = "Operations on Organizations")
 @Component
-@Path("/org")
+@Path("/organizations")
 public class OrganizationServiceController {
 	private static final Logger logger = LoggerFactory.getLogger(OrganizationServiceController.class);
 	
@@ -40,9 +42,31 @@ public class OrganizationServiceController {
 	public Organization getUser(@PathParam("id") Long id) {
 		return orgService.get(id);
 	}
+
+	@POST
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Creates or updates an organization with the given id"
+	, notes = "An update occurs if the ID field is provided"
+	, response = Organization.class
+	, responseContainer = "")
+	public Organization saveOrUpdate(Organization org) {
+		return orgService.save(org);
+	}
+
+	@DELETE
+	@Path("/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Deletes the organization with the given id"
+	, notes = ""
+	, response = Organization.class
+	, responseContainer = "")
+	public Organization deleteOrganization(@PathParam("id") Long id) {
+		return orgService.delete(new Organization(id));
+	}
 	
 	@GET
-	@Path("/orgs/user/{id}")
+	@Path("/users/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Returns the organizations that the given user is related to"
 	, notes = ""

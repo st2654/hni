@@ -1,6 +1,6 @@
 package org.hni.order.dao;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -24,7 +24,7 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 	}
 
 	@Override
-	public Collection<Order> get(User user, LocalDateTime startDate, LocalDateTime endDate) {
+	public Collection<Order> get(User user, LocalDate startDate, LocalDate endDate) {
 		try {
 			Query q = em.createQuery("SELECT x FROM Order x WHERE x.clientId = :userId AND x.orderDate BETWEEN :startDate AND :endDate")
 				.setParameter("userId", user.getId())

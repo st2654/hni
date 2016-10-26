@@ -2,8 +2,7 @@ package org.hni.order.service;
 
 import static org.junit.Assert.assertEquals;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 
@@ -50,7 +49,7 @@ public class TestOrderService {
 	@Test
 	public void testGetOrdersSince() {
 		User user = new User(2L);
-		LocalDateTime startDate = LocalDateTime.now().minusDays(3);
+		LocalDate startDate = LocalDate.now().minusDays(3);
 		Collection<Order> orders = orderService.get(user, startDate);
 		assertEquals(1, orders.size());
 	}

@@ -1,4 +1,4 @@
-package org.hni.om;
+package org.hni.user.om;
 
 import java.io.Serializable;
 
@@ -8,8 +8,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hni.om.Persistable;
 @Entity
-@Table(name="providers")
+@Table(name="roles")
 public class Role implements Persistable, Serializable {
 
 	private static final long serialVersionUID = -5344420286199389049L;
