@@ -2,6 +2,8 @@ package org.hni.provider.service;
 
 import java.util.Collection;
 
+import javax.inject.Inject;
+
 import org.hni.common.service.AbstractService;
 import org.hni.provider.dao.MenuDAO;
 import org.hni.provider.om.Menu;
@@ -11,6 +13,7 @@ public class DefaultMenuService extends AbstractService<Menu> implements MenuSer
 
 	private MenuDAO menuDao;
 	
+	@Inject
 	public DefaultMenuService(MenuDAO menuDao) {
 		super(menuDao);
 		this.menuDao = menuDao;
