@@ -24,8 +24,8 @@ public class ProviderLocationHour implements Serializable, Persistable {
 	protected Long id;
 	
 	@Column(name="dow") private String dow;
-	@Column(name="open_hour_secs") private Long openHourSeconds;
-	@Column(name="close_hour_secs") private Long closeHourSeconds;
+	@Column(name="open_hour") private Long openHour; // 24 hr format
+	@Column(name="close_hour") private Long closeHour;
 	
 	@ManyToOne
 	@JoinColumn(name="provider_location_id", referencedColumnName = "id")
@@ -48,20 +48,20 @@ public class ProviderLocationHour implements Serializable, Persistable {
 		this.dow = dow;
 	}
 
-	public Long getOpenHourSeconds() {
-		return openHourSeconds;
+	public Long getOpenHour() {
+		return openHour;
 	}
 
-	public void setOpenHourSeconds(Long openHourSeconds) {
-		this.openHourSeconds = openHourSeconds;
+	public void setOpenHour(Long openHour) {
+		this.openHour = openHour;
 	}
 
-	public Long getCloseHourSeconds() {
-		return closeHourSeconds;
+	public Long getCloseHour() {
+		return closeHour;
 	}
 
-	public void setCloseHourSeconds(Long closeHourSeconds) {
-		this.closeHourSeconds = closeHourSeconds;
+	public void setCloseHour(Long closeHour) {
+		this.closeHour = closeHour;
 	}
 
 	public ProviderLocation getProviderLocation() {

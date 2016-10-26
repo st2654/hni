@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `provider_location_hours` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `provider_location_id` INT NOT NULL,
   `dow` VARCHAR(3) NULL,
-  `open_hour_secs` INT NULL COMMENT 'open hour in seconds since midnight',
-  `close_hour_secs` INT NULL COMMENT 'close hour in seconds since midnight',
+  `open_hour` INT NULL COMMENT 'open hour in 24hr',
+  `close_hour` INT NULL COMMENT 'close hour in 24hr',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
