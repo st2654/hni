@@ -40,6 +40,11 @@ public class Provider implements Serializable, Persistable {
 	@JoinTable(name = "provider_addresses", joinColumns = { @JoinColumn(name = "provider_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
 	private Set<Address> addresses = new HashSet<Address>();
 
+	public Provider() {}
+	public Provider(Long id) {
+		this.id = id;
+	}
+	
 	@Override
 	public Long getId() {
 		return this.id;

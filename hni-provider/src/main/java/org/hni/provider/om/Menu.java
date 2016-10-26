@@ -40,6 +40,11 @@ public class Menu implements Persistable, Serializable {
 	@JoinColumn(name="provider_id", referencedColumnName = "id")
 	private Provider provider;
 	
+	public Menu() {}
+	public Menu(Long id) {
+		this.id = id;
+	}
+	
 	@Override
 	public Object getId() {
 		return this.id;
@@ -87,6 +92,29 @@ public class Menu implements Persistable, Serializable {
 
 	public void setMenuItems(Set<MenuItem> menuItems) {
 		this.menuItems = menuItems;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Menu other = (Menu) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 	
