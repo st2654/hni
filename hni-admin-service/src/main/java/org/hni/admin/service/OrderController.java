@@ -1,5 +1,6 @@
 package org.hni.admin.service;
 
+import java.time.LocalDate;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -12,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hni.common.DateUtils;
 import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
@@ -66,25 +68,18 @@ public class OrderController {
 	@GET
 	@Path("/users/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns a collection of orders for the given user from given date until current date"
-	, notes = "accepted date formats yyyy-mm-dd, yyyy/mm/dd, mm-dd-yyyy, mm/dd/yyyy"
-	, response = Order.class
-	, responseContainer = "")
-	public Collection<Order> getUserOrdersSinceDate(@PathParam("id") Long id, @QueryParam("startDate") String startDate) {
-		
-		return orderService.get(new User(id), DateUtils.parseDate(startDate));
-	}
-
-	@GET
-	@Path("/users/{id}")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns a collection of orders for the given user between the given dates"
+	@ApiOperation(value = "Returns a collection of orders for the given user between the given dates.  If the endDate is not supplied it will default to current date"
 	, notes = "accepted date formats yyyy-mm-dd, yyyy/mm/dd, mm-dd-yyyy, mm/dd/yyyy"
 	, response = Order.class
 	, responseContainer = "")
 	public Collection<Order> getUserOrdersBetweenDates(@PathParam("id") Long id, @QueryParam("startDate") String startDate , @QueryParam("endDate") String endDate) {
 		
-		return orderService.get(new User(id), DateUtils.parseDate(startDate), DateUtils.parseDate(endDate));
+		LocalDate start = DateUtils.parseDate(startDate);
+		LocalDate end = LocalDate.now();
+		if ( !StringUtils.isEmpty(endDate) ) {
+			end = DateUtils.parseDate(endDate);
+		}
+		return orderService.get(new User(id), start, end);
 	}
 
 
