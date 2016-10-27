@@ -16,6 +16,13 @@ import org.hni.provider.om.MenuItem;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Represents the actual item being created in an Order.  It must be related
+ * back to a MenuItem.
+ * 
+ * @author j2parke
+ *
+ */
 @Entity
 @Table(name = "order_items")
 public class OrderItem implements Persistable, Serializable {

@@ -17,7 +17,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hni.om.Persistable;
-
+/**
+ * Maps the name of a menu and when the menu is applicable
+ * during the day.  Hours should be represented in 24hr format.
+ *
+ * For example a menu might be "breakfast" with hours between 6am - 10am.
+ * 
+ */
 @Entity
 @Table(name="menus")
 public class Menu implements Persistable, Serializable {

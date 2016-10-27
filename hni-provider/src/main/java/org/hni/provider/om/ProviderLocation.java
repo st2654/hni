@@ -22,6 +22,11 @@ import javax.persistence.Table;
 import org.hni.om.Persistable;
 import org.hni.user.om.Address;
 
+/**
+ * Represents a physical location for a provider generally where
+ * food is prepared and provided to clients. 
+ *
+ */
 @Entity
 @Table(name="provider_locations")
 public class ProviderLocation implements Persistable, Serializable {

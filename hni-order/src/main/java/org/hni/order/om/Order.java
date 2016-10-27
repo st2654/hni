@@ -20,6 +20,13 @@ import javax.persistence.Table;
 import org.hni.om.Persistable;
 import org.hni.provider.om.ProviderLocation;
 
+/**
+ * Represents a request for something/a meal.  The order is related to a User/client,
+ * a ProviderLocation and one or more MenuItem via the OrderItem.
+ * 
+ * @author j2parke
+ *
+ */
 @Entity
 @Table(name = "orders")
 public class Order implements Persistable, Serializable {

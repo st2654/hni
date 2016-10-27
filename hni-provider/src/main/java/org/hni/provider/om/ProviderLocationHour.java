@@ -13,6 +13,11 @@ import javax.persistence.Table;
 
 import org.hni.om.Persistable;
 
+/**
+ * Provides information about when a ProviderLocation is open for
+ * business on any day of week. 
+ *
+ */
 @Entity
 @Table(name="provider_location_hours")
 public class ProviderLocationHour implements Serializable, Persistable {

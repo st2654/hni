@@ -17,7 +17,8 @@ import org.hni.user.om.type.Gender;
  * Represents any user defined in the system.  Users can play several different roles such as
  * Administrator, Treasurer, Customer, etc
  * 
- * Every User in the system MUST be associated to an Organization
+ * Every User in the system MUST be associated to an Organization or Provider through the mapping tables
+ * or they will have no permission within the system.
  * 
  * @author jeff3parker
  *

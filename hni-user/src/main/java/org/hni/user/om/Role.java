@@ -10,6 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hni.om.Persistable;
+
+/**
+ * Represents a role that a User plays within the system to various
+ * other entities.  This is used in mapping tables (e.g. user_organization_role)
+ * and is used extensively by the security layer to determine permissions
+ * for users.
+ * 
+ *
+ */
 @Entity
 @Table(name="roles")
 public class Role implements Persistable, Serializable {

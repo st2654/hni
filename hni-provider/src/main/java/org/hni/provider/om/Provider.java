@@ -21,6 +21,12 @@ import javax.persistence.Table;
 import org.hni.om.Persistable;
 import org.hni.user.om.Address;
 
+/**
+ * A Provider is an entity that provides meals to clients.  There will be
+ * one or more ProviderLocations associated with a Provider.  Each provier also
+ * has one or more Menus associated with them that can be fulfilled at a location.
+ *
+ */
 @Entity
 @Table(name="providers")
 public class Provider implements Serializable, Persistable {

@@ -12,6 +12,12 @@ import javax.persistence.Table;
 
 import org.hni.om.Persistable;
 
+/**
+ * A physical or mailing address.  This object is used and mapped by various 
+ * other entities in the system such as organization, provider, providerLocation, etc
+ * 
+ *
+ */
 @Entity
 @Table(name="addresses")
 public class Address implements Persistable, Serializable {

@@ -11,10 +11,10 @@ import org.hni.user.om.Role;
 import org.hni.user.om.User;
 
 /**
- * Represents an organization which could be an NGO, School or other entity providing
- * support and users to the system.
- * 
- * @author jeff3parker
+ * Provides the mapping between a user a provider where the user must play
+ * a specific role to the Provider.  This data is generally used
+ * by the security layer when determining the permissions a user has with 
+ * the provider.  
  *
  */
 @Entity

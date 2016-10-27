@@ -16,6 +16,11 @@ import org.hni.om.Persistable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Represents an item on a menu.  A menuItem exists for a single
+ * menu.  The price is estimated and may or may not be populated.
+ *
+ */
 @Entity
 @Table(name="menu_items")
 public class MenuItem implements Persistable, Serializable {
