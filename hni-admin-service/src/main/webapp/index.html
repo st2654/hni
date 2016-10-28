@@ -37,7 +37,8 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        url = "http://localhost:8080/hni-admin/api/v1/swagger.json";
+        url = "http://hni-service-dev.azurewebsites.net/hni-admin-service/api/v1/swagger.json";
+        //url = "http://localhost:8080/hni-admin-service/api/v1/swagger.json";
       }
 
       hljs.configure({
