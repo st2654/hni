@@ -50,5 +50,4 @@ public class TestUserService {
 		User cust = list.get(0);
 		assertEquals("Scott", cust.getFirstName());
 	}
-
 }

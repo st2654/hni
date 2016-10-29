@@ -15,17 +15,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 	private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
+
 	public DefaultUserDAO() {
-		super(User.class);		
+		super(User.class);
 	}
-	
+
 	@Override
 	public List<User> byMobilePhone(String mobilePhone) {
 		try {
-			Query q = em.createQuery("SELECT x FROM User x WHERE x.mobilePhone = :mobilePhone")
-				.setParameter("mobilePhone", mobilePhone);
+			Query q = em.createQuery("SELECT x FROM User x WHERE x.mobilePhone = :mobilePhone").setParameter("mobilePhone", mobilePhone);
 			return q.getResultList();
-		} catch(NoResultException e) {
+		} catch (NoResultException e) {
 			return Collections.emptyList();
 		}
 	}
@@ -33,12 +33,11 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 	@Override
 	public List<User> byLastName(String lastName) {
 		try {
-			Query q = em.createQuery("SELECT x FROM User x WHERE x.lastName = :lastName")
-				.setParameter("lastName", lastName);
+			Query q = em.createQuery("SELECT x FROM User x WHERE x.lastName = :lastName").setParameter("lastName", lastName);
 			return q.getResultList();
-		} catch(NoResultException e) {
+		} catch (NoResultException e) {
 			return Collections.emptyList();
 		}
 	}
-	
+
 }
