@@ -35,7 +35,7 @@ insert into user_token values(2,'BBCDEFGHIJKLMNOP', current_timestamp);
 insert into user_token values(3,'CBCDEFGHIJKLMNOP', current_timestamp);
 insert into user_token values(4,'DBCDEFGHIJKLMNOP', current_timestamp);
 insert into user_token values(5,'EBCDEFGHIJKLMNOP', current_timestamp);
-insert into user_token values(6,'FBCDEFGHIJKLMNOP', current_timestamp);
+insert into user_token values(6,'FBCDEFGHIJKLMNOP', current_date);
 
 insert into roles values(1,'Administrator');
 

@@ -5,12 +5,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hni.organization.om.UserOrganizationRole;
-import org.hni.user.dao.DefaultUserTokenDAO;
-import org.hni.user.dao.UserTokenDAO;
 import org.hni.user.om.OrganizationUserPermission;
 import org.hni.user.om.Permission;
 import org.hni.user.om.User;
@@ -31,6 +34,22 @@ public class DefaultUserSecurityService implements UserSecurityService {
 
 	@Inject
 	RolePermissionService rolePermissionService;
+	private static final Long INITIAL_CLEANUP_DELAY = 0L;
+	private static final Long TOKEN_DURATION = 1000 * 60 * 30L;
+	private static final Long TIME_BETWEEN_TOKEN_CLEANUP = 60 * 10L;
+	private static final Log logger = LogFactory.getLog(UserSecurityService.class);
+	private static final ScheduledExecutorService SCHEDULED_EXECUTOR = Executors.newScheduledThreadPool(1);
+
+	private static boolean cleanupScheduleSet = false;
+
+	public DefaultUserSecurityService() {
+		if (!cleanupScheduleSet) {
+			cleanupScheduleSet = true;
+			SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> {
+				cleanupExpiredTokens(TOKEN_DURATION);
+			}, INITIAL_CLEANUP_DELAY, TIME_BETWEEN_TOKEN_CLEANUP, TimeUnit.SECONDS);
+		}
+	}
 
 	public String authenticate(Long userid, String password) {
 		String tokenValue = "";
@@ -56,7 +75,7 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		UserToken userToken = userTokenService.get(tokenPK);
 		/* If the token is still present, confirm its still valid */
 		if (!userToken.getId().getToken().isEmpty()) {
-			if (userToken.getCreated().getTime() < (System.currentTimeMillis() - 1000 * 60 * 30)) {
+			if (userToken.getCreated().getTime() < (System.currentTimeMillis() - TOKEN_DURATION)) {
 				/* remove the token if more than 30 minutes has passed. */
 				userTokenService.delete(userToken);
 			} else {
@@ -122,15 +141,18 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		return organizationUserPermissions;
 	}
 
+	/*
+	 * Note: tested method being called internally, and tested with debug
+	 * breakpoints. Hard something around unit tests doesn't like the
+	 * schedulingExecutor.
+	 */
 	public void cleanupExpiredTokens(long millisecondsBack) {
 		/*
 		 * remove from database all tokens older than milliseconds back from
 		 * currentTime. This should be done asynchronously from another
 		 * operation.
 		 */
-		UserTokenDAO userTokenDao = new DefaultUserTokenDAO();
-		Long currentTime = System.currentTimeMillis();
-		Long deleteOlderThan = currentTime - millisecondsBack;
-		userTokenDao.deleteTokensOlderThan(new Date(deleteOlderThan));
+		Long deleteOlderThan = System.currentTimeMillis() - millisecondsBack;
+		userTokenService.deleteTokensOlderThan(new Date(deleteOlderThan));
 	}
 }

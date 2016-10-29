@@ -1,7 +1,9 @@
 package org.hni.organization.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -9,6 +11,8 @@ import javax.inject.Inject;
 import org.apache.log4j.BasicConfigurator;
 import org.hni.user.om.OrganizationUserPermission;
 import org.hni.user.om.User;
+import org.hni.user.om.UserToken;
+import org.hni.user.service.UserTokenService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,6 +26,9 @@ public class TestUserSecurityService {
 
 	@Inject
 	private UserSecurityService userSecurityService;
+
+	@Inject
+	private UserTokenService userTokenService;
 
 	public TestUserSecurityService() {
 		BasicConfigurator.configure();
@@ -55,6 +62,12 @@ public class TestUserSecurityService {
 	public void testValidateToken() {
 		String tokenString = "ABCDEFGHIJKLMNOP";
 		User tokenUser = userSecurityService.validateToken(tokenString);
-		assertTrue(0 != tokenUser.getId());
+		assertTrue(1L == tokenUser.getId());
+	}
+
+	@Test
+	public void testTokenCleanup() {
+		List<UserToken> afterCleanupTokens = userTokenService.getAll();
+		assertEquals(5, afterCleanupTokens.size());
 	}
 }
