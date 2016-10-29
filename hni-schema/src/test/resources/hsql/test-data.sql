@@ -30,12 +30,12 @@ insert into menu_items values(4, 1, 'Club Sandwich', 'turkey, ham and cheese wit
 
 insert into orders values(1, 2, 1, dateadd('DAY', -2, current_date), dateadd('DAY', -2, current_date), null, 9.95, 1.20, 1);
 
-insert into user_token values(1,'ABCDEFGHIJKLMNOP', current_date);
-insert into user_token values(2,'BBCDEFGHIJKLMNOP', current_date);
-insert into user_token values(3,'CBCDEFGHIJKLMNOP', current_date);
-insert into user_token values(4,'DBCDEFGHIJKLMNOP', current_date);
-insert into user_token values(5,'EBCDEFGHIJKLMNOP', current_date);
-insert into user_token values(6,'FBCDEFGHIJKLMNOP', current_date);
+insert into user_token values(1,'ABCDEFGHIJKLMNOP', current_timestamp);
+insert into user_token values(2,'BBCDEFGHIJKLMNOP', current_timestamp);
+insert into user_token values(3,'CBCDEFGHIJKLMNOP', current_timestamp);
+insert into user_token values(4,'DBCDEFGHIJKLMNOP', current_timestamp);
+insert into user_token values(5,'EBCDEFGHIJKLMNOP', current_timestamp);
+insert into user_token values(6,'FBCDEFGHIJKLMNOP', current_timestamp);
 
 insert into roles values(1,'Administrator');
 

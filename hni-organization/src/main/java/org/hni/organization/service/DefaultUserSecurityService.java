@@ -15,6 +15,7 @@ import org.hni.user.om.OrganizationUserPermission;
 import org.hni.user.om.Permission;
 import org.hni.user.om.User;
 import org.hni.user.om.UserToken;
+import org.hni.user.om.UserTokenPK;
 import org.hni.user.service.RolePermissionService;
 import org.hni.user.service.UserTokenService;
 import org.springframework.stereotype.Component;
@@ -50,11 +51,25 @@ public class DefaultUserSecurityService implements UserSecurityService {
 
 	public User validateToken(String token) {
 		/* query for token in db. */
-
-		List<User> users = userTokenService.byToken(token);
 		User user = new User();
-		if (users.size() > 0) {
-			user = users.get(0);
+		UserTokenPK tokenPK = new UserTokenPK(token);
+		UserToken userToken = userTokenService.get(tokenPK);
+		/* If the token is still present, confirm its still valid */
+		if (!userToken.getId().getToken().isEmpty()) {
+			if (userToken.getCreated().getTime() < (System.currentTimeMillis() - 1000 * 60 * 30)) {
+				/* remove the token if more than 30 minutes has passed. */
+				userTokenService.delete(userToken);
+			} else {
+				/*
+				 * TODO: may be better to just query the user by id (since we
+				 * have it)
+				 */
+				List<User> users = userTokenService.byToken(token);
+				if (users.size() > 0) {
+					/* if token is still valid, return user. */
+					user = users.get(0);
+				}
+			}
 		}
 		return user;
 	}
@@ -110,8 +125,8 @@ public class DefaultUserSecurityService implements UserSecurityService {
 	public void cleanupExpiredTokens(long millisecondsBack) {
 		/*
 		 * remove from database all tokens older than milliseconds back from
-		 * currentTime. This should be done asynchronously from the other
-		 * operations.
+		 * currentTime. This should be done asynchronously from another
+		 * operation.
 		 */
 		UserTokenDAO userTokenDao = new DefaultUserTokenDAO();
 		Long currentTime = System.currentTimeMillis();
