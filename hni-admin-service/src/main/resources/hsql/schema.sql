@@ -59,6 +59,34 @@ CREATE TABLE IF NOT EXISTS `user_organization_role` (
   PRIMARY KEY (`user_id`, `organization_id`, `role_id`))
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `permissions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `permissions` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `role_permission`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `role_permissions` (
+  `role_id` INT NOT NULL,
+  `permission_id` INT NOT NULL,
+  PRIMARY KEY (`role_id`, `permission_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `user_token`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user_token` (
+  `user_id` INT NOT NULL,
+  `token` VARCHAR(255) NULL,
+  `created` DATETIME NULL,
+  PRIMARY KEY (`token`))
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `providers`
