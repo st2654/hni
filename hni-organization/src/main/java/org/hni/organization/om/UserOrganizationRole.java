@@ -6,8 +6,8 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.hni.om.Persistable;
-import org.hni.user.om.Role;
+import org.hni.common.om.Persistable;
+import org.hni.common.om.Role;
 import org.hni.user.om.User;
 
 /**

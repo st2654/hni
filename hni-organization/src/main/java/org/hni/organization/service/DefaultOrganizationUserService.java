@@ -8,12 +8,12 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.hni.common.Constants;
+import org.hni.common.om.Role;
 import org.hni.organization.dao.UserOrganizationRoleDAO;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.om.UserOrganizationRolePK;
 import org.hni.user.dao.UserDAO;
-import org.hni.user.om.Role;
 import org.hni.user.om.User;
 import org.hni.user.service.DefaultUserService;
 import org.springframework.stereotype.Component;

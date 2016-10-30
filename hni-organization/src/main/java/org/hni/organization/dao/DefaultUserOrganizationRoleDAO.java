@@ -8,9 +8,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.hni.common.dao.AbstractDAO;
+import org.hni.common.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
-import org.hni.user.om.Role;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

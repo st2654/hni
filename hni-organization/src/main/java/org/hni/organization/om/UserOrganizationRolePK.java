@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.hni.user.om.Role;
+import org.hni.common.om.Role;
 import org.hni.user.om.User;
 
 /**

@@ -52,7 +52,7 @@
 			  use this if you don't have a database running locally
 		 -->
 		<beans profile="integration">
-			<util:properties id="hniProperties" location="classpath:profiles/local/hni.properties" />
+			<util:properties id="hniProperties" location="classpath:profiles/integration/hni.properties" />
 			
 	        <!-- In Memory Database Configuration -->
 	        <jdbc:embedded-database id="dataSource" type="H2">

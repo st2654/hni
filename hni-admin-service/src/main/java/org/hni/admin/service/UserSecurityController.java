@@ -12,8 +12,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.hni.organization.service.UserSecurityService;
-import org.hni.user.om.OrganizationUserPermission;
+import org.hni.security.om.OrganizationUserPermission;
+import org.hni.security.service.UserSecurityService;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

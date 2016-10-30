@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hni.om.Persistable;
+import org.hni.common.om.Persistable;
 /**
  * Maps the name of a menu and when the menu is applicable
  * during the day.  Hours should be represented in 24hr format.

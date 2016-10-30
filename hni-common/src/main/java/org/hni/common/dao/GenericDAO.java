@@ -2,7 +2,7 @@ package org.hni.common.dao;
 
 import java.util.List;
 
-import org.hni.om.Persistable;
+import org.hni.common.om.Persistable;
 
 public interface GenericDAO {
 	static String WILD_CARD = "%";

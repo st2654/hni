@@ -19,7 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hni.om.Persistable;
+import org.hni.common.om.Persistable;
 import org.hni.user.om.Address;
 
 /**
