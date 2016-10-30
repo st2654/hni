@@ -19,7 +19,6 @@ import org.hni.security.om.OrganizationUserPermission;
 import org.hni.security.om.Permission;
 import org.hni.security.om.UserToken;
 import org.hni.security.om.UserTokenPK;
-import org.hni.security.service.UserTokenService;
 import org.hni.security.service.security.Authenticator;
 import org.hni.security.service.security.EmailAuthenticator;
 import org.hni.security.service.security.MobilePhoneAuthenticator;
@@ -29,19 +28,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultUserSecurityService implements UserSecurityService {
 
-	@Inject private OrganizationUserService organizationUserService;
-
-	@Inject private UserTokenService userTokenService;
-
-	@Inject
-	RolePermissionService rolePermissionService;
 	private static final Long INITIAL_CLEANUP_DELAY = 0L;
 	private static final Long TOKEN_DURATION = 1000 * 60 * 30L;
 	private static final Long TIME_BETWEEN_TOKEN_CLEANUP = 60 * 10L;
 	private static final Log logger = LogFactory.getLog(UserSecurityService.class);
 	private static final ScheduledExecutorService SCHEDULED_EXECUTOR = Executors.newScheduledThreadPool(1);
-
 	private static boolean cleanupScheduleSet = false;
+
+	@Inject private OrganizationUserService organizationUserService;
+	@Inject private UserTokenService userTokenService;
+	@Inject private RolePermissionService rolePermissionService;
+	
 
 	public DefaultUserSecurityService() {
 		if (!cleanupScheduleSet) {

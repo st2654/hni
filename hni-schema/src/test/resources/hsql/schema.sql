@@ -72,7 +72,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `role_permission`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `role_permission` (
+CREATE TABLE IF NOT EXISTS `role_permissions` (
   `role_id` INT NOT NULL,
   `permission_id` INT NOT NULL,
   PRIMARY KEY (`role_id`, `permission_id`))

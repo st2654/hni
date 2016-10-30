@@ -20,10 +20,5 @@
 			<artifactId>hni-user</artifactId>
 			<version>${project.version}</version>
 		</dependency>  
-		<dependency>
-			<groupId>org.hni</groupId>
-			<artifactId>hni-security</artifactId>
-			<version>${project.version}</version>
-		</dependency>  
   </dependencies>
 </project>
