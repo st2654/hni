@@ -35,8 +35,21 @@ public class TestUserSecurityService {
 	}
 
 	@Test
-	public void testAuthenticateUser() {
-		String token = userSecurityService.authenticate(1L, "pwd");
+	public void testAuthenticateUserByMobilePhone() {
+		User user = new User();
+		user.setPassword("pwd");
+		user.setMobilePhone("mphone");
+		String token = userSecurityService.authenticate(user);
+		assertTrue(null != token);
+		assertTrue(!token.isEmpty());
+	}
+
+	@Test
+	public void testAuthenticateUserByEmailAddress() {
+		User user = new User();
+		user.setPassword("pwd");
+		user.setEmail("superuser@hni.com");
+		String token = userSecurityService.authenticate(user);
 		assertTrue(null != token);
 		assertTrue(!token.isEmpty());
 	}
@@ -67,6 +80,7 @@ public class TestUserSecurityService {
 
 	@Test
 	public void testTokenCleanup() {
+		userSecurityService.cleanupExpiredTokens(12000000);
 		List<UserToken> afterCleanupTokens = userTokenService.getAll();
 		assertEquals(5, afterCleanupTokens.size());
 	}

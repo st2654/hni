@@ -8,5 +8,8 @@ import org.hni.user.om.User;
 public interface UserDAO extends BaseDAO<User> {
 
 	List<User> byMobilePhone(String byMobilePhone);
+
 	List<User> byLastName(String lastName);
+
+	List<User> byEmailAddress(String emailAddress);
 }

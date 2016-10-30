@@ -14,6 +14,9 @@ import javax.inject.Inject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hni.organization.om.UserOrganizationRole;
+import org.hni.organization.service.security.Authenticator;
+import org.hni.organization.service.security.EmailAuthenticator;
+import org.hni.organization.service.security.MobilePhoneAuthenticator;
 import org.hni.user.om.OrganizationUserPermission;
 import org.hni.user.om.Permission;
 import org.hni.user.om.User;
@@ -51,21 +54,22 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		}
 	}
 
-	public String authenticate(Long userid, String password) {
-		String tokenValue = "";
-		/*
-		 * TODO: known no salt.
-		 * 
-		 * TODO: will probably fail if no user with that userid
-		 */
-		User user = organizationUserService.get(userid);
-		if (!user.getPassword().isEmpty()) {
-			if (password.equals(user.getPassword())) {
-				UserToken token = new UserToken(userid);
-				tokenValue = token.getToken();
+	@Override
+	public String authenticate(User user) {
+		Authenticator authenticator = null;
+		String identifier = null;
+		String token = "";
+		if (null != user) {
+			if (null != user.getEmail() && !user.getEmail().isEmpty()) {
+				authenticator = new EmailAuthenticator(organizationUserService);
+				identifier = user.getEmail();
+			} else if (null != user.getMobilePhone() && !user.getMobilePhone().isEmpty()) {
+				authenticator = new MobilePhoneAuthenticator(organizationUserService);
+				identifier = user.getMobilePhone();
 			}
 		}
-		return tokenValue;
+		token = authenticator.authenticate(identifier, user.getPassword());
+		return token;
 	}
 
 	public User validateToken(String token) {
@@ -141,11 +145,6 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		return organizationUserPermissions;
 	}
 
-	/*
-	 * Note: tested method being called internally, and tested with debug
-	 * breakpoints. Hard something around unit tests doesn't like the
-	 * schedulingExecutor.
-	 */
 	public void cleanupExpiredTokens(long millisecondsBack) {
 		/*
 		 * remove from database all tokens older than milliseconds back from

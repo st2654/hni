@@ -35,4 +35,9 @@ public class DefaultUserService extends AbstractService<User> implements UserSer
 		return userDao.byLastName(lastName);
 	}
 
+	@Override
+	public List<User> byEmailAddress(String emailAddress) {
+		return userDao.byEmailAddress(emailAddress);
+	}
+
 }

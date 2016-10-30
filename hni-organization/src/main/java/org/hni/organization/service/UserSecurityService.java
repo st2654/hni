@@ -12,13 +12,13 @@ import org.hni.user.om.User;
  */
 public interface UserSecurityService {
 	/**
-	 * authenticate user, if matches then return token
+	 * authenticate user by identifier (email address, mobile phone number), if
+	 * matches then return token
 	 * 
-	 * @param userid
-	 * @param password
+	 * @param user
 	 * @return String token
 	 */
-	String authenticate(Long userid, String password);
+	String authenticate(User user);
 
 	/**
 	 * validate token, if valid return the user that requested it.

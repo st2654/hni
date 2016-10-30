@@ -7,6 +7,9 @@ import org.hni.user.om.User;
 
 public interface UserService extends BaseService<User> {
 
-	 List<User> byMobilePhone(String byMobilePhone);
-	 List<User> byLastName(String lastName);
+	List<User> byMobilePhone(String byMobilePhone);
+
+	List<User> byLastName(String lastName);
+
+	List<User> byEmailAddress(String emailAddress);
 }
