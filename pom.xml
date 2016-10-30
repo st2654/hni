@@ -47,9 +47,7 @@
     <module>hni-db-parent</module>
     <module>hni-user</module>
     <module>hni-organization</module>
-<!-- TODO
     <module>hni-security</module>
--->
     <module>hni-schema</module>
     <module>hni-admin-service</module>
     <module>hni-provider</module>
