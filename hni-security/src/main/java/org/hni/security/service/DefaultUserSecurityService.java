@@ -35,10 +35,12 @@ public class DefaultUserSecurityService implements UserSecurityService {
 	private static final ScheduledExecutorService SCHEDULED_EXECUTOR = Executors.newScheduledThreadPool(1);
 	private static boolean cleanupScheduleSet = false;
 
-	@Inject private OrganizationUserService organizationUserService;
-	@Inject private UserTokenService userTokenService;
-	@Inject private RolePermissionService rolePermissionService;
-	
+	@Inject
+	private OrganizationUserService organizationUserService;
+	@Inject
+	private UserTokenService userTokenService;
+	@Inject
+	private RolePermissionService rolePermissionService;
 
 	public DefaultUserSecurityService() {
 		if (!cleanupScheduleSet) {
@@ -50,7 +52,7 @@ public class DefaultUserSecurityService implements UserSecurityService {
 	}
 
 	@Override
-	public String authenticate(User user) {
+	public User authenticate(User user) {
 		Authenticator authenticator = null;
 		String identifier = null;
 		String token = "";
@@ -64,7 +66,9 @@ public class DefaultUserSecurityService implements UserSecurityService {
 			}
 		}
 		token = authenticator.authenticate(identifier, user.getPassword());
-		return token;
+		User returnUser = validateToken(token);
+		returnUser.setToken(token);
+		return returnUser;
 	}
 
 	public User validateToken(String token) {

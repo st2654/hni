@@ -33,7 +33,7 @@ public class UserSecurityController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/authentication")
 	@ApiOperation(value = "Authenticates a user, returning a token for that user.", notes = "Requires either (user phone # or email address) and password be populated in user", response = String.class, responseContainer = "")
-	public String authenticate(User user) {
+	public User authenticate(User user) {
 		return userSecurityService.authenticate(user);
 	}
 

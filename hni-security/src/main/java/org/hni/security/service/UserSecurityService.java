@@ -18,7 +18,7 @@ public interface UserSecurityService {
 	 * @param user
 	 * @return String token
 	 */
-	String authenticate(User user);
+	User authenticate(User user);
 
 	/**
 	 * validate token, if valid return the user that requested it.
