@@ -21,7 +21,6 @@ import org.hni.security.om.UserToken;
 import org.hni.security.om.UserTokenPK;
 import org.hni.security.service.security.Authenticator;
 import org.hni.security.service.security.EmailAuthenticator;
-import org.hni.security.service.security.MobilePhoneAuthenticator;
 import org.hni.user.om.User;
 import org.springframework.stereotype.Component;
 
@@ -58,19 +57,28 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		String token = "";
 		if (null != user) {
 			if (null != user.getEmail() && !user.getEmail().isEmpty()) {
-				authenticator = new EmailAuthenticator(organizationUserService);
+				authenticator = new EmailAuthenticator(organizationUserService, userTokenService);
 				identifier = user.getEmail();
-			} else if (null != user.getMobilePhone() && !user.getMobilePhone().isEmpty()) {
-				authenticator = new MobilePhoneAuthenticator(organizationUserService);
-				identifier = user.getMobilePhone();
 			}
 		}
 		token = authenticator.authenticate(identifier, user.getPassword());
-		User returnUser = validateToken(token);
+		List<User> users = userTokenService.byToken(token);
+		User returnUser = getSingleUserFromList(users);
 		returnUser.setPassword("");
 		returnUser.setSalt("");
 		returnUser.setToken(token);
 		return returnUser;
+	}
+
+	private User getSingleUserFromList(List<User> users) {
+		User user = new User();
+		if (!users.isEmpty()) {
+			/* if token is still valid, return user. */
+			user = users.get(0);
+		} else {
+			throw new RuntimeException("User not found.");
+		}
+		return user;
 	}
 
 	public User validateToken(String token) {
@@ -89,10 +97,7 @@ public class DefaultUserSecurityService implements UserSecurityService {
 				 * have it)
 				 */
 				List<User> users = userTokenService.byToken(token);
-				if (users.size() > 0) {
-					/* if token is still valid, return user. */
-					user = users.get(0);
-				}
+				user = getSingleUserFromList(users);
 			}
 		}
 		user.setPassword("");

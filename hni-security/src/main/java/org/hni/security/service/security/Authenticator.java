@@ -56,9 +56,9 @@ public interface Authenticator {
 		return valid;
 	}
 
-	default String generateSessionToken(User user) {
+	default UserToken generateSessionToken(User user) {
 		UserToken token = new UserToken(user.getId());
-		return token.getToken();
+		return token;
 	}
 
 }

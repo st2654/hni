@@ -37,6 +37,9 @@ public class TestUserTokenService {
 		UserToken userToken = new UserToken(1L);
 		String currentUserToken = userToken.getToken();
 		UserToken updatedUserToken = userTokenService.insert(userToken);
+		List<User> users = userTokenService.byToken(userToken.getToken());
+		assertTrue(1 == users.size());
+		assertTrue(users.get(0).getToken().equals(userToken.getToken()));
 		assertTrue(updatedUserToken.getToken().equals(currentUserToken));
 	}
 

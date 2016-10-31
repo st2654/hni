@@ -36,23 +36,13 @@ public class TestUserSecurityService {
 	}
 
 	@Test
-	public void testAuthenticateUserByMobilePhone() {
-		User user = new User();
-		user.setPassword("pwd");
-		user.setMobilePhone("mphone");
-		String token = userSecurityService.authenticate(user);
-		assertTrue(null != token);
-		assertTrue(!token.isEmpty());
-	}
-
-	@Test
 	public void testAuthenticateUserByEmailAddress() {
 		User user = new User();
 		user.setPassword("pwd");
 		user.setEmail("superuser@hni.com");
-		String token = userSecurityService.authenticate(user);
-		assertTrue(null != token);
-		assertTrue(!token.isEmpty());
+		User tokenUser = userSecurityService.authenticate(user);
+		assertTrue(null != tokenUser.getToken());
+		assertTrue(!tokenUser.getToken().isEmpty());
 	}
 
 	@Test

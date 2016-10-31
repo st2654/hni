@@ -29,7 +29,11 @@ public class DefaultUserTokenService extends AbstractService<UserToken> implemen
 
 	@Override
 	public List<User> byToken(String token) {
-		return userTokenDao.byToken(token);
+		List<User> users = userTokenDao.byToken(token);
+		for (User user : users) {
+			user.setToken(token);
+		}
+		return users;
 	}
 
 	@Override

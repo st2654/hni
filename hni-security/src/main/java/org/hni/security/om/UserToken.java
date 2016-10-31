@@ -8,6 +8,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.apache.commons.codec.binary.Base64;
 import org.hni.common.om.Persistable;
 
 /**
@@ -17,7 +18,7 @@ import org.hni.common.om.Persistable;
 @Entity
 @Table(name = "user_token")
 public class UserToken implements Persistable, Serializable {
-	private static final int TOKEN_LENGTH = 255;
+	private static final int TOKEN_LENGTH = 30;
 	private static final long serialVersionUID = -5344420286199389049L;
 
 	@EmbeddedId
@@ -41,7 +42,7 @@ public class UserToken implements Persistable, Serializable {
 		 * already exist for another user. This is a minimal probability.
 		 */
 		this.id = new UserTokenPK();
-		this.id.setToken(org.apache.commons.lang3.RandomStringUtils.random(TOKEN_LENGTH));
+		this.id.setToken(Base64.encodeBase64String(org.apache.commons.lang3.RandomStringUtils.random(TOKEN_LENGTH).getBytes()));
 		this.created = new Date();
 	}
 
