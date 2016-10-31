@@ -67,6 +67,8 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		}
 		token = authenticator.authenticate(identifier, user.getPassword());
 		User returnUser = validateToken(token);
+		returnUser.setPassword("");
+		returnUser.setSalt("");
 		returnUser.setToken(token);
 		return returnUser;
 	}
@@ -93,6 +95,8 @@ public class DefaultUserSecurityService implements UserSecurityService {
 				}
 			}
 		}
+		user.setPassword("");
+		user.setSalt("");
 		return user;
 	}
 
