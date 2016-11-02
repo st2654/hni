@@ -1,13 +1,12 @@
-package org.hni.provider.dao;
+package org.hni.provider.service;
 
 import java.util.Collection;
 
-import org.hni.common.dao.BaseDAO;
+import org.hni.common.service.BaseService;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 
-public interface ProviderLocationDAO extends BaseDAO<ProviderLocation> {
+public interface ProviderLocationService extends BaseService<ProviderLocation> {
 
 	Collection<ProviderLocation> with(Provider provider);
-
 }

@@ -142,4 +142,41 @@ public class ProviderController {
 		// TODO
 		return null;
 	}
+	
+	@POST
+	@Path("/{id}/providerLocations/{plid}/addresses")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Adds an address to a ProviderLocation"
+		, notes = "Use the /addresses API to update addresses"
+		, response = Provider.class
+		, responseContainer = "")
+	public Provider addAddressToProviderLocation(@PathParam("id") Long id, Address address) {
+		//TODO
+		Provider provider = providerService.get(id);
+		if (null != provider) {
+			provider.getAddresses().add(address);
+			providerService.save(provider);
+		}
+		return provider;
+	}
+
+	@DELETE
+	@Path("/{id}/providerLocations/{plid}/addresses/{addressId}")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Removes the address from a providerLocation"
+		, notes = ""
+		, response = Provider.class
+		, responseContainer = "")
+	public Provider removeAddressFromProviderLocation(@PathParam("id") Long id, @PathParam("addressId") Long addressId) {
+		// TODO
+		Provider provider = providerService.get(id);
+		if (null != provider) {
+			Address address = addressDao.get(addressId);
+			if ( null != address ) {
+				provider.getAddresses().remove(address); // Hibernate will manage the mapping table for us.
+				providerService.save(provider);
+			}
+		}
+		return provider;
+	}	
 }
