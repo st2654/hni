@@ -1,15 +1,24 @@
 package org.hni.organization.om;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.hni.om.Persistable;
+import org.hni.common.om.Persistable;
+import org.hni.user.om.Address;
 
 /**
  * An organization is an entity that provides customer support
@@ -31,14 +40,20 @@ public class Organization implements Persistable, Serializable {
 	protected Long id;
 	
 	@Column(name="name") private String name;
-	@Column(name="addressLine1") private String addressLine1;
-	@Column(name="addressLine2") private String addressLine2;
-	@Column(name="city") private String city;
-	@Column(name="state") private String state;
-	@Column(name="zip") private String zip;
+	@Column(name="phone") private String phone;
+	@Column(name="website") private String website;
+	@Column(name="logo") private String logo;
+	@Column(name="created") private Date created;
+	@Column(name="created_by") private Long createdById;
+
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "organization_addresses", joinColumns = { @JoinColumn(name = "organization_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
+	protected Set<Address> addresses = new HashSet<Address>();
 
 	public Organization() {}
-	
+	public Organization(Long id) {
+		this.id = id;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -53,6 +68,44 @@ public class Organization implements Persistable, Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	public Set<Address> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(Set<Address> addresses) {
+		this.addresses = addresses;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getWebsite() {
+		return website;
+	}
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+	
+	public Date getCreated() {
+		return created;
+	}
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+	public Long getCreatedById() {
+		return createdById;
+	}
+	public void setCreatedById(Long createdById) {
+		this.createdById = createdById;
+	}
+	public String getLogo() {
+		return logo;
+	}
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 	

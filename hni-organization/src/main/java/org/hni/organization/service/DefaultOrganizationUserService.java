@@ -1,13 +1,14 @@
 package org.hni.organization.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.hni.om.type.Role;
+import org.hni.common.Constants;
+import org.hni.common.om.Role;
 import org.hni.organization.dao.UserOrganizationRoleDAO;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
@@ -20,8 +21,11 @@ import org.springframework.stereotype.Component;
 @Component("orgUserService")
 public class DefaultOrganizationUserService extends DefaultUserService implements OrganizationUserService {
 
+	public static final Long USER = 5L;
+
 	private OrganizationService orgService;
 	private UserOrganizationRoleDAO uorDao;
+
 	@Inject
 	public DefaultOrganizationUserService(UserDAO userDao, OrganizationService orgService, UserOrganizationRoleDAO uorDao) {
 		super(userDao);
@@ -30,33 +34,63 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	}
 
 	@Override
-	public User save(User user, Organization org) {	
+	public User save(User user, Organization org) {
 		super.save(user);
-		
-		UserOrganizationRole uor = new UserOrganizationRole(user, org, Role.USER);
+
+		UserOrganizationRole uor = new UserOrganizationRole(user, org, Role.get(Constants.USER));
 		uorDao.save(uor);
 		return user;
 	}
-	
+
 	@Override
-	public List<User> getAllUsers(Organization org) {
+	public Collection<User> getByRole(Organization org, Role role) {
 		Set<User> set = new HashSet<>();
-		List<UserOrganizationRole> userRolesList = uorDao.getByRole(org, Role.USER);
-		for(UserOrganizationRole uor : userRolesList) {
-			set.add(super.get(((UserOrganizationRolePK)uor.getId()).getUserId()));
+		Collection<UserOrganizationRole> userRolesList = uorDao.getByRole(org, role);
+		for (UserOrganizationRole uor : userRolesList) {
+			set.add(super.get(((UserOrganizationRolePK) uor.getId()).getUserId()));
 		}
 		return new ArrayList<User>(set);
 	}
+
 	@Override
-	public User delete(User user, Organization org) {
+	public UserOrganizationRole associate(User user, Organization org, Role role) {
+		return uorDao.save(new UserOrganizationRole(user, org, role));
+	}
+
+	@Override
+	public Collection<User> getAllUsers(Organization org) {
+		return getByRole(org, Role.get(USER));
+	}
+
+	@Override
+	public void delete(User user, Organization org) {
+		// TODO
+
+	}
+
+	@Override
+	public void delete(User user, Organization org, Role role) {
+		uorDao.delete(new UserOrganizationRole(user, org, role));
+	}
+
+	@Override
+	public User archive(User user, Organization org) {
 		// TODO
 		return user;
 	}
 
 	@Override
-	public User archive(User user, Organization org) {
-		//TODO
-		return user;
+	public Collection<Organization> get(User user) {
+		Collection<Organization> orgs = new HashSet<>();
+		for (UserOrganizationRole uor : uorDao.get(user)) {
+			orgs.add(orgService.get(uor.getId().getOrgId()));
+		}
+		return orgs;
+	}
+
+	@Override
+	public Collection<UserOrganizationRole> getUserOrganizationRoles(User user) {
+		return uorDao.get(user);
 	}
 
 }
