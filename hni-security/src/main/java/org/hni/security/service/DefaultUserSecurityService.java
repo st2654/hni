@@ -61,10 +61,10 @@ public class DefaultUserSecurityService implements UserSecurityService {
 				identifier = user.getEmail();
 			}
 		}
-		token = authenticator.authenticate(identifier, user.getPassword());
+		token = authenticator.authenticate(identifier, user.getHashedSecret());
 		List<User> users = userTokenService.byToken(token);
 		User returnUser = getSingleUserFromList(users);
-		returnUser.setPassword("");
+		returnUser.setHashedSecret("");
 		returnUser.setSalt("");
 		returnUser.setToken(token);
 		return returnUser;
@@ -100,7 +100,7 @@ public class DefaultUserSecurityService implements UserSecurityService {
 				user = getSingleUserFromList(users);
 			}
 		}
-		user.setPassword("");
+		user.setHashedSecret("");
 		user.setSalt("");
 		return user;
 	}

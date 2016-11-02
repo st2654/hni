@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import org.hni.common.om.Persistable;
 import org.hni.user.om.type.Gender;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Represents any user defined in the system. Users can play several different
  * roles such as Administrator, Treasurer, Customer, etc
@@ -33,24 +35,16 @@ public class User implements Persistable, Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "first_name")
-	private String firstName;
-	@Column(name = "last_name")
-	private String lastName;
-	@Column(name = "gender_code")
-	private String genderCode;
-	@Column(name = "mobile_phone")
-	private String mobilePhone;
-	@Column(name = "email")
-	private String email;
-	@Column(name = "deleted")
-	private boolean deleted;
-	@Column(name = "password")
-	private String password;
-	@Column(name = "salt")
-	private String salt;
-	@Column(name = "created")
-	private Date created;
+	@Column(name = "first_name") private String firstName;
+	@Column(name = "last_name") private String lastName;
+	@Column(name = "gender_code") private String genderCode;
+	@Column(name = "mobile_phone") private String mobilePhone;
+	@Column(name = "email") private String email;
+	@Column(name = "deleted") private boolean deleted;
+	@Column(name = "created") private Date created;
+
+	@Column(name = "hashed_secret") private String hashedSecret;
+	@Column(name = "salt") private String salt;
 
 	private transient String token;
 
@@ -133,22 +127,6 @@ public class User implements Persistable, Serializable {
 		this.email = email;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getSalt() {
-		return salt;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
-	}
-
 	public Date getCreated() {
 		return created;
 	}
@@ -165,4 +143,23 @@ public class User implements Persistable, Serializable {
 		this.token = token;
 	}
 
+	@JsonIgnore
+	public String getHashedSecret() {
+		return hashedSecret;
+	}
+
+	public void setHashedSecret(String hashedSecret) {
+		this.hashedSecret = hashedSecret;
+	}
+
+	@JsonIgnore
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
+	
 }
