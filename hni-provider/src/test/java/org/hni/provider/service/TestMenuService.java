@@ -4,14 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Collection;
-import java.util.Date;
 
 import javax.inject.Inject;
 
 import org.hni.provider.om.Menu;
+import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
-import org.hni.provider.om.ProviderLocation;
-import org.hni.user.om.Address;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -60,7 +59,39 @@ public class TestMenuService {
 		
 		Collection<Menu> menus = menuService.with(provider);
 		assertEquals(2, menus.size());
+	}
 	
+	@Test
+	public void testAddItemToMenu() {
+		Provider provider = providerService.get(1L);
+		assertNotNull(provider);
+		
+		Menu menu = new Menu();
+		menu.setName("test menu 2");
+		menu.setProvider(provider);
+		
+		for(int i = 1; i < 5; i++) {
+			menu.getMenuItems().add(new MenuItem("item "+i, "item "+i+" desc", i+1.23, new DateTime().plusMonths(1).toDate()));
+			menu = menuService.save(menu);
+		}
+		
+		Menu check = menuService.get(menu.getId());
+		assertNotNull(check);
+		assertEquals(4, check.getMenuItems().size());
+	}
 
+	@Test
+	public void testRemoveItemFromMenu() {
+		Menu menu = menuService.get(1L);
+		assertNotNull(menu);
+		assertEquals(4, menu.getMenuItems().size());
+		
+		MenuItem mi = new MenuItem(4L);		
+		menu.getMenuItems().remove(mi);
+		menuService.save(menu);
+		
+		Menu check = menuService.get(1L);
+		assertNotNull(check);
+		assertEquals(3, check.getMenuItems().size());
 	}
 }
