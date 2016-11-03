@@ -20,7 +20,10 @@ import org.hni.common.om.Persistable;
 @Entity
 @Table(name = "permissions")
 public class Permission implements Persistable, Serializable {
-
+	/*
+	 * TODO: change this so that the values are id, domain, permission, and
+	 * optional instance
+	 */
 	private static final long serialVersionUID = -5344420286199389049L;
 
 	@Id

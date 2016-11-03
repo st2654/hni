@@ -164,5 +164,4 @@ public class User implements Persistable, Serializable {
 	public void setToken(String token) {
 		this.token = token;
 	}
-
 }

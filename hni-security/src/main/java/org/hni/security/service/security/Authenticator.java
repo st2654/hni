@@ -60,5 +60,4 @@ public interface Authenticator {
 		UserToken token = new UserToken(user.getId());
 		return token;
 	}
-
 }
