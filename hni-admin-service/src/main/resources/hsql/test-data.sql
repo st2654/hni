@@ -1,4 +1,4 @@
-insert into users values(1,'Super','User','M','mphone', 'superuser@hni.com', 0, 'pwd', 'salt', now());
+insert into users values(1,'Super','User','M','mphone', 'superuser@hni.com', 0, 'qqIDI/cPs/CqdMo15uDhwAN/Zc+Z9VOUjLNGgxlC864=', '42M7kr4oektqA6Jgy9u1YQ==', now());
 insert into users values(2,'Freddy','Fikes','M','479-555-1212', '', 0, '', '', now());
 insert into users values(3,'Mikey','Multiphone','M','479-555-4321', '', 0, '', '', now());
 insert into users values(4,'Mikey','Multiphone','M','479-555-5678', '', 0, '', '', now());

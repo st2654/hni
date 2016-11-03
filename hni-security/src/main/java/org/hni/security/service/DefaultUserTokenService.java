@@ -101,11 +101,11 @@ public class DefaultUserTokenService implements UserTokenService {
 		/* decrypt encrypted token */
 		String decryptedToken = encryption.decrypt(token);
 		UserToken userToken = parseJson(decryptedToken, UserToken.class);
-		List<User> users = orgUserService.byEmailAddress(userToken.getUserIdentifier());
+		User userx = orgUserService.byEmailAddress(userToken.getUserIdentifier());
 		AuthorizedUser user = null;
 		/* if token not expired, and user found */
-		if (System.currentTimeMillis() < userToken.getExpirationTime() && !users.isEmpty()) {
-			user = new AuthorizedUser(users.get(0));
+		if (System.currentTimeMillis() < userToken.getExpirationTime() /*&& !users.isEmpty()*/) {
+			user = new AuthorizedUser(userx);
 			user.setPermissions(userToken.getPermissions());
 			user.setOrgId(userToken.getOrganiationId());
 			user.getUser().setToken(token);

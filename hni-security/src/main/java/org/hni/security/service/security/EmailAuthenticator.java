@@ -28,12 +28,15 @@ public class EmailAuthenticator implements Authenticator {
 
 	@Override
 	public String authenticate(String emailAddress, String password, Long organizationId) {
+
 		String tokenValue = "";
+		/*
 		List<User> users = organizationUserService.byEmailAddress(emailAddress);
 		User user = parseSingleUserFromList(users);
 		if (validateUserPassword(user, password)) {
 			tokenValue = generateSessionToken(user, organizationId);
 		}
+		*/
 		return tokenValue;
 	}
 

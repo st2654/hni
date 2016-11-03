@@ -15,6 +15,7 @@
         <context:annotation-config/>
         <context:component-scan base-package="org.hni" />
         <import resource="dao.xml"/>
+        <import resource="shiro.xml"/>
 
 
 <!-- you MUST define a spring profile to activate in your Java env when launching the servlet container
@@ -23,7 +24,7 @@
 		<beans profile="production">
 			<!-- this allows injection of values into the dataSource below -->
 			<bean  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-				<property name="hniProps" value="classpath:config/application-production.properties" />	
+				<property name="locations" value="classpath:config/application-production.properties" />	
 			</bean>	
 			<util:properties id="hniProperties" location="classpath:config/application-production.properties" />
 
@@ -69,7 +70,7 @@
 			
 			<!-- this allows injection of values into the dataSource below -->
 			<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-				<property name="hniProps" value="classpath:config/application-localdev.properties" />	
+				<property name="locations" value="classpath:config/application-localdev.properties" />	
 			</bean>	
 
 			<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
@@ -99,7 +100,7 @@
 			
 			<!-- this allows injection of values into the dataSource below -->
 			<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-				<property name="hniProps" value="classpath:config/application-removedev.properties" />	
+				<property name="locations" value="classpath:config/application-removedev.properties" />	
 			</bean>	
 
 			<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">

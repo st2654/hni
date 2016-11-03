@@ -15,7 +15,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 @ApplicationPath("api/v1") /* this is the servlet mapping */
 public class Application extends ResourceConfig {
 
-	private static final String DEFAULT_HOST = "http://localhost:8080";
+	private static final String DEFAULT_HOST = "localhost:8080";
 	private static final String DEFAULT_VERSION = "1.5.0";
 	private static final String DEFAULT_BASEPATH = "/hni-admin-service/api/v1";
 	private static final String DEFAULT_SCHEME = "http";
