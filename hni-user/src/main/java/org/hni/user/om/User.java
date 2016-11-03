@@ -35,18 +35,28 @@ public class User implements Persistable, Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "first_name") private String firstName;
-	@Column(name = "last_name") private String lastName;
-	@Column(name = "gender_code") private String genderCode;
-	@Column(name = "mobile_phone") private String mobilePhone;
-	@Column(name = "email") private String email;
-	@Column(name = "deleted") private boolean deleted;
-	@Column(name = "created") private Date created;
+	@Column(name = "first_name")
+	private String firstName;
+	@Column(name = "last_name")
+	private String lastName;
+	@Column(name = "gender_code")
+	private String genderCode;
+	@Column(name = "mobile_phone")
+	private String mobilePhone;
+	@Column(name = "email")
+	private String email;
+	@Column(name = "deleted")
+	private boolean deleted;
+	@Column(name = "created")
+	private Date created;
 
-	@Column(name = "hashed_secret") private String hashedSecret;
-	@Column(name = "salt") private String salt;
+	@Column(name = "hashed_secret")
+	private String hashedSecret;
+	@Column(name = "salt")
+	private String salt;
 
 	private transient String token;
+	private transient Long organizationId;
 
 	public User() {
 	}
@@ -135,14 +145,6 @@ public class User implements Persistable, Serializable {
 		this.created = created;
 	}
 
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
 	@JsonIgnore
 	public String getHashedSecret() {
 		return hashedSecret;
@@ -161,5 +163,19 @@ public class User implements Persistable, Serializable {
 		this.salt = salt;
 	}
 
-	
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Long getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(Long organizationId) {
+		this.organizationId = organizationId;
+	}
 }

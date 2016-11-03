@@ -8,6 +8,7 @@ insert into users values(6, 'Barbara', 'Bollingsworth', 'F', '123-456-7830', '' 
 insert into organizations values(1, 'Not Impossible', 'phone', 'phone', 'logo', now(), 1);
 insert into organizations values(2, 'Samaritan House', 'phone', 'website', 'logo', now(), 1);
 
+insert into user_organization_role values(1, 2, 1);
 insert into user_organization_role values(2, 2, 7);
 insert into user_organization_role values(3, 2, 7);
 insert into user_organization_role values(4, 2, 7);
@@ -30,99 +31,107 @@ insert into menu_items values(4, 1, 'Club Sandwich', 'turkey, ham and cheese wit
 
 insert into orders values(1, 2, 1, dateadd('DAY', -2, current_date), dateadd('DAY', -2, current_date), null, 9.95, 1.20, 1);
 
-insert into user_token values(1,'ABCDEFGHIJKLMNOP', current_timestamp);
-insert into user_token values(2,'BBCDEFGHIJKLMNOP', current_timestamp);
-insert into user_token values(3,'CBCDEFGHIJKLMNOP', current_timestamp);
-insert into user_token values(4,'DBCDEFGHIJKLMNOP', current_timestamp);
-insert into user_token values(5,'EBCDEFGHIJKLMNOP', current_timestamp);
-insert into user_token values(6,'FBCDEFGHIJKLMNOP', current_date);
-
 insert into roles values(1,'Administrator');
 
-insert into permissions values(1,'Create Organization');
-insert into permissions values(2,'Read Organization');
-insert into permissions values(3,'Update Organization');
-insert into permissions values(4,'Delete Organization');
+insert into permissions values(1,'organizations','create',null);
+insert into permissions values(2,'organizations','read',null);
+insert into permissions values(3,'organizations','update',null);
+insert into permissions values(4,'organizations','delete',null);
+insert into permissions values(5,'organizations','*',null);
 
-insert into permissions values(5,'Create User');
-insert into permissions values(6,'Read User');
-insert into permissions values(7,'Update User');
-insert into permissions values(8,'Delete User');
+insert into permissions values(6,'users','create',null);
+insert into permissions values(7,'users','read',null);
+insert into permissions values(8,'users','update',null);
+insert into permissions values(9,'users','delete',null);
+insert into permissions values(10,'users','*',null);
 
-insert into permissions values(9,'Create Role');
-insert into permissions values(10,'Read Role');
-insert into permissions values(11,'Update Role');
-insert into permissions values(12,'Delete Role');
+insert into permissions values(11,'roles','create',null);
+insert into permissions values(12,'roles','read',null);
+insert into permissions values(13,'roles','update',null);
+insert into permissions values(14,'roles','delete',null);
+insert into permissions values(15,'roles','*',null);
 
-insert into permissions values(13,'Create Permission');
-insert into permissions values(14,'Read Permission');
-insert into permissions values(15,'Update Permission');
-insert into permissions values(16,'Delete Permission');
+insert into permissions values(16,'permissions','create',null);
+insert into permissions values(17,'permissions','read',null);
+insert into permissions values(18,'permissions','update',null);
+insert into permissions values(19,'permissions','delete',null);
+insert into permissions values(20,'permissions','*',null);
 
-insert into permissions values(17,'Create Providers');
-insert into permissions values(18,'Read Providers');
-insert into permissions values(19,'Update Providers');
-insert into permissions values(20,'Delete Providers');
+insert into permissions values(21,'providers','create',null);
+insert into permissions values(22,'providers','read',null);
+insert into permissions values(23,'providers','update',null);
+insert into permissions values(24,'providers','delete',null);
+insert into permissions values(25,'providers','*',null);
 
-insert into permissions values(21,'Create Provider Location');
-insert into permissions values(22,'Read Provider Location');
-insert into permissions values(23,'Update Provider Location');
-insert into permissions values(24,'Delete Provider Location');
+insert into permissions values(26,'provider-locations','create',null);
+insert into permissions values(27,'provider-locations','read',null);
+insert into permissions values(28,'provider-locations','update',null);
+insert into permissions values(29,'provider-locations','delete',null);
+insert into permissions values(30,'provider-locations','*',null);
 
-insert into permissions values(25,'Create Order');
-insert into permissions values(26,'Read Order');
-insert into permissions values(27,'Update Order');
-insert into permissions values(28,'Delete Order');
+insert into permissions values(31,'orders','create',null);
+insert into permissions values(32,'orders','read',null);
+insert into permissions values(33,'orders','update',null);
+insert into permissions values(34,'orders','delete',null);
+insert into permissions values(35,'orders','*',null);
 
-insert into permissions values(29,'Create Menu');
-insert into permissions values(30,'Read Menu');
-insert into permissions values(31,'Update Menu');
-insert into permissions values(32,'Delete Menu');
+insert into permissions values(36,'menus','create',null);
+insert into permissions values(37,'menus','read',null);
+insert into permissions values(38,'menus','update',null);
+insert into permissions values(39,'menus','delete',null);
+insert into permissions values(40,'menus','*',null);
 
-insert into permissions values(33,'Create Menu Item');
-insert into permissions values(34,'Read Menu Item');
-insert into permissions values(35,'Update Menu Item');
-insert into permissions values(36,'Delete Menu Item');
+insert into permissions values(41,'menu-items','create',null);
+insert into permissions values(42,'menu-items','read',null);
+insert into permissions values(43,'menu-items','update',null);
+insert into permissions values(44,'menu-items','delete',null);
+insert into permissions values(45,'menu-items','*',null);
 
-insert into permissions values(37,'Create Order Item');
-insert into permissions values(38,'Read Order Item');
-insert into permissions values(39,'Update Order Item');
-insert into permissions values(40,'Delete Order Item');
+insert into permissions values(46,'order-items','create',null);
+insert into permissions values(47,'order-items','read',null);
+insert into permissions values(48,'order-items','update',null);
+insert into permissions values(49,'order-items','delete',null);
+insert into permissions values(50,'order-items','*',null);
 
-insert into permissions values(41,'Create Address');
-insert into permissions values(42,'Read Address');
-insert into permissions values(43,'Update Address');
-insert into permissions values(44,'Delete Address');
+insert into permissions values(51,'addresses', 'create', null);
+insert into permissions values(52,'addresses', 'read', null);
+insert into permissions values(53,'addresses', 'update', null);
+insert into permissions values(54,'addresses', 'delete', null);
+insert into permissions values(55,'addresses', '*', null);
 
-insert into permissions values(45,'Create Activation Code');
-insert into permissions values(46,'Read Activiation Code');
-insert into permissions values(47,'Update Activation Code');
-insert into permissions values(48,'Delete Activation Code');
+insert into permissions values(56,'activation-codes','create',null);
+insert into permissions values(57,'activation-codes','read',null);
+insert into permissions values(58,'activation-codes','update',null);
+insert into permissions values(59,'activation-codes','delete',null);
+insert into permissions values(60,'activation-codes','*',null);
 
-insert into permissions values(49,'Create Location Hours');
-insert into permissions values(50,'Read Location Hours');
-insert into permissions values(51,'Update Location Hours');
-insert into permissions values(52,'Delete Location Hours');
+insert into permissions values(61,'location-hours','create',null);
+insert into permissions values(62,'location-hours','read',null);
+insert into permissions values(63,'location-hours','update',null);
+insert into permissions values(64,'location-hours','delete',null);
+insert into permissions values(65,'location-hours','*',null);
 
-insert into permissions values(53,'Link User-Organization-Role');
-insert into permissions values(54,'Unlink User-Organization-Role');
+insert into permissions values(66,'user-organization-roles','link', null);
+insert into permissions values(67,'user-organization-roles','unlink', null);
 
-insert into permissions values(55,'Link User-Provider-Role');
-insert into permissions values(56,'Unlink User-Provider-Role');
+insert into permissions values(68,'user-provider-roles','link',null);
+insert into permissions values(69,'user-provider-roles','unlink',null);
 
-insert into permissions values(57,'Link Provider-Address');
-insert into permissions values(58,'Unlink Provider-Address');
+insert into permissions values(70,'provider-addresses','link',null);
+insert into permissions values(71,'provider-addresses','unlink',null);
 
-insert into permissions values(59,'Link Provider-Location-Address');
-insert into permissions values(60,'Unlink Provider-Location-Address');
+insert into permissions values(72,'provider-location-addresses','link',null);
+insert into permissions values(73,'provider-location-addresses','unlink',null);
 
-insert into permissions values(61,'Link Organization-Address');
-insert into permissions values(62,'Unlink Organization-Address');
+insert into permissions values(74,'organization-addresses','link',null);
+insert into permissions values(75,'organization-addresses','unlink',null);
 
-insert into permissions values(63,'Link Role-Permission');
-insert into permissions values(64,'Unlink Role-Permission');
+insert into permissions values(76,'role-permissions','link',null);
+insert into permissions values(77,'role-permissions','unlink',null);
 
-insert into user_organization_role values(1, 2, 1);
+insert into permissions values(78,'orders','provision',null);
+
+
 
 insert into role_permissions values(1,1);
 insert into role_permissions values(1,2);
@@ -188,3 +197,19 @@ insert into role_permissions values(1,61);
 insert into role_permissions values(1,62);
 insert into role_permissions values(1,63);
 insert into role_permissions values(1,64);
+insert into role_permissions values(1,65);
+insert into role_permissions values(1,66);
+insert into role_permissions values(1,67);
+insert into role_permissions values(1,68);
+insert into role_permissions values(1,69);
+insert into role_permissions values(1,70);
+insert into role_permissions values(1,71);
+insert into role_permissions values(1,72);
+insert into role_permissions values(1,73);
+insert into role_permissions values(1,74);
+insert into role_permissions values(1,75);
+insert into role_permissions values(1,76);
+insert into role_permissions values(1,77);
+insert into role_permissions values(1,78);
+
+insert into secrets values(1,'VlN6NTh3OFg0YituY3l5M29ESk5kZz09');

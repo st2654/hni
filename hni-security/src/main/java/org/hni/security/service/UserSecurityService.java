@@ -1,6 +1,6 @@
 package org.hni.security.service;
 
-import java.util.Set;
+import java.util.List;
 
 import org.hni.security.om.OrganizationUserPermission;
 import org.hni.user.om.User;
@@ -32,14 +32,7 @@ public interface UserSecurityService {
 	 * authorize user based on token.
 	 * 
 	 * @param token
-	 * @return Set<OrganizationUserPermission>
+	 * @return List<OrganizationUserPermission>
 	 */
-	Set<OrganizationUserPermission> authorize(String token);
-
-	/**
-	 * clean up tokens older than this many milliseconds
-	 * 
-	 * @param millisecondsBack
-	 */
-	void cleanupExpiredTokens(long millisecondsBack);
+	List<OrganizationUserPermission> authorize(String token);
 }

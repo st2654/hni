@@ -2,7 +2,6 @@ package org.hni.security.service.security;
 
 import java.util.List;
 
-import org.hni.security.om.UserToken;
 import org.hni.user.om.User;
 
 /**
@@ -23,7 +22,7 @@ public interface Authenticator {
 	 * @param password
 	 * @return String token
 	 */
-	String authenticate(String identifier, String password);
+	String authenticate(String identifier, String password, Long organizationId);
 
 	/**
 	 * parses a single user from what's supposed to be a list of 1 user.
@@ -55,10 +54,4 @@ public interface Authenticator {
 		}
 		return valid;
 	}
-
-	default UserToken generateSessionToken(User user) {
-		UserToken token = new UserToken(user.getId());
-		return token;
-	}
-
 }
