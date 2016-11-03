@@ -65,7 +65,18 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `permissions` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
+  `domain` VARCHAR(45) NOT NULL,
+  `permission` VARCHAR(45) NOT NULL,
+  `instance` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `permissions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `secrets` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `secret` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -78,16 +89,6 @@ CREATE TABLE IF NOT EXISTS `role_permissions` (
   PRIMARY KEY (`role_id`, `permission_id`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `user_token`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_token` (
-  `user_id` INT NOT NULL,
-  `token` VARCHAR(255) NULL,
-  `created` DATETIME NULL,
-  PRIMARY KEY (`token`))
-ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------

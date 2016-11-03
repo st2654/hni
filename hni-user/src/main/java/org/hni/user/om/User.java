@@ -56,6 +56,7 @@ public class User implements Persistable, Serializable {
 	private String salt;
 
 	private transient String token;
+	private transient Long organizationId;
 
 	public User() {
 	}
@@ -144,14 +145,6 @@ public class User implements Persistable, Serializable {
 		this.created = created;
 	}
 
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
 	@JsonIgnore
 	public String getHashedSecret() {
 		return hashedSecret;
@@ -168,5 +161,21 @@ public class User implements Persistable, Serializable {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Long getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(Long organizationId) {
+		this.organizationId = organizationId;
 	}
 }
