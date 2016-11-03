@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `mobile_phone` VARCHAR(45) NULL,
   `email` VARCHAR(255) NULL,
   `deleted` INT NULL,
-  `password` VARCHAR(255) NULL,
+  `hashed_secret` VARCHAR(255) NULL,
   `salt` VARCHAR(255) NULL,
   `created` DATETIME NULL,
   PRIMARY KEY (`id`))

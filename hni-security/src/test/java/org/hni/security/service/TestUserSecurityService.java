@@ -38,7 +38,7 @@ public class TestUserSecurityService {
 	@Test
 	public void testAuthenticateUserByEmailAddress() {
 		User user = new User();
-		user.setPassword("pwd");
+		user.setHashedSecret("pwd");
 		user.setEmail("superuser@hni.com");
 		User tokenUser = userSecurityService.authenticate(user);
 		assertTrue(null != tokenUser.getToken());

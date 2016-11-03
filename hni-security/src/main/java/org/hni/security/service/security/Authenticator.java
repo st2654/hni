@@ -48,8 +48,8 @@ public interface Authenticator {
 	 */
 	default boolean validateUserPassword(User user, String password) {
 		boolean valid = false;
-		if (!user.getPassword().isEmpty()) {
-			if (password.equals(user.getPassword())) {
+		if (!user.getHashedSecret().isEmpty()) {
+			if (password.equals(user.getHashedSecret())) {
 				valid = true;
 			}
 		}
