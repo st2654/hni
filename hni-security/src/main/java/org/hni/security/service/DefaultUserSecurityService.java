@@ -83,9 +83,9 @@ public class DefaultUserSecurityService implements UserSecurityService {
 			for (Permission permission : authorizedUser.getPermissions()) {
 				OrganizationUserPermission orgUserPermission = new OrganizationUserPermission();
 				orgUserPermission.setOrganizationId(authorizedUser.getOrgId());
-				orgUserPermission.setPermission(permission.getPermission());
+				orgUserPermission.setPermission(permission.getValue());
 				orgUserPermission.setPermissionDomain(permission.getDomain());
-				orgUserPermission.setPermissionInstance(permission.getInstance());
+				//orgUserPermission.setPermissionInstance(permission.getInstance());
 				orgUserPermission.setUserId(authorizedUser.getUser().getId());
 				organizationUserPermissions.add(orgUserPermission);
 			}

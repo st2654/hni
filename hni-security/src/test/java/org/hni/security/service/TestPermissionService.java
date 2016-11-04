@@ -28,10 +28,10 @@ public class TestPermissionService {
 
 	@Test
 	public void testGet() {
-		Permission permission = permissionService.get(1L);
+		Permission permission = permissionService.get(11L);
 		assertEquals("organizations", permission.getDomain());
-		assertEquals("create", permission.getPermission());
-		assertNull(permission.getInstance());
+		assertEquals("create", permission.getValue());
+		//assertNull(permission.getInstance());
 	}
 
 	@Test
@@ -58,10 +58,10 @@ public class TestPermissionService {
 		String insertedName = "ad hoc domain";
 		String insertPermission = "create";
 		permission.setDomain(insertedName);
-		permission.setPermission(insertPermission);
+		permission.setValue(insertPermission);
 		Permission insertedPermission = permissionService.insert(permission);
 		assertEquals(insertedName, insertedPermission.getDomain());
-		assertEquals(insertPermission, insertedPermission.getPermission());
+		assertEquals(insertPermission, insertedPermission.getValue());
 		assertTrue(insertedPermission.getId() > 64);
 	}
 }

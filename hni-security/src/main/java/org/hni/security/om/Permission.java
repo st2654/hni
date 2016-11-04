@@ -18,7 +18,7 @@ import org.hni.common.om.Persistable;
  *
  */
 @Entity
-@Table(name = "permissions")
+@Table(name = "security_permissions")
 public class Permission implements Persistable, Serializable {
 
 	private static final long serialVersionUID = -5344420286199389049L;
@@ -28,14 +28,8 @@ public class Permission implements Persistable, Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "domain")
-	private String domain;
-
-	@Column(name = "permission")
-	private String permission;
-
-	@Column(name = "instance")
-	private String instance;
+	@Column(name = "domain") private String domain;
+	@Column(name = "value") private String value;
 
 	public Permission() {
 	}
@@ -65,20 +59,13 @@ public class Permission implements Persistable, Serializable {
 		this.domain = domain;
 	}
 
-	public String getPermission() {
-		return permission;
+	public String getValue() {
+		return value;
 	}
 
-	public void setPermission(String permission) {
-		this.permission = permission;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
-	public String getInstance() {
-		return instance;
-	}
-
-	public void setInstance(String instance) {
-		this.instance = instance;
-	}
-
+	
 }
