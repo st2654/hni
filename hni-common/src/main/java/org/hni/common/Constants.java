@@ -17,4 +17,7 @@ public interface Constants {
 	static final String UPDATE = "update";
 	static final String DELETE = "delete";
 	
+	static final String USERID = "userId";
+	static final String PERMISSIONS = "permissions";
+
 }

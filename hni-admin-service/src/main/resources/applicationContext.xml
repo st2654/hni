@@ -65,7 +65,7 @@
 		<!--  local-dev: intended for 'local development with a separate database ' 
 			use this if you have a database running locally for development.
 		-->
-		<beans profile="local-dev">
+		<beans profile="localdev">
 			<util:properties id="hniProperties" location="classpath:config/application-localdev.properties" />
 			
 			<!-- this allows injection of values into the dataSource below -->
@@ -95,7 +95,7 @@
 		</beans>
 		
 		<!--  remote-dev: intended for 'remove server development/testing' -->
-		<beans profile="remote-dev">
+		<beans profile="remotedev">
 			<util:properties id="hniProperties" location="classpath:config/application-remotedev.properties" />
 			
 			<!-- this allows injection of values into the dataSource below -->

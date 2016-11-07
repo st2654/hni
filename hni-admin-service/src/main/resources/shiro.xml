@@ -51,7 +51,7 @@
                 <property name="realms">
                         <set>
                         		<ref bean="passwordRealm"/>
-                                <!-- ref bean="tokenRealm"/> -->
+                                <ref bean="tokenRealm"/>
                         </set>
                 </property>
                 <!-- 
@@ -65,14 +65,14 @@
                 <property name="storedCredentialsHexEncoded" value="false" />
                 <property name="hashIterations" value="1024" />
         </bean>
-        
+       <bean id="tokenCredentialsMatcher" class="org.hni.security.realm.TokenCredentialsMatcher"/>       
    
         <bean id="passwordRealm" class="org.hni.security.realm.PasswordRealm">
                 <property name="credentialsMatcher" ref="credentialsMatcher" />
-                <!-- 
-                <property name="cacheManager" ref="cacheManagerShiro" />
-                <property name="authorizationCacheName" value="shiro-activeSessionCache" />
-                 -->
         </bean>        
+        <bean id="tokenRealm" class="org.hni.security.realm.TokenRealm">
+                <property name="credentialsMatcher" ref="tokenCredentialsMatcher" />
+        </bean>        
+
 
 </beans>
