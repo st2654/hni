@@ -74,7 +74,7 @@ public class UserSecurityController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/authorization")
 	@ApiOperation(value = "Authorizes a user based on their token, returning a set of organization user permissions for that user and all organizations with which the user is associated .", notes = "Requires authentication token.  Returns Set<OrganizationUserPermission>", response = Set.class, responseContainer = "")
-	public List<OrganizationUserPermission> authorize(String token) {
+	public Set<OrganizationUserPermission> authorize(String token) {
 		return userSecurityService.authorize(token);
 	}
 	

@@ -1,7 +1,7 @@
 package org.hni.security.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -66,7 +66,7 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		return authorizedUser.getUser();
 	}
 
-	public List<OrganizationUserPermission> authorize(String token) {
+	public Set<OrganizationUserPermission> authorize(String token) {
 		/*
 		 * currently pulls permissions from the token (encrypted), so if they've
 		 * had permissions change since they got their token, they won't show
@@ -76,7 +76,7 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		 * need to regenerate the token (since it will have changed). If this
 		 * becomes and issue, here's where to address it).
 		 */
-		List<OrganizationUserPermission> organizationUserPermissions = new ArrayList<OrganizationUserPermission>();
+		Set<OrganizationUserPermission> organizationUserPermissions = new HashSet<OrganizationUserPermission>();
 		UserTokenService userToken = new DefaultUserTokenService(secretDAO, rolePermissionService, organizationUserService);
 		AuthorizedUser authorizedUser = userToken.getTokenUser(token);
 		if (0 != authorizedUser.getOrgId()) {
