@@ -52,4 +52,4 @@ public class ValidTokenFilter extends AuthorizationFilter {
 			return false;
 		} 
 	}
-}
+}	
