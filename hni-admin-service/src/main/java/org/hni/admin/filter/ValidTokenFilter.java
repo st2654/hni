@@ -14,8 +14,16 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.MissingClaimException;
 
+/**
+ * This is a Shiro filter that is referenced in the shiro configuration for URL's.
+ * This filter intercepts requests requiring a token, grabs the token, validates it and
+ * binds the claims onto the ThreadLocal which will be used in the Authorization phase of shiro security
+ * within the TokenRealm.
+ * 
+ * @author jeff3parker
+ *
+ */
 public class ValidTokenFilter extends AuthorizationFilter {
-
 	private static final String TOKEN_HEADER = "X-hni-token";
 	
 	// TODO: make these values dynamically injected
@@ -25,7 +33,7 @@ public class ValidTokenFilter extends AuthorizationFilter {
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		
+
 		String tokenValue = httpRequest.getHeader(TOKEN_HEADER);
 		if (isValid(tokenValue)) { 
 			return true;
@@ -43,7 +51,5 @@ public class ValidTokenFilter extends AuthorizationFilter {
 		} catch(MissingClaimException | IncorrectClaimException | ExpiredJwtException mce) {
 			return false;
 		} 
-		
 	}
-
 }
