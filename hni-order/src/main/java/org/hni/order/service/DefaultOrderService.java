@@ -2,6 +2,7 @@ package org.hni.order.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -76,8 +77,9 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 
 	@Override
 	public Order complete(Order order) {
-		// TODO Auto-generated method stub
-		return null;
+		order.setPickupDate(new Date());
+		save(order);
+		return order;
 	}
 
 }
