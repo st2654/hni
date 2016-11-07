@@ -3,7 +3,7 @@ package org.hni.security.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -43,7 +43,7 @@ public class TestUserSecurityService {
 	//@Test
 	public void testAuthorizeUser() {
 		String token = getUserToken();
-		List<OrganizationUserPermission> orgUserPermissions = userSecurityService.authorize(token);
+		Set<OrganizationUserPermission> orgUserPermissions = userSecurityService.authorize(token);
 		assertTrue(null != orgUserPermissions);
 		assertTrue(!orgUserPermissions.isEmpty());
 		assertTrue(78 == orgUserPermissions.size());
