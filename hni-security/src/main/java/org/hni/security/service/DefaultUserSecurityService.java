@@ -10,8 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.dao.SecretDAO;
 import org.hni.security.om.AuthorizedUser;
-import org.hni.security.om.OrganizationUserPermission;
-import org.hni.security.om.Permission;
+import org.hni.security.om.OrganizationUserRolePermission;
 import org.hni.security.service.security.Authenticator;
 import org.hni.security.service.security.EmailAuthenticator;
 import org.hni.user.om.User;
@@ -66,29 +65,17 @@ public class DefaultUserSecurityService implements UserSecurityService {
 		return authorizedUser.getUser();
 	}
 
-	public Set<OrganizationUserPermission> authorize(String token) {
+	public Set<OrganizationUserRolePermission> authorize(String token) {
 		/*
 		 * currently pulls permissions from the token (encrypted), so if they've
 		 * had permissions change since they got their token, they won't show
 		 * up.
-		 * 
-		 * If we want to re-pull permissions, we can do that, but we'll also
-		 * need to regenerate the token (since it will have changed). If this
-		 * becomes and issue, here's where to address it).
 		 */
-		Set<OrganizationUserPermission> organizationUserPermissions = new HashSet<OrganizationUserPermission>();
+		Set<OrganizationUserRolePermission> organizationUserPermissions = new HashSet<OrganizationUserRolePermission>();
 		UserTokenService userToken = new DefaultUserTokenService(secretDAO, rolePermissionService, organizationUserService);
 		AuthorizedUser authorizedUser = userToken.getTokenUser(token);
 		if (0 != authorizedUser.getOrgId()) {
-			for (Permission permission : authorizedUser.getPermissions()) {
-				OrganizationUserPermission orgUserPermission = new OrganizationUserPermission();
-				orgUserPermission.setOrganizationId(authorizedUser.getOrgId());
-				orgUserPermission.setPermission(permission.getValue());
-				orgUserPermission.setPermissionDomain(permission.getDomain());
-				// orgUserPermission.setPermissionInstance(permission.getInstance());
-				orgUserPermission.setUserId(authorizedUser.getUser().getId());
-				organizationUserPermissions.add(orgUserPermission);
-			}
+			organizationUserPermissions = authorizedUser.getPermissions();
 		}
 		return organizationUserPermissions;
 	}

@@ -1,7 +1,5 @@
 package org.hni.security.service.security;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.hni.organization.service.OrganizationUserService;

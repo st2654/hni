@@ -2,7 +2,7 @@ package org.hni.security.service;
 
 import java.util.Set;
 
-import org.hni.security.om.OrganizationUserPermission;
+import org.hni.security.om.OrganizationUserRolePermission;
 import org.hni.user.om.User;
 
 /**
@@ -34,5 +34,5 @@ public interface UserSecurityService {
 	 * @param token
 	 * @return List<OrganizationUserPermission>
 	 */
-	Set<OrganizationUserPermission> authorize(String token);
+	Set<OrganizationUserRolePermission> authorize(String token);
 }

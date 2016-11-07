@@ -1,9 +1,9 @@
 package org.hni.security.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -14,6 +14,7 @@ import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.dao.SecretDAO;
 import org.hni.security.om.AuthorizedUser;
 import org.hni.security.om.Encryption;
+import org.hni.security.om.OrganizationUserRolePermission;
 import org.hni.security.om.Permission;
 import org.hni.security.om.UserToken;
 import org.hni.user.om.User;
@@ -45,26 +46,30 @@ public class DefaultUserTokenService implements UserTokenService {
 		}
 	}
 
-	private List<Permission> getUserOrganizationPermissions(User user, Long organizationId) {
-		List<UserOrganizationRole> userOrgRoles = new ArrayList<UserOrganizationRole>();
+	public Set<OrganizationUserRolePermission> getUserOrganizationRolePermissions(User user, Long organizationId) {
+		Set<UserOrganizationRole> userOrgRoles = new TreeSet<UserOrganizationRole>();
 		Collection<UserOrganizationRole> userOrganizationRoles = orgUserService.getUserOrganizationRoles(user);
 		for (UserOrganizationRole userOrgRole : userOrganizationRoles) {
 			if (organizationId.equals(userOrgRole.getId().getOrgId())) {
 				userOrgRoles.add(userOrgRole);
 			}
 		}
-		List<Permission> orgPermissions = new ArrayList<Permission>();
+		Set<OrganizationUserRolePermission> orgPermissions = new TreeSet<OrganizationUserRolePermission>();
 		for (UserOrganizationRole userOrgRole : userOrgRoles) {
-			List<Permission> permissions = rolePermissionService.byRoleId(userOrgRole.getId().getRoleId());
-			orgPermissions.addAll(permissions);
+			OrganizationUserRolePermission orgUserRolePermission = new OrganizationUserRolePermission();
+			orgUserRolePermission.setOrganizationId(organizationId);
+			orgUserRolePermission.setRoleId(userOrgRole.getId().getRoleId());
+			orgUserRolePermission.setUserId(user.getId());
+			Set<Permission> permissions = rolePermissionService.byRoleId(userOrgRole.getId().getRoleId(), userOrgRole.getId().getOrgId());
+			orgUserRolePermission.setPermissions(permissions);
 		}
 		return orgPermissions;
 	}
 
 	public String getUserToke(User user, Long organizationId) {
 		UserToken userToken = new UserToken();
-		List<Permission> orgPermissions = getUserOrganizationPermissions(user, organizationId);
-		userToken.setPermissions(orgPermissions);
+		Set<OrganizationUserRolePermission> orgPermissions = getUserOrganizationRolePermissions(user, organizationId);
+		userToken.setOrganizationUserRolePermissions(orgPermissions);
 		userToken.setUserIdentifier(user.getEmail());
 		userToken.setOrganiationId(organizationId);
 		userToken.setCreateTime(System.currentTimeMillis());
@@ -104,9 +109,10 @@ public class DefaultUserTokenService implements UserTokenService {
 		User userx = orgUserService.byEmailAddress(userToken.getUserIdentifier());
 		AuthorizedUser user = null;
 		/* if token not expired, and user found */
-		if (System.currentTimeMillis() < userToken.getExpirationTime() /*&& !users.isEmpty()*/) {
+		/* && !users . isEmpty () */
+		if (System.currentTimeMillis() < userToken.getExpirationTime()) {
 			user = new AuthorizedUser(userx);
-			user.setPermissions(userToken.getPermissions());
+			user.setPermissions(userToken.getOrganizationUserRolePermissions());
 			user.setOrgId(userToken.getOrganiationId());
 			user.getUser().setToken(token);
 			user.setTokenCreationTime(userToken.getCreateTime());

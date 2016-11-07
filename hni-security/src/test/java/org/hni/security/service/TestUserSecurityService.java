@@ -9,7 +9,8 @@ import javax.inject.Inject;
 
 import org.apache.log4j.BasicConfigurator;
 import org.hni.security.om.Encryption;
-import org.hni.security.om.OrganizationUserPermission;
+import org.hni.security.om.OrganizationUserRolePermission;
+import org.hni.security.om.Permission;
 import org.hni.user.om.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,7 @@ public class TestUserSecurityService {
 		BasicConfigurator.configure();
 	}
 
-	//@Test
+	// @Test
 	public void testAuthenticateUserByEmailAddress() {
 		User user = new User();
 		user.setHashedSecret("pwd");
@@ -40,24 +41,26 @@ public class TestUserSecurityService {
 		assertTrue(!tokenUser.getToken().isEmpty());
 	}
 
-	//@Test
+	// @Test
 	public void testAuthorizeUser() {
 		String token = getUserToken();
-		Set<OrganizationUserPermission> orgUserPermissions = userSecurityService.authorize(token);
+		Set<OrganizationUserRolePermission> orgUserPermissions = userSecurityService.authorize(token);
 		assertTrue(null != orgUserPermissions);
 		assertTrue(!orgUserPermissions.isEmpty());
 		assertTrue(78 == orgUserPermissions.size());
 		boolean createUserPermissionFound = false;
-		for (OrganizationUserPermission orgUserPermission : orgUserPermissions) {
-			if ("organizations".equals(orgUserPermission.getPermissionDomain()) && "*".equals(orgUserPermission.getPermission())
-					&& 2 == orgUserPermission.getOrganizationId() && 1 == orgUserPermission.getUserId()) {
-				createUserPermissionFound = true;
+		for (OrganizationUserRolePermission orgUserPermission : orgUserPermissions) {
+			for (Permission permission : orgUserPermission.getPermissions()) {
+				if ("organizations".equals(permission.getDomain()) && "*".equals(permission.getValue())
+						&& 2 == orgUserPermission.getOrganizationId() && 1 == orgUserPermission.getUserId()) {
+					createUserPermissionFound = true;
+				}
 			}
 		}
 		assertTrue(createUserPermissionFound);
 	}
 
-	//@Test
+	// @Test
 	public void testValidateToken() {
 		String tokenString = getUserToken();
 		User tokenUser = userSecurityService.validateToken(tokenString);
