@@ -14,6 +14,7 @@ import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.SimpleByteSource;
 import org.apache.shiro.util.ThreadContext;
 import org.hni.common.Constants;
+import org.hni.security.realm.token.JWTAuthenticationToken;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,19 +23,20 @@ public class TokenRealm extends PasswordRealm {
 	private static final Logger logger = LoggerFactory.getLogger(TokenRealm.class);
 	public static final String REALM_NAME = "tokenRealm";
 	
-	// TODO: work out when this gets called.  There is no explicit "login" for a token, may this can occur in the ValidTokenFilter?
+	public TokenRealm() {
+		setAuthenticationTokenClass(JWTAuthenticationToken.class);
+	}
+	
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
 		logger.info("Attempting TOKEN authentication of user "+token.getPrincipal());
 		User user = null;
+		JWTAuthenticationToken jwtToken = (JWTAuthenticationToken)token;
 		
-		Long userId = (Long)ThreadContext.get(Constants.USERID);
-		String permissions = (String)ThreadContext.get(Constants.PERMISSIONS);
-
 		try {
 			//user = userDao.get((Long)token.getPrincipal());
-			user = userDao.get(userId);
+			user = userDao.get(jwtToken.getUserId());
 			if (null == user ) {
 				logger.warn("Could not find User for principal:"+token.getPrincipal());
 				return new SimpleAuthenticationInfo("","", new SimpleByteSource(REALM_NAME.getBytes()), REALM_NAME);				
@@ -58,10 +60,9 @@ public class TokenRealm extends PasswordRealm {
 		}		
 				
 		SimpleAuthorizationInfo authInfo = new SimpleAuthorizationInfo();
-		Long userId = (Long)ThreadContext.get(Constants.USERID);
+
 		String permissions = (String)ThreadContext.get(Constants.PERMISSIONS);
-				
-		
+						
 		// TODO: deserialize the permissions and add them to the authInfo
 		//authInfo.addRole(role);
 		//authInfo.addStringPermission(permission);

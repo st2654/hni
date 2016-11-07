@@ -48,14 +48,6 @@ public class UserServiceController {
 	, response = User.class
 	, responseContainer = "")
 	public User getUser(@PathParam("id") Long id) {
-		logger.info("TOkEN = "+servletRequest.getHeader("X-hni-token"));
-		System.out.println("TOkEN = "+servletRequest.getHeader("X-hni-token"));
-		Enumeration<String> headerNames = servletRequest.getHeaderNames();
-		while(headerNames.hasMoreElements()) {
-			String name = headerNames.nextElement();
-			System.out.println(name);
-			
-		}
 		return orgUserService.get(id);
 	}
 

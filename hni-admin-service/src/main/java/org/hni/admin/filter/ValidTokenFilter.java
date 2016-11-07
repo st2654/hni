@@ -23,6 +23,7 @@ import io.jsonwebtoken.MissingClaimException;
  * @author jeff3parker
  *
  */
+@Deprecated // JWTTokenAuthenticatingFilter
 public class ValidTokenFilter extends AuthorizationFilter {
 	private static final String TOKEN_HEADER = "X-hni-token";
 	

@@ -19,6 +19,7 @@ import org.apache.shiro.subject.Subject;
 import org.hni.common.Constants;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.om.OrganizationUserPermission;
+import org.hni.security.realm.token.JWTTokenFactory;
 import org.hni.security.service.UserSecurityService;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
@@ -34,6 +35,11 @@ import io.swagger.annotations.ApiOperation;
 public class UserSecurityController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceController.class);
 
+	// TODO: make these values dynamically injected
+	private static final String KEY = "YbpWo521Z/aF7DqpiIpIHQ==";
+	private static final String ISSUER = "test-issuer";
+	private static final Long TTL_MILLIS = 3600000L; 
+	
 	@Inject private OrganizationUserService organizationUserService;
 	@Inject	private UserSecurityService userSecurityService;
 
@@ -43,7 +49,7 @@ public class UserSecurityController extends AbstractBaseController {
 	@Path("/authentication")
 	@ApiOperation(value = "Authenticates a user, returning a token for that user."
 	, notes = "Requires username & password to be populated in the body", response = String.class, responseContainer = "")
-	public User authenticate(UsernamePasswordToken userPasswordToken) {
+	public String authenticate(UsernamePasswordToken userPasswordToken) {
 		//return userSecurityService.authenticate(userCredentials);
 		Subject subject = SecurityUtils.getSubject();
 		try {
@@ -51,10 +57,12 @@ public class UserSecurityController extends AbstractBaseController {
 			logger.info("Attempt to auth uyser "+userPasswordToken.getUsername());
 			User user = organizationUserService.byEmailAddress(userPasswordToken.getUsername());
 			logger.info("user is authenticated");
+			return JWTTokenFactory.encode(KEY, ISSUER, "", TTL_MILLIS, user.getId(), "{}");
+			
 			//TODO: at this point we could force the authZ to run, then create/return an object that has the user + perms
 			// should probably at least return a token rather than a useless user object
-			isPermitted(Constants.ORGANIZATION, Constants.READ, 0L); // force authZ to run
-			return user;
+			//isPermitted(Constants.ORGANIZATION, Constants.READ, 0L); // force authZ to run
+			//return user;
 		} catch(IncorrectCredentialsException ice) {
 			// TODO return error
 			logger.error("couldn't auth user:", ice.getMessage());
