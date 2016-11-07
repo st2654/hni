@@ -16,6 +16,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.hni.common.Constants;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.om.OrganizationUserPermission;
 import org.hni.security.service.UserSecurityService;
@@ -30,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "/security", description = "Operations regarding authentication, authorization, and token validation.  All operations are POST, not due to updating RESTful entities, but because that puts the payload in the (hopefully) encrypted body, rather than as (plaintext) query parameters.")
 @Component
 @Path("/security")
-public class UserSecurityController {
+public class UserSecurityController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceController.class);
 
 	@Inject private OrganizationUserService organizationUserService;
@@ -52,6 +53,7 @@ public class UserSecurityController {
 			logger.info("user is authenticated");
 			//TODO: at this point we could force the authZ to run, then create/return an object that has the user + perms
 			// should probably at least return a token rather than a useless user object
+			isPermitted(Constants.ORGANIZATION, Constants.READ, 0L); // force authZ to run
 			return user;
 		} catch(IncorrectCredentialsException ice) {
 			// TODO return error
