@@ -11,6 +11,10 @@ public class TokenCredentialsMatcher implements CredentialsMatcher {
 	@Override
 	public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
 		logger.info("** validating token **");
+		JWTAuthenticationToken jwtToken = (JWTAuthenticationToken)token;
+		if ( null == jwtToken.getUserId()) {
+			return false;
+		}
 		return true;
 	}
 
