@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.hni.security.service.UserSecurityService;
 import org.hni.user.om.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ValidTokenFilter extends AuthorizationFilter {
 	private static final String TOKEN_HEADER = "X-hni-token";
 
