@@ -53,6 +53,6 @@ public class UserSecurityController {
 	@Path("/authorization")
 	@ApiOperation(value = "Authorizes a user based on their token, returning a set of organization user permissions for that user and all organizations with which the user is associated .", notes = "Requires authentication token.  Returns Set<OrganizationUserPermission>", response = Set.class, responseContainer = "")
 	public Set<OrganizationUserPermission> authorize(String token) {
-		return userSecurityService.authorize(token).stream().collect(Collectors.toSet());
+		return userSecurityService.authorize(token);
 	}
 }
