@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -52,6 +53,6 @@ public class UserSecurityController {
 	@Path("/authorization")
 	@ApiOperation(value = "Authorizes a user based on their token, returning a set of organization user permissions for that user and all organizations with which the user is associated .", notes = "Requires authentication token.  Returns Set<OrganizationUserPermission>", response = Set.class, responseContainer = "")
 	public Set<OrganizationUserPermission> authorize(String token) {
-		return userSecurityService.authorize(token);
+		return userSecurityService.authorize(token).stream().collect(Collectors.toSet());
 	}
 }
