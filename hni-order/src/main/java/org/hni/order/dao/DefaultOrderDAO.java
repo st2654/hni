@@ -26,7 +26,7 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 	@Override
 	public Collection<Order> get(User user, LocalDate startDate, LocalDate endDate) {
 		try {
-			Query q = em.createQuery("SELECT x FROM Order x WHERE x.clientId = :userId AND x.orderDate BETWEEN :startDate AND :endDate")
+			Query q = em.createQuery("SELECT x FROM Order x WHERE x.userId = :userId AND x.orderDate BETWEEN :startDate AND :endDate")
 				.setParameter("userId", user.getId())
 				.setParameter("startDate", DateUtils.asDate(startDate))
 				.setParameter("endDate", DateUtils.asDate(endDate));
