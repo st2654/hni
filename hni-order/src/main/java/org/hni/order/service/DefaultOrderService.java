@@ -64,7 +64,11 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	public Order next(ProviderLocation providerLocation, LocalDateTime fromDate) {
 		// Returns an uncompleted order placed with the provided time window.  Null if none found.
 		List<Order> orders = (ArrayList) orderDao.get(providerLocation, fromDate, LocalDateTime.now());
-		return orders.get(0);
+		return orders.stream()
+				.filter(order -> order.getPickupDate() == null)
+				.sorted((order1, order2) -> Long.compare(order1.getOrderDate().getTime(), order2.getOrderDate().getTime()))
+				.findFirst()
+				.orElse(null);
 	}
 
 	@Override

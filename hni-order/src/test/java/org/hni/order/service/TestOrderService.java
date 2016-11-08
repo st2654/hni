@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
@@ -72,16 +73,23 @@ public class TestOrderService {
 
 	@Test
 	public void testNextOrder() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime fromDate = LocalDateTime.now().minus(12, ChronoUnit.HOURS);
+
 		//Loads 10 orders into database with two different providers and orders offset by 1 hour
 		for (int i = 0; i < 5; i ++) {
-			orderService.save(OrderTestData.getTestOrder(now.minus(i, ChronoUnit.MINUTES), new ProviderLocation(1L)));
-			orderService.save(OrderTestData.getTestOrder(now.minus(i, ChronoUnit.MINUTES), new ProviderLocation(2L)));
+			orderService.save(OrderTestData.getTestOrder(fromDate.minus(i, ChronoUnit.MINUTES), new ProviderLocation(1L)));
+			orderService.save(OrderTestData.getTestOrder(fromDate.minus(i, ChronoUnit.MINUTES), new ProviderLocation(2L)));
 		}
 
-		Order order = orderService.next(new ProviderLocation(1L));
+		//Gets the next order, checks its time/date is good, marks it complete, and repeats.
+		for (int i = 5; i > 0; i --) {
+			Order order = orderService.next(new ProviderLocation(1L));
 
-		assertTrue(order.getOrderDate().before(DateUtils.asDate(LocalDateTime.now())));
-		assertEquals(new Long(1L) , order.getProviderLocation().getId());
+			assertEquals(DateUtils.asDate(fromDate.minus(i - 1, ChronoUnit.MINUTES)), order.getOrderDate());
+			assertNull(order.getPickupDate());
+			assertEquals(new Long(1L) , order.getProviderLocation().getId());
+			orderService.complete(order);
+		}
+
 	}
 }

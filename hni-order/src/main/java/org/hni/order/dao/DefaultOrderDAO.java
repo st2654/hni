@@ -42,8 +42,7 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 		try {
 			Query q = em.createQuery("SELECT x FROM Order x "
 					+ "WHERE x.orderDate BETWEEN :fromDate AND :toDate "
-					+ "AND x.providerLocation = :providerLocationId "
-					+ "ORDER By orderDate")
+					+ "AND x.providerLocation = :providerLocationId ")
 					.setParameter("providerLocationId", providerLocation)
 					.setParameter("fromDate", DateUtils.asDate(fromDate))
 					.setParameter("toDate", DateUtils.asDate(toDate));

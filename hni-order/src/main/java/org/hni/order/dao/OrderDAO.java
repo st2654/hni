@@ -8,11 +8,10 @@ import org.hni.user.om.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 
 public interface OrderDAO extends BaseDAO<Order> {
 
-	public Collection<Order> get(User user, LocalDate fromDate, LocalDate toDate);
+	Collection<Order> get(User user, LocalDate fromDate, LocalDate toDate);
 
 	Collection<Order> get(ProviderLocation providerLocation, LocalDateTime fromDate, LocalDateTime toDate);
 

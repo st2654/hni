@@ -39,10 +39,16 @@ public class TestDefaultOrderDAO {
         }
 
         List<Order> orders = (ArrayList<Order>) orderDao.get(new ProviderLocation(2L), LocalDateTime.now().minus(1, ChronoUnit.DAYS), LocalDateTime.now());
+
+        //Verifies that the correct list of orders was returned
         Assert.assertEquals(5, orders.size());
         for (Order order : orders) {
             Assert.assertEquals(new Long(2L), order.getProviderLocation().getId());
         }
+
+        //Verifies that orders were not returned when search parameters were bad
+        orders = (ArrayList<Order>) orderDao.get(new ProviderLocation(9L), LocalDateTime.now().minus(1, ChronoUnit.DAYS), LocalDateTime.now());
+        Assert.assertEquals(0, orders.size());
     }
 
 }
