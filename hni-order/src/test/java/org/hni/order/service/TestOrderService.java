@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
@@ -72,7 +71,7 @@ public class TestOrderService {
 	}
 
 	@Test
-	public void testNextOrder() {
+	public void testNextOrder_Success() {
 		LocalDateTime fromDate = LocalDateTime.now().minus(12, ChronoUnit.HOURS);
 
 		//Loads 10 orders into database with two different providers and orders offset by 1 hour
@@ -92,4 +91,22 @@ public class TestOrderService {
 		}
 
 	}
+
+	@Test
+	public void testNextOrder_InvalidDate() {
+		//Places orders 12 hours into the future
+		LocalDateTime fromDate = LocalDateTime.now().plus(12, ChronoUnit.HOURS);
+
+		//Loads 10 orders into database with two different providers and orders offset by 1 hour
+		for (int i = 0; i < 5; i ++) {
+			orderService.save(OrderTestData.getTestOrder(fromDate.minus(i, ChronoUnit.MINUTES), new ProviderLocation(1L)));
+			orderService.save(OrderTestData.getTestOrder(fromDate.minus(i, ChronoUnit.MINUTES), new ProviderLocation(2L)));
+		}
+
+		//Search from tomorrow to today (backwards)
+		Order order = orderService.next(new ProviderLocation(1L), LocalDateTime.now().plus(1, ChronoUnit.DAYS));
+		//No object should be returned for searches in the future
+		assertNull(order);
+	}
+
 }
