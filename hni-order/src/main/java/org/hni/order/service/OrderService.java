@@ -1,12 +1,14 @@
 package org.hni.order.service;
 
-import java.time.LocalDate;
-import java.util.Collection;
-
 import org.hni.common.service.BaseService;
 import org.hni.order.om.Order;
-import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Date;
 
 public interface OrderService extends BaseService<Order> {
 
@@ -43,33 +45,20 @@ public interface OrderService extends BaseService<Order> {
 	Order release(Order order);
 	
 	/**
-	 * Gets the next order to process where the order was created on a date
-	 * @param orderDate
-	 * @return
-	 */
-	Order next(LocalDate orderDate);
-	
-	/**
-	 * Returns the next available order.
-	 * @return
-	 */
-	Order next();
-	
-	/**
 	 * Gets the next available order to process for a particular provider
 	 * where the order was created on a date.
-	 * @param provider
+	 * @param providerLocation
 	 * @param orderDate
 	 * @return
 	 */
-	Order next(Provider provider, LocalDate orderDate);
+	Order next(ProviderLocation providerLocation, LocalDateTime orderDate);
 	
 	/**
 	 * Returns the next available order for a provider
-	 * @param provider
+	 * @param providerLocation
 	 * @return
 	 */
-	Order next(Provider provider);
+	Order next(ProviderLocation providerLocation);
 	
 	/**
 	 * Sets an order to completed.
