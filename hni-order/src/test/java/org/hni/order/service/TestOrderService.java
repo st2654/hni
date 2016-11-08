@@ -7,7 +7,6 @@ import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,6 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:test-applicationContext.xml"} )
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
 public class TestOrderService {
 	
@@ -57,18 +55,20 @@ public class TestOrderService {
 	public void testOrderComplete() {
 		Date pickupDate = new Date();
 
-		Order order = OrderTestData.getTestOrder();
+		Order order = OrderTestData.getTestOrder(LocalDateTime.now() ,new ProviderLocation(99L));
 		// Checks that the pickup date is null prior to the completion methods
 		assertEquals(null, order.getPickupDate());
 
 		Order returnOrder = orderService.complete(order);
 		// Verifies that the pickup date has been updated
-		assertTrue(pickupDate.before(returnOrder.getPickupDate()));
+		assertTrue(pickupDate.before(returnOrder.getPickupDate())
+				|| pickupDate.getTime() == returnOrder.getPickupDate().getTime());
 
 		//Checks that it was properly loaded into database
 		Order orderFromDatabase = orderService.get(order.getId());
-		assertNotNull(orderFromDatabase);
-		assertTrue(pickupDate.before(orderFromDatabase.getPickupDate()));
+		assertNotNull(orderFromDatabase.getPickupDate());
+		assertTrue(pickupDate.before(orderFromDatabase.getPickupDate())
+				|| pickupDate.getTime() == orderFromDatabase.getPickupDate().getTime());
 	}
 
 	@Test
