@@ -7,6 +7,7 @@ import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:test-applicationContext.xml"} )
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
 public class TestOrderService {
 	
@@ -99,12 +101,12 @@ public class TestOrderService {
 
 		//Loads 10 orders into database with two different providers and orders offset by 1 hour
 		for (int i = 0; i < 5; i ++) {
-			orderService.save(OrderTestData.getTestOrder(fromDate.minus(i, ChronoUnit.MINUTES), new ProviderLocation(1L)));
-			orderService.save(OrderTestData.getTestOrder(fromDate.minus(i, ChronoUnit.MINUTES), new ProviderLocation(2L)));
+			orderService.save(OrderTestData.getTestOrder(fromDate.minus(i, ChronoUnit.MINUTES), new ProviderLocation(10L)));
+			orderService.save(OrderTestData.getTestOrder(fromDate.minus(i, ChronoUnit.MINUTES), new ProviderLocation(20L)));
 		}
 
 		//Search from tomorrow to today (backwards)
-		Order order = orderService.next(new ProviderLocation(1L), LocalDateTime.now().plus(1, ChronoUnit.DAYS));
+		Order order = orderService.next(new ProviderLocation(10L), LocalDateTime.now().plus(1, ChronoUnit.DAYS));
 		//No object should be returned for searches in the future
 		assertNull(order);
 	}
