@@ -3,7 +3,7 @@ package org.hni.security.om;
 import java.io.Serializable;
 import java.util.Set;
 
-public class OrganizationUserRolePermission implements Serializable {
+public class OrganizationUserRolePermission implements Serializable, Comparable<OrganizationUserRolePermission> {
 	/**
 	 * guid
 	 */
@@ -43,6 +43,21 @@ public class OrganizationUserRolePermission implements Serializable {
 
 	public void setPermissions(Set<Permission> permissions) {
 		this.permissions = permissions;
+	}
+
+	@Override
+	public int compareTo(OrganizationUserRolePermission o) {
+		int result = -1;
+		if (null != o) {
+			result = this.getOrganizationId().compareTo(o.getOrganizationId());
+			if (0 == result) {
+				result = this.getUserId().compareTo(o.getUserId());
+				if (0 == result) {
+					result = this.getRoleId().compareTo(o.getRoleId());
+				}
+			}
+		}
+		return result;
 	}
 
 }

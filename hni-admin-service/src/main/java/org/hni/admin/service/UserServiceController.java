@@ -1,7 +1,9 @@
 package org.hni.admin.service;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import java.util.Collection;
-import java.util.Enumeration;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -26,9 +28,6 @@ import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component

@@ -38,13 +38,11 @@ public class TokenRealm extends PasswordRealm {
 
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-
 		logger.info("Attempting TOKEN authentication of user " + token.getPrincipal());
 		User user = null;
 		JWTAuthenticationToken jwtToken = (JWTAuthenticationToken) token;
 
 		try {
-			// user = userDao.get((Long)token.getPrincipal());
 			user = userDao.get(jwtToken.getUserId());
 			if (null == user) {
 				logger.warn("Could not find User for principal:" + token.getPrincipal());
