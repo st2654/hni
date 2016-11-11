@@ -90,14 +90,14 @@ public class UserServiceController {
 	}
 	
 	@GET
-	@Path("/organizations/{id}")
+	@Path("/organizations/{orgId}/roles/{roleId}")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Returns a collection of users for the given organization with the given roleId."
 	, notes = ""
 	, response = User.class
 	, responseContainer = "")
-	public Collection<User> getOrgUsers(@PathParam("id") Long id, @QueryParam("role") Long roleId) {
-		Organization org = new Organization(id);
+	public Collection<User> getOrgUsers(@PathParam("orgId") Long orgId, @QueryParam("roleId") Long roleId) {
+		Organization org = new Organization(orgId);
 		return orgUserService.getByRole(org, Role.get(roleId));
 	}
 
@@ -111,6 +111,20 @@ public class UserServiceController {
 	public Collection<Role> getUserRoles() {
 		
 		return roleDao.getAll();
+	}
+
+	@DELETE
+	@Path("/{id}/organizations/{orgId}")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Removes a user from the given organization"
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
+	public String deleteUserFromOrg(@PathParam("id") Long id, @PathParam("orgId") Long orgId) {
+		User user = new User(id);
+		Organization org = new Organization(orgId);
+		orgUserService.delete(user, org);
+		return "OK";
 	}
 
 }
