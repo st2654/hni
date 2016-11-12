@@ -1,13 +1,13 @@
 package org.hni.security.om;
 
-import java.util.List;
+import java.util.Set;
 
 public class UserToken {
 	private String userIdentifier;
 	private Long organiationId;
 	private Long createTime;
 	private Long expirationTime;
-	private List<Permission> permissions;
+	private Set<OrganizationUserRolePermission> organizationUserRolePermissions;
 
 	public Long getOrganiationId() {
 		return organiationId;
@@ -33,19 +33,19 @@ public class UserToken {
 		this.expirationTime = expirationTime;
 	}
 
-	public List<Permission> getPermissions() {
-		return permissions;
-	}
-
-	public void setPermissions(List<Permission> permissions) {
-		this.permissions = permissions;
-	}
-
 	public String getUserIdentifier() {
 		return userIdentifier;
 	}
 
 	public void setUserIdentifier(String userIdentifier) {
 		this.userIdentifier = userIdentifier;
+	}
+
+	public Set<OrganizationUserRolePermission> getOrganizationUserRolePermissions() {
+		return organizationUserRolePermissions;
+	}
+
+	public void setOrganizationUserRolePermissions(Set<OrganizationUserRolePermission> organizationUserRolePermissions) {
+		this.organizationUserRolePermissions = organizationUserRolePermissions;
 	}
 }
