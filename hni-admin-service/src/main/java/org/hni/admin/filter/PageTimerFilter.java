@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class PageTimerFilter implements Filter {
 	private static final Logger logger = LoggerFactory.getLogger(PageTimerFilter.class);
-	
+
 	@Override
 	public void destroy() {
 	}
@@ -26,12 +26,13 @@ public class PageTimerFilter implements Filter {
 		try {
 			chain.doFilter(request, response);
 		} finally {
-			String url = ((HttpServletRequest)request).getRequestURL().toString();					
-			String queryString = (null == ((HttpServletRequest)request).getQueryString()) ? "" : "?"+((HttpServletRequest)request).getQueryString();	
-			logger.info(String.format("[%d ms] - %s%s", System.currentTimeMillis()-start,url, queryString));
+			String url = ((HttpServletRequest) request).getRequestURL().toString();
+			String queryString = (null == ((HttpServletRequest) request).getQueryString()) ? "" : "?"
+					+ ((HttpServletRequest) request).getQueryString();
+			logger.info(String.format("[%d ms] - %s%s", System.currentTimeMillis() - start, url, queryString));
 		}
 	}
-	
+
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		// TODO Auto-generated method stub

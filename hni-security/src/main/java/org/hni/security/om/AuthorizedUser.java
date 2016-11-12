@@ -1,6 +1,6 @@
 package org.hni.security.om;
 
-import java.util.List;
+import java.util.Set;
 
 import org.hni.user.om.User;
 
@@ -19,16 +19,16 @@ public class AuthorizedUser {
 	 */
 	private static final long serialVersionUID = 2698586306174596113L;
 	private User user;
-	private List<Permission> permissions;
+	private Set<OrganizationUserRolePermission> permissions;
 	private Long orgId = 0L;
 	private Long tokenCreationTime;
 	private Long tokenExpirationTime;
 
-	public List<Permission> getPermissions() {
+	public Set<OrganizationUserRolePermission> getPermissions() {
 		return permissions;
 	}
 
-	public void setPermissions(List<Permission> permissions) {
+	public void setPermissions(Set<OrganizationUserRolePermission> permissions) {
 		this.permissions = permissions;
 	}
 
