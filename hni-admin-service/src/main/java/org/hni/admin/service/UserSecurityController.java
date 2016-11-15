@@ -102,7 +102,7 @@ public class UserSecurityController extends AbstractBaseController {
 	}
 	
 	private static final String GOOGLE_USERINFO = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=%s";
-	@POST
+	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/google/authentication")
