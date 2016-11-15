@@ -44,7 +44,8 @@
 	</properties>
 	<modules>
     <module>hni-common</module>
-    <module>hni-db-parent</module>
+	<module>hni-db-parent</module>
+	<module>hni-events</module>
     <module>hni-user</module>
     <module>hni-organization</module>
     <module>hni-security</module>
