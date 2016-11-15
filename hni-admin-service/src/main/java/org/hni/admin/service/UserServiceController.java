@@ -19,6 +19,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.shiro.util.ThreadContext;
+import org.hni.common.Constants;
 import org.hni.common.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
@@ -124,6 +126,18 @@ public class UserServiceController {
 		Organization org = new Organization(orgId);
 		orgUserService.delete(user, org);
 		return "OK";
+	}
+
+	@GET
+	@Path("/userinfo")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the user with the given id"
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
+	public User getUser() {
+		Long userId = (Long)ThreadContext.get(Constants.USERID); // this was placed onto the context by the JWTTokenAuthenticatingFilter
+		return orgUserService.get(userId);
 	}
 
 }
