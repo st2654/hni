@@ -41,6 +41,7 @@
                 <property name="filterChainDefinitions">
                         <value>
                         		/api/v1/security/authentication = anon
+                        		/api/v1/security/google/authentication = anon
                                 /api/v1/security/loginrequired = anon    
                                 /api/v1/swagger.json = anon                       
                                 /api/v1/** = jwtAuthc <!--  ssl, noSessionCreation,  ALL other urls to require a valid token -->
