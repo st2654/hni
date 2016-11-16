@@ -165,12 +165,14 @@ ENGINE = InnoDB;
 -- Table `activation_codes`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `activation_codes` (
-  `activation_code` VARCHAR(255) NOT NULL,
-  `organization_id` INT NOT NULL,
-  `created` VARCHAR(45) NULL,
-  PRIMARY KEY (`activation_code`))
-ENGINE = InnoDB;
-
+    `activation_code` VARCHAR(255) NOT NULL,
+    `organization_id` INT NOT NULL, 
+    `meals_authorized` INT NULL,
+    `meals_remaining` INT NULL,
+    `authorized` TINYINT NULL,
+    `created` VARCHAR(45) NULL,
+    PRIMARY KEY (`activation_code`))
+  ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `user_provider_role`
