@@ -46,9 +46,9 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 			Claims claims = JWTTokenFactory.decode(tokenValue, UserTokenService.KEY, UserTokenService.ISSUER);
 			Long userId = new Long(claims.get(Constants.USERID, Integer.class).longValue());
 
-			// place the pre-calc permissions onto the Thread.local so we don't
-			// have to calc them again
+			// place the pre-calc permissions onto the Thread.local so we don't have to calc them again
 			ThreadContext.put(Constants.PERMISSIONS, claims.get(Constants.PERMISSIONS, String.class));
+			ThreadContext.put(Constants.USERID, userId);
 
 			User user = userDao.get(userId);
 			if (null != user) {

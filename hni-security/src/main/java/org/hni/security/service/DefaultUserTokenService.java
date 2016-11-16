@@ -70,6 +70,7 @@ public class DefaultUserTokenService implements UserTokenService {
 	public Set<OrganizationUserRolePermission> getUserOrganizationRolePermissions(User user, Long organizationId) {
 		Set<UserOrganizationRole> userOrgRoles = new TreeSet<UserOrganizationRole>();
 		Collection<UserOrganizationRole> userOrganizationRoles = orgUserService.getUserOrganizationRoles(user);
+		organizationId = validateAndAssignOrganizationId(organizationId, userOrganizationRoles);
 		for (UserOrganizationRole userOrgRole : userOrganizationRoles) {
 			if (organizationId.equals(userOrgRole.getId().getOrgId())) {
 				userOrgRoles.add(userOrgRole);
@@ -92,5 +93,14 @@ public class DefaultUserTokenService implements UserTokenService {
 	public Set<OrganizationUserRolePermission> getPermissionsFromToken(String token) {
 		Claims claims = getClaimsFromToken(token);
 		return getPermissionsFromClaims(claims);
+	}
+	
+	private Long validateAndAssignOrganizationId(Long organizationId, Collection<UserOrganizationRole> userOrganizationRoles) {
+		if ( null == organizationId && userOrganizationRoles.size() > 0) {
+			// find an organization to use
+			UserOrganizationRole[] array = userOrganizationRoles.toArray(new UserOrganizationRole[userOrganizationRoles.size()]);
+			organizationId = array[0].getId().getOrgId();			
+		}
+		return organizationId;
 	}
 }
