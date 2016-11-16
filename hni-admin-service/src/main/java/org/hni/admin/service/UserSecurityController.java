@@ -16,10 +16,9 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.hni.common.Constants;
-import org.hni.common.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationUserService;
+import org.hni.security.om.AuthenticationResult;
 import org.hni.security.om.GoogleUserInfo;
 import org.hni.security.om.OrganizationUserRolePermission;
 import org.hni.security.realm.token.JWTAuthenticationToken;
@@ -29,6 +28,7 @@ import org.hni.user.om.User;
 import org.hni.user.om.type.Gender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,7 +44,7 @@ import io.swagger.annotations.ApiOperation;
 public class UserSecurityController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceController.class);
 	
-	private static final Long VOLUNTEER_ORG_ID = 1L;
+	private static final Long VOLUNTEER_ORG_ID = 3L;
 	private static final Long TTL_MILLIS = 3600000L;
 	private RestTemplate restTemplate = new RestTemplate();
 	private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -107,7 +107,7 @@ public class UserSecurityController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/google/authentication")
 	@ApiOperation(value = "Authenticates a user, returning a token for that user.", notes = "Requires username & password to be populated in the body", response = String.class, responseContainer = "")
-	public String googleTokenAuthenticate(@QueryParam("access_token") String accessToken, @HeaderParam("organizationId") Long organizationId) {
+	public AuthenticationResult googleTokenAuthenticate(@QueryParam("access_token") String accessToken, @HeaderParam("organizationId") Long organizationId) {
 		try {
 			GoogleUserInfo userInfo = restTemplate.getForObject(String.format(GOOGLE_USERINFO, accessToken), GoogleUserInfo.class);
 			User user = organizationUserService.byEmailAddress(userInfo.getEmail());
@@ -120,11 +120,13 @@ public class UserSecurityController extends AbstractBaseController {
 			subject.login(token);
 			Set<OrganizationUserRolePermission> permissions = userTokenService.getUserOrganizationRolePermissions(user, organizationId);
 			String permissionObject = mapPermissionsToString(permissions);
-			return JWTTokenFactory.encode(UserTokenService.KEY, UserTokenService.ISSUER, "", TTL_MILLIS, user.getId(), permissionObject);
+			return new AuthenticationResult(HttpStatus.OK.value(), user, 
+					JWTTokenFactory.encode(UserTokenService.KEY, UserTokenService.ISSUER, "", TTL_MILLIS, user.getId(), permissionObject)
+				   ,"Success");
 
 		} catch(Exception e) {
 			logger.error(String.format("unable to authenticate from google token due to %s", e.getMessage()), e);
-			return null;
+			return new AuthenticationResult(HttpStatus.FORBIDDEN.value(), String.format("{\"error\":\"unable to authenticate from google token due to %s\"}", e.getMessage()));
 		}
 				
 	}
