@@ -1,6 +1,7 @@
 package org.hni.payment.service;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.inject.Inject;
 
@@ -26,8 +27,19 @@ public class DefaultPaymentInstrumentService extends AbstractService<PaymentInst
 
 	@Override
 	public Collection<PaymentInstrument> with(Provider provider, Double amount) {
-		// TODO Auto-generated method stub
-		return null;
+		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
+		Collection<PaymentInstrument> paymentCards = new HashSet();
+		Double cardTotal = 0.0;
+		// this is horribly crude, but will work for v1
+		for(PaymentInstrument paymentInstrument : providerCards) {
+			cardTotal += paymentInstrument.getBalance();
+			paymentCards.add(paymentInstrument);
+			if (cardTotal >= amount) {
+				break;
+			}
+		}
+		//TODO: mark these cards used and add to the order
+		return paymentCards;
 	}
 
 

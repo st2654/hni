@@ -36,6 +36,7 @@ public class PaymentInstrument implements Serializable, Persistable {
 	@Column(name="orginal_balance") private Double originalBalance;
 	@Column(name="balance") private Double balance;
 	@Column(name="last_used_datetime") private Date lastUsedDatetime;
+	@Column(name="pin_number") private String pinNumber;
 	
 	public PaymentInstrument() {}
 	
@@ -86,6 +87,14 @@ public class PaymentInstrument implements Serializable, Persistable {
 	}
 	public void setLastUsedDatetime(Date lastUsedDatetime) {
 		this.lastUsedDatetime = lastUsedDatetime;
+	}
+
+	public String getPinNumber() {
+		return pinNumber;
+	}
+
+	public void setPinNumber(String pinNumber) {
+		this.pinNumber = pinNumber;
 	}
 	
 
