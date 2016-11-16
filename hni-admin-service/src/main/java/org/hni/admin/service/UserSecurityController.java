@@ -125,8 +125,8 @@ public class UserSecurityController extends AbstractBaseController {
 				   ,"Success");
 
 		} catch(Exception e) {
-			logger.error(String.format("unable to authenticate from google token due to %s", e.getMessage()), e);
-			return new AuthenticationResult(HttpStatus.FORBIDDEN.value(), String.format("{\"error\":\"unable to authenticate from google token due to %s\"}", e.getMessage()));
+			logger.error(String.format("unable to authenticate from google token due to %s", e.getMessage()));
+			return new AuthenticationResult(HttpStatus.UNAUTHORIZED.value(), String.format("{\"error\":\"unable to authenticate from google token due to %s\"}", e.getMessage()));
 		}
 				
 	}
