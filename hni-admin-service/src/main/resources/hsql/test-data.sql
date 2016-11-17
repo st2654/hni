@@ -87,3 +87,6 @@ insert into security_role_permissions values(3,67,1);
 /* client/user */
 insert into security_role_permissions values(4,12,0);
 insert into security_role_permissions values(5,12,0);
+
+insert into activation_codes values('1234567890', 2, 10, 10, 1, null, now(), null);
+insert into activation_codes values('7h-1234567890', 2, 10, 10, 2, 'freddy has activated this', now(), 2);
