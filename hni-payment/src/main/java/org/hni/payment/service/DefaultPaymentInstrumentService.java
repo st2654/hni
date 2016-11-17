@@ -25,6 +25,9 @@ public class DefaultPaymentInstrumentService extends AbstractService<PaymentInst
 		this.paymentInstrumentDao = paymentInstrumentDao;
 	}
 
+	/**
+	 * Return CARD, amount to use on this card
+	 */
 	@Override
 	public Collection<PaymentInstrument> with(Provider provider, Double amount) {
 		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
@@ -42,5 +45,8 @@ public class DefaultPaymentInstrumentService extends AbstractService<PaymentInst
 		return paymentCards;
 	}
 
-
+	/**
+	 * This ORDER, this CARD, this amount
+	 * for the OrderPayment
+	 */
 }
