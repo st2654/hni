@@ -1,22 +1,67 @@
 package org.hni.order.om;
 
+import org.hni.common.om.Persistable;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Provides a state holder during ordering session.
  */
-public class PartialOrder {
+@Entity
+@Table(name = "partial_orders")
+public class PartialOrder implements Persistable, Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
+
+    @OneToMany
+    @JoinColumn(name="provider_location_id", referencedColumnName = "id")
     private List<ProviderLocation> providerLocationsForSelection;
-    private ProviderLocation chosenProvider;
+
+    @OneToMany
+    @JoinColumn(name="menu_item_id", referencedColumnName = "id")
     private List<MenuItem> menuItemsForSelection;
+
+    @OneToMany
+    @JoinColumn(name="order_item_id", referencedColumnName = "id")
     private List<OrderItem> orderItems;
+
+    @ManyToOne
+    @JoinColumn(name="chosen_provider_id", referencedColumnName = "id")
+    private ProviderLocation chosenProvider;
+
+    @Column(name = "transaction_phase")
     private TransactionPhase transactionPhase;
+
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public User getUser() {
         return user;
