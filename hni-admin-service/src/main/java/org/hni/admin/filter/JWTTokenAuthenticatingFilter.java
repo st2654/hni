@@ -1,15 +1,18 @@
 package org.hni.admin.filter;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.IncorrectClaimException;
-import io.jsonwebtoken.MissingClaimException;
+import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
@@ -21,6 +24,11 @@ import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.IncorrectClaimException;
+import io.jsonwebtoken.MissingClaimException;
 
 /**
  * This filter is bound to all service calls requiring them all to present a
@@ -39,6 +47,11 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String tokenValue = httpRequest.getHeader(UserTokenService.TOKEN_HEADER);
+		Enumeration<String> headerNames = httpRequest.getHeaderNames();
+		while(headerNames.hasMoreElements()) {
+			String name = headerNames.nextElement();
+			logger.info(String.format("%s=%s", name, httpRequest.getHeader(name) ));
+		}
 		logger.info("validating token with " + tokenValue);
 		try {
 			// if the token is valid we'll put the claims onto the ThreadLocal
@@ -55,12 +68,17 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 				logger.info(String.format("Found user %s for the token.  Authenticating...", user.getEmail()));
 				return new JWTAuthenticationToken(user.getEmail(), userId);
 			}
+			logger.error("token authenication failed...no user");
+			//throw new WebApplicationException("auth-token is missing, invalid or expired: user couldn't be validated", Response.Status.FORBIDDEN);
+			throw new AuthenticationException("the token is invalid; no user found");
 		} catch (MissingClaimException | IncorrectClaimException | ExpiredJwtException e) {
 			// let this fall through so the authN fails
 			logger.error("Not able to validate token due to " + e.getMessage());
+			throw new AuthenticationException("auth-token is missing, invalid or expired:"+e.getMessage());
 		}
-		logger.info("token authenication failed...");
-		return new JWTAuthenticationToken("", null);
+		
+		
+		//return new JWTAuthenticationToken("", null);
 	}
 
 	@Override
@@ -75,4 +93,16 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 		return loggedIn;
 	}
 
+	@Override
+	protected void cleanup(ServletRequest request, ServletResponse response, Exception existing) throws ServletException, IOException {
+
+		HttpServletResponse httpResponse = (HttpServletResponse)response;
+		if ( null != existing ) {
+			httpResponse.setContentType(MediaType.APPLICATION_JSON);
+			httpResponse.getOutputStream().write(String.format("{\"error\":\"%s\"}", existing.getMessage()).getBytes());
+			httpResponse.setStatus(Response.Status.UNAUTHORIZED.getStatusCode());
+			existing = null; // prevent Shiro from tossing a ServletException
+		}
+		super.cleanup(request, httpResponse, existing);
+	}
 }
