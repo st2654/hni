@@ -13,12 +13,9 @@ public class ResponseCorsFilter implements ContainerResponseFilter {
 	    MultivaluedMap<String, Object> headers = responseContext.getHeaders();
 	
 	    headers.add("Access-Control-Allow-Origin", "*");
-	    /**
-	     * added to cache preflight request for 180 seconds
-	     */
-	    headers.add("Access-Control-Max-Age", "180");
-	    headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
-	    headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia");
+	    headers.add("Access-Control-Max-Age", "180"); // cache preflight request for 180 seconds
+	    headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
+	    headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia, X-hni-token, origin, content-type, accept");
     }
     
 }
