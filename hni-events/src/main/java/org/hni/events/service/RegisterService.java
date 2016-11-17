@@ -45,6 +45,7 @@ public class RegisterService extends AbstractEventService<User> {
                         + "to verify your account in case you text me from a new "
                         + "number. So what's your email address? Thanks";
                 // } else {
+                // nextStep = false;
                 // returnString = "We didn't get that. Please send your name again.";
                 // }
                 break;
