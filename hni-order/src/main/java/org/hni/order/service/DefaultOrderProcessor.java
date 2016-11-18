@@ -22,10 +22,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
     private UserDAO userDao;
 
     @Inject
-    GeoCodingService geoService;
+    private GeoCodingService geoService;
 
     @Inject
-    MenuService menuService;
+    private MenuService menuService;
 
     public String processMessage(User user, String message) {
         //this partial order is the one I get for this user
@@ -42,54 +42,16 @@ public class DefaultOrderProcessor implements OrderProcessor {
             case MEAL:
                 break;
             case PROVIDING_ADDRESS:
-                Optional<Address> address = geoService.resolveAddress(message);
-                if (address.isPresent()) {
-                    List<ProviderLocation> nearbyProviders = geoService.searchNearbyLocations(address.get(), PROVIDER_SEARCH_RADIUS);
-                    order.setProviderLocationsForSelection(nearbyProviders);
-                    List<MenuItem> items = new ArrayList<>();
-                    for (ProviderLocation location : nearbyProviders) {
-                        //TODO get the currently available menu items, not just first
-                        items.add(menuService.with(location.getProvider()).iterator().next().getMenuItems().iterator().next());
-                    }
-                    order.setMenuItemsForSelection(items);
-                    for (int i = 0 ; i < 3; i++) {
-                        output += i + "." + nearbyProviders.get(i).getName() + "(" + items.get(i).getName() + ")";
-                    }
-                    order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
-                } else {
-                    output = "Invalid address, please try again";
-                }
+                output = findNearbyMeals(message, order);
                 break;
             case CHOOSING_LOCATION:
-                //below may need to get moved in order to fit the format
-                //Subway (Ham Sandwich), Taco Bell (Chicken Soft Tacos),  Panera (Steak Sandwich)
-                try {
-                    int index = Integer.parseInt(message);
-                    if (index < 1 || index > 3) {
-                        throw new IndexOutOfBoundsException();
-                    }
-                    ProviderLocation location = order.getProviderLocationsForSelection().get(index-1);
-                    order.setChosenProvider(location);
-                    order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
-                } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                    output = "Please provide a number between 1-3";
-                }
+                output = chooseLocation(message, order);
                 break;
             case CHOOSING_MENU_ITEM:
-                //this is chosen w/ provider now I believe
+                //this is chosen w/ provider for now
                 break;
             case CONFIRM_OR_CONTINUE:
-                switch (message.toUpperCase()) {
-                    case "CONFIRM":
-                        //TODO create new completed order
-                        break;
-                    case "CONTINUE":
-                        //TODO mark the partial order as having ometihng ordered
-                        order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
-                        break;
-                    default:
-                        output = "Please respond with CONFIRM or CONTINUE";
-                }
+                output = confirmOrContinueOrder(message, order);
                 break;
             default:
                 //shouldn't get here
@@ -100,6 +62,61 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     public String processMessage(Long userId, String message) {
         return processMessage(userDao.get(userId), message);
+    }
+
+    private String findNearbyMeals(String addressString, PartialOrder order) {
+        String output = "";
+        Optional<Address> address = geoService.resolveAddress(addressString);
+        if (address.isPresent()) {
+            List<ProviderLocation> nearbyProviders = geoService.searchNearbyLocations(address.get(), PROVIDER_SEARCH_RADIUS);
+            order.setProviderLocationsForSelection(nearbyProviders);
+            List<MenuItem> items = new ArrayList<>();
+            for (ProviderLocation location : nearbyProviders) {
+                //TODO get the currently available menu items, not just first
+                items.add(menuService.with(location.getProvider()).iterator().next().getMenuItems().iterator().next());
+            }
+            order.setMenuItemsForSelection(items);
+            for (int i = 0 ; i < 3; i++) {
+                output += i + "." + nearbyProviders.get(i).getName() + "(" + items.get(i).getName() + ")";
+            }
+            order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
+        } else {
+            output = "Invalid address, please try again";
+        }
+        return output;
+    }
+
+
+    private String chooseLocation(String message, PartialOrder order) {
+        String output = "";
+        try {
+            int index = Integer.parseInt(message);
+            if (index < 1 || index > 3) {
+                throw new IndexOutOfBoundsException();
+            }
+            ProviderLocation location = order.getProviderLocationsForSelection().get(index-1);
+            order.setChosenProvider(location);
+            order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            output = "Please provide a number between 1-3";
+        }
+        return output;
+    }
+
+    private String confirmOrContinueOrder(String message, PartialOrder order) {
+        String output = "";
+        switch (message.toUpperCase()) {
+            case "CONFIRM":
+                //TODO create new completed order
+                break;
+            case "CONTINUE":
+                //TODO mark the partial order as having sometihng ordered
+                order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
+                break;
+            default:
+                output = "Please respond with CONFIRM or CONTINUE";
+        }
+        return output;
     }
 
 }
