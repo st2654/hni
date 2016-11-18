@@ -7,6 +7,7 @@ insert into users values(6, 'Barbara', 'Bollingsworth', 'F', '123-456-7830', '' 
 
 insert into organizations values(1, 'Not Impossible', 'phone', 'website', 'logo', now(), 1);
 insert into organizations values(2, 'Samaritan House', 'phone', 'website', 'logo', now(), 1);
+insert into organizations values(3, 'Volunteer Organization', 'phone', 'website', 'logo', now(), 1);
 
 insert into user_organization_role values(1, 2, 1);
 insert into user_organization_role values(2, 2, 7);
@@ -86,3 +87,6 @@ insert into security_role_permissions values(3,67,1);
 /* client/user */
 insert into security_role_permissions values(4,12,0);
 insert into security_role_permissions values(5,12,0);
+
+insert into activation_codes values('1234567890', 2, 10, 10, 1, null, now(), null);
+insert into activation_codes values('7h-1234567890', 2, 10, 10, 2, 'freddy has activated this', now(), 2);

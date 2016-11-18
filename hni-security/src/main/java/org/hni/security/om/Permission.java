@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hni.common.om.Persistable;
 
 /**
@@ -19,7 +21,7 @@ import org.hni.common.om.Persistable;
  */
 @Entity
 @Table(name = "security_permissions")
-public class Permission implements Persistable, Serializable {
+public class Permission implements Persistable, Serializable, Comparable<Permission> {
 
 	private static final long serialVersionUID = -5344420286199389049L;
 
@@ -28,8 +30,13 @@ public class Permission implements Persistable, Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "domain") private String domain;
-	@Column(name = "value") private String value;
+	@Column(name = "domain")
+	private String domain;
+
+	@Column(name = "value")
+	private String value;
+
+	private transient String instance;
 
 	public Permission() {
 	}
@@ -67,5 +74,36 @@ public class Permission implements Persistable, Serializable {
 		this.value = value;
 	}
 
-	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(domain).append(":").append(value);
+		if (null != instance) {
+			sb.append(":").append(instance);
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public int compareTo(Permission o) {
+		return this.toString().compareTo(o.toString());
+	}
+
+	public String getInstance() {
+		return instance;
+	}
+
+	public void setInstance(String instance) {
+		this.instance = instance;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this, false);
+	}
 }
