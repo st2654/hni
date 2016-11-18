@@ -36,6 +36,4 @@ public class AuthorizationRequestFilter implements ContainerRequestFilter {
                 .entity("User cannot access the resource.")
                 .build());
 	}
-
-
 }

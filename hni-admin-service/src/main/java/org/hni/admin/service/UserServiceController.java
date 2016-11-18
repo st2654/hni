@@ -1,7 +1,9 @@
 package org.hni.admin.service;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import java.util.Collection;
-import java.util.Enumeration;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.shiro.util.ThreadContext;
+import org.hni.common.Constants;
 import org.hni.common.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
@@ -26,9 +30,6 @@ import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
@@ -90,14 +91,14 @@ public class UserServiceController {
 	}
 	
 	@GET
-	@Path("/organizations/{id}")
+	@Path("/organizations/{orgId}/roles/{roleId}")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Returns a collection of users for the given organization with the given roleId."
 	, notes = ""
 	, response = User.class
 	, responseContainer = "")
-	public Collection<User> getOrgUsers(@PathParam("id") Long id, @QueryParam("role") Long roleId) {
-		Organization org = new Organization(id);
+	public Collection<User> getOrgUsers(@PathParam("orgId") Long orgId, @QueryParam("roleId") Long roleId) {
+		Organization org = new Organization(orgId);
 		return orgUserService.getByRole(org, Role.get(roleId));
 	}
 
@@ -111,6 +112,32 @@ public class UserServiceController {
 	public Collection<Role> getUserRoles() {
 		
 		return roleDao.getAll();
+	}
+
+	@DELETE
+	@Path("/{id}/organizations/{orgId}")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Removes a user from the given organization"
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
+	public String deleteUserFromOrg(@PathParam("id") Long id, @PathParam("orgId") Long orgId) {
+		User user = new User(id);
+		Organization org = new Organization(orgId);
+		orgUserService.delete(user, org);
+		return "OK";
+	}
+
+	@GET
+	@Path("/userinfo")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the user with the given id"
+	, notes = ""
+	, response = User.class
+	, responseContainer = "")
+	public User getUser() {
+		Long userId = (Long)ThreadContext.get(Constants.USERID); // this was placed onto the context by the JWTTokenAuthenticatingFilter
+		return orgUserService.get(userId);
 	}
 
 }

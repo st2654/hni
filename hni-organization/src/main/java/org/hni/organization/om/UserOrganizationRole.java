@@ -19,7 +19,7 @@ import org.hni.user.om.User;
  */
 @Entity
 @Table(name = "user_organization_role")
-public class UserOrganizationRole implements Persistable, Serializable {
+public class UserOrganizationRole implements Persistable, Serializable, Comparable<UserOrganizationRole> {
 
 	private static final long serialVersionUID = 2755700987714341746L;
 
@@ -44,5 +44,20 @@ public class UserOrganizationRole implements Persistable, Serializable {
 
 	public void setId(UserOrganizationRolePK id) {
 		this.id = id;
+	}
+
+	@Override
+	public int compareTo(UserOrganizationRole o) {
+		int result = 0;
+		if (null != this.getId() && null != o.getId()) {
+			result = this.getId().getUserId().compareTo(o.getId().getUserId());
+			if (0 == result) {
+				result = this.getId().getRoleId().compareTo(o.getId().getRoleId());
+				if (0 == result) {
+					result = this.getId().getOrgId().compareTo(o.getId().getOrgId());
+				}
+			}
+		}
+		return result;
 	}
 }

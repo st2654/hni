@@ -47,6 +47,6 @@ public class TestOrganizationService {
 	@Test
 	public void testGetAll() {
 		List<Organization> list = organizationService.getAll();
-		assertEquals(2, list.size());
+		assertEquals(3, list.size());
 	}
 }
