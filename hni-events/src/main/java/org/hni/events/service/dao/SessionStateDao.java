@@ -6,10 +6,10 @@ public interface SessionStateDao {
 
     SessionState get(String sessionId);
 
-    boolean insert(SessionState state);
+    SessionState insert(SessionState state);
 
-    boolean update(SessionState state);
+    SessionState update(SessionState state);
 
-    boolean delete(String sessionId);
+    SessionState delete(String sessionId);
 
 }
