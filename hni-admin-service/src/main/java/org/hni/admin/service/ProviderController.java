@@ -4,15 +4,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
@@ -115,6 +111,24 @@ public class ProviderController {
 	, responseContainer = "")
 	public Collection<ProviderLocation> getProviderLocations(@PathParam("id") Long id) {
 		return providerLocationService.with(new Provider(id));
+	}
+
+	@GET
+	@Path("/providerLocations")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns a collection of ProviderLocations for the given customer"
+			, notes = ""
+			, response = ProviderLocation.class
+			, responseContainer = "")
+	public Collection<ProviderLocation> getProviderLocationsByCustomerAddress(
+			@QueryParam("customerId") Long custId,
+			@NotNull @QueryParam("address") String customerAddress,
+			@QueryParam("itemsPerPage") int itemsPerPage,
+			@QueryParam("pageNumber") int pageNum) {
+		if (!StringUtils.isBlank(customerAddress)) {
+			return providerLocationService.providersNearCustomer(custId, customerAddress, itemsPerPage, pageNum);
+		}
+		return null;
 	}
 	
 	@POST
