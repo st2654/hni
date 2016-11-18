@@ -6,6 +6,7 @@ package org.hni.order.om;
 public enum TransactionPhase {
 
     MEAL,
+    PROVIDING_ADDRESS,
     CHOOSING_LOCATION,
     CHOOSING_MENU_ITEM,
     CONFIRM_OR_CONTINUE

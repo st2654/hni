@@ -44,7 +44,7 @@ public class ProviderLocation implements Persistable, Serializable {
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "provider_location_addresses", joinColumns = { @JoinColumn(name = "provider_location_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
-	private Set<Address> addresses = new HashSet<Address>();
+	private Set<Address> addresses = new HashSet<>();
 
 	@ManyToOne
 	@JoinColumn(name="provider_id", referencedColumnName = "id")
