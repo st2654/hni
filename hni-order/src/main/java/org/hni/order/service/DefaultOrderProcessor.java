@@ -1,5 +1,7 @@
 package org.hni.order.service;
 
+import org.hni.order.om.Order;
+import org.hni.order.om.OrderItem;
 import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.MenuItem;
@@ -12,6 +14,7 @@ import org.hni.user.om.User;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,7 +76,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             List<MenuItem> items = new ArrayList<>();
             for (ProviderLocation location : nearbyProviders) {
                 //TODO get the currently available menu items, not just first
-                items.add(menuService.with(location.getProvider()).iterator().next().getMenuItems().iterator().next());
+                items.add(location.getProvider().getMenus().iterator().next().getMenuItems().iterator().next());
             }
             order.setMenuItemsForSelection(items);
             for (int i = 0 ; i < 3; i++) {
@@ -96,6 +99,8 @@ public class DefaultOrderProcessor implements OrderProcessor {
             }
             ProviderLocation location = order.getProviderLocationsForSelection().get(index-1);
             order.setChosenProvider(location);
+            MenuItem chosenItem = order.getMenuItemsForSelection().get(index-1);
+            order.getOrderItems().add(new OrderItem((long)1, chosenItem.getPrice(), chosenItem));
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             output = "Please provide a number between 1-3";
@@ -108,9 +113,14 @@ public class DefaultOrderProcessor implements OrderProcessor {
         switch (message.toUpperCase()) {
             case "CONFIRM":
                 //TODO create new completed order
+                Order finalOrder = new Order();
+                finalOrder.setUserId(order.getUser().getId());
+                finalOrder.setOrderDate(new Date());
+                finalOrder.setProviderLocation(order.getChosenProvider());
+                finalOrder.setOrderItems(order.getOrderItems());
+                finalOrder.setSubTotal(order.getOrderItems().stream().map(item -> (item.getAmount() * item.getQuantity())).reduce(0.0, Double::sum));
                 break;
             case "CONTINUE":
-                //TODO mark the partial order as having sometihng ordered
                 order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
                 break;
             default:
