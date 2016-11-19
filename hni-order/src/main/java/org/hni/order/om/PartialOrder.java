@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Provides a state holder during ordering session.
@@ -44,7 +45,7 @@ public class PartialOrder implements Persistable, Serializable {
 
     @OneToMany
     @JoinColumn(name="order_item_id", referencedColumnName = "id")
-    private List<OrderItem> orderItems;
+    private Set<OrderItem> orderItems;
 
     @ManyToOne
     @JoinColumn(name="chosen_provider_id", referencedColumnName = "id")
@@ -95,11 +96,11 @@ public class PartialOrder implements Persistable, Serializable {
         this.menuItemsForSelection = menuItemsForSelection;
     }
 
-    public List<OrderItem> getOrderItems() {
+    public Set<OrderItem> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
+    public void setOrderItems(Set<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
