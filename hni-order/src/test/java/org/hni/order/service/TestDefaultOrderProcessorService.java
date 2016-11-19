@@ -5,6 +5,7 @@ import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.ProviderLocation;
+import org.hni.provider.service.DefaultProviderLocationService;
 import org.hni.provider.service.GeoCodingService;
 import org.hni.provider.service.MenuService;
 import org.hni.user.dao.UserDAO;
@@ -22,8 +23,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +40,7 @@ public class TestDefaultOrderProcessorService {
     private DefaultPartialOrderDAO partialOrderDAO;
 
     @Mock
-    private GeoCodingService geoCodingService;
+    private DefaultProviderLocationService geoCodingService;
 
     @Mock
     private MenuService menuService;

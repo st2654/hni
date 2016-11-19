@@ -11,10 +11,11 @@ import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class DefaultProviderLocationService extends AbstractService<ProviderLocation> implements ProviderLocationService {
 
@@ -35,12 +36,12 @@ public class DefaultProviderLocationService extends AbstractService<ProviderLoca
 	}
 
 	@Override
-	public Collection<ProviderLocation> providersNearCustomer(Long customerId, String customerAddress, int itemsPerPage, int pageNum) {
+	public Collection<ProviderLocation> providersNearCustomer(String customerAddress, int itemsPerPage) {
 
 		Address addrpoint = geoCodingService.resolveAddress(customerAddress).orElse(null);
 
 		if (addrpoint != null) {
-			return providerLocationDao.providersNearCustomer(customerId, addrpoint, itemsPerPage, pageNum);
+			return providerLocationDao.providersNearCustomer(addrpoint, itemsPerPage);
 		}
 
 		return null;

@@ -8,9 +8,8 @@ import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.ProviderLocation;
-import org.hni.provider.service.GeoCodingService;
+import org.hni.provider.service.DefaultProviderLocationService;
 import org.hni.user.dao.UserDAO;
-import org.hni.user.om.Address;
 import org.hni.user.om.User;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class DefaultOrderProcessor implements OrderProcessor {
@@ -28,13 +26,13 @@ public class DefaultOrderProcessor implements OrderProcessor {
     private UserDAO userDao;
 
     @Inject
-    DefaultPartialOrderDAO partialOrderDAO;
+    private DefaultPartialOrderDAO partialOrderDAO;
 
     @Inject
-    OrderDAO orderDAO;
+    private DefaultProviderLocationService locationService;
 
     @Inject
-    private GeoCodingService geoService;
+    private OrderDAO orderDAO;
 
 
     public String processMessage(User user, String message) {
@@ -82,11 +80,9 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String findNearbyMeals(String addressString, PartialOrder order) {
         String output = "";
-        Optional<Address> address = geoService.resolveAddress(addressString);
-        if (address.isPresent()) {
+        List<ProviderLocation> nearbyProviders = (ArrayList) locationService.providersNearCustomer(addressString, 3);
+        if (!nearbyProviders.isEmpty()) {
             //TODO actually find nearby addresses
-            // List<ProviderLocation> nearbyProviders = geoService.resolveAddress(address.get(), PROVIDER_SEARCH_RADIUS);
-            List<ProviderLocation> nearbyProviders = new ArrayList<>();
             order.setProviderLocationsForSelection(nearbyProviders);
             List<MenuItem> items = new ArrayList<>();
             for (ProviderLocation location : nearbyProviders) {
