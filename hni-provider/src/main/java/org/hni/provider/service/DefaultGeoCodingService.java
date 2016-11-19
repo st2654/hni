@@ -3,26 +3,23 @@ package org.hni.provider.service;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.http.client.fluent.Request;
-import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.Address;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by walmart on 11/14/16.
- */
-@Component
+@Service
 public class DefaultGeoCodingService implements GeoCodingService {
 
     private static final String GOOGLE_MAP_API_KEY="AIzaSyBCmt3RMn46CIpxUx20hmlpPbx6ws-lbkI";
 
     @Override
     public Optional<Address> resolveAddress(String address) {
+
+        Address addrPoint = null;
 
         String targetURI= null;
         try {
@@ -40,19 +37,23 @@ public class DefaultGeoCodingService implements GeoCodingService {
                     .asString();
             if(json != null) {
                 DocumentContext ctx = JsonPath.parse(json);
-                Double latitude = ctx.read("$.results[0].geometry.location.lat");
-                Double longitude = ctx.read("$.results[0].geometry.location.lng");
+
+                if("OK".equals(ctx.read("status"))) {
+                    Double latitude = ctx.read("$.results[0].geometry.location.lat");
+                    Double longitude = ctx.read("$.results[0].geometry.location.lng");
+                    addrPoint = new Address();
+                    addrPoint.setLatitude(latitude.toString());
+                    addrPoint.setLongitude(longitude.toString());
+                }
+
+
             }
         } catch (IOException e) {
             e.printStackTrace();
             return Optional.empty();
         }
-        return Optional.of(new Address());
+        return Optional.of(addrPoint);
 
     }
 
-    @Override
-    public List<ProviderLocation> searchNearbyLocations(Address address, double distanceMiles) {
-        return null;
-    }
 }
