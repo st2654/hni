@@ -6,11 +6,13 @@ import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
+import org.hni.security.service.ActivationCodeService;
+import org.hni.user.om.User;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
@@ -22,6 +24,7 @@ public class EventServiceFactoryIntTest {
 
     private static final String SESSION_ID = "1";
     private static final String PHONE_NUMBER = "8188461238";
+    private static final String AUTH_CODE = "123456";
 
     @InjectMocks
     private EventServiceFactory factory;
@@ -33,10 +36,18 @@ public class EventServiceFactoryIntTest {
     @Spy
     private SessionStateDAO sessionStateDao = new DefaultSessionStateDAO();
 
+    @Mock
+    private CustomerService customerService;
+
+    @Mock
+    private ActivationCodeService activationCodeService;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         factory.init();
+        when(customerService.validate(any(User.class))).thenReturn(true);
+        when(activationCodeService.validate(eq(AUTH_CODE))).thenReturn(true);
     }
 
     @Test
@@ -91,11 +102,7 @@ public class EventServiceFactoryIntTest {
                 + " codes now. When you need a meal just text MEAL back to this number.", returnString);
         // addition auth code
         returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "111111"));
-        Assert.assertEquals("We have added that authorization code to your family account. Please"
-                + " send any additional codes you need for your family.", returnString);
-        // addition auth code
-        returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "222222"));
-        Assert.assertEquals("We have added that authorization code to your family account. Please"
-                + " send any additional codes you need for your family.", returnString);
+        Assert.assertEquals("The authorization code you entered (" + "111111" + ") is not valid."
+                + " Please resend a valid unused authorization code", returnString);
     }
 }
