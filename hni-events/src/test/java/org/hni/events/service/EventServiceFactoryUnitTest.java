@@ -38,7 +38,7 @@ public class EventServiceFactoryUnitTest {
         MockitoAnnotations.initMocks(this);
         factory.init();
         event = new Event(SESSION_ID, PHONE_NUMBER, "message");
-        when(sessionStateDao.insert(any(SessionState.class))).thenReturn(true);
+        when(sessionStateDao.insert(any(SessionState.class))).thenReturn(new SessionState());
         when(registerService.handleEvent(eq(event))).thenReturn(REUTRN_MESSAGE);
     }
 
