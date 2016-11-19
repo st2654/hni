@@ -6,7 +6,6 @@ import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.DefaultProviderLocationService;
-import org.hni.provider.service.GeoCodingService;
 import org.hni.provider.service.MenuService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
@@ -40,7 +39,7 @@ public class TestDefaultOrderProcessorService {
     private DefaultPartialOrderDAO partialOrderDAO;
 
     @Mock
-    private DefaultProviderLocationService geoCodingService;
+    private DefaultProviderLocationService providerLocationService;
 
     @Mock
     private MenuService menuService;
@@ -104,7 +103,8 @@ public class TestDefaultOrderProcessorService {
         partialOrder.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
 
         Mockito.when(partialOrderDAO.get(user)).thenReturn(partialOrder);
-        Mockito.when(geoCodingService.searchNearbyLocations(Mockito.anyString())).thenReturn();
+        Mockito.when(providerLocationService.providersNearCustomer(Mockito.anyString(), Mockito.anyInt()))
+                .thenReturn(providerLocationList);
 
         // Execute
         String output = orderProcessor.processMessage(user, message);

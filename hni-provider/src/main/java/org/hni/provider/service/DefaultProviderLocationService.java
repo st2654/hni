@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.hni.common.service.AbstractService;
 import org.hni.provider.dao.ProviderLocationDAO;
+import org.hni.provider.om.GeoCodingException;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.Address;
@@ -42,9 +43,9 @@ public class DefaultProviderLocationService extends AbstractService<ProviderLoca
 
 		if (addrpoint != null) {
 			return providerLocationDao.providersNearCustomer(addrpoint, itemsPerPage);
+		} else {
+			throw new GeoCodingException("Unable to resolve address");
 		}
-
-		return null;
 	}
 
 
