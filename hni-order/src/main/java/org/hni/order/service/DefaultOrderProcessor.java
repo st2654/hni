@@ -21,7 +21,6 @@ import java.util.List;
 
 @Component
 public class DefaultOrderProcessor implements OrderProcessor {
-    private static final double PROVIDER_SEARCH_RADIUS = 5;
 
     @Inject
     private UserDAO userDao;
@@ -76,7 +75,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String requestingMeal(String request, PartialOrder order) {
         order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
-        return "Please provide your address";
+        return "Please provide your address or CANCEL to quit";
     }
 
     private String findNearbyMeals(String addressString, PartialOrder order) {
@@ -84,7 +83,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         try {
             List<ProviderLocation> nearbyProviders = (ArrayList) locationService.providersNearCustomer(addressString, 3);
             if (!nearbyProviders.isEmpty()) {
-                //TODO actually find nearby addresses
+                order.setAddress(addressString);
                 order.setProviderLocationsForSelection(nearbyProviders);
                 List<MenuItem> items = new ArrayList<>();
                 for (ProviderLocation location : nearbyProviders) {
@@ -97,7 +96,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 }
                 order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
             } else {
-                output = "No provider locations near this address.";
+                output = "No provider locations near this address. Please provide another address or CANCEL to quit";
             }
         } catch (GeoCodingException e) {
             output = e.getMessage();
@@ -119,6 +118,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             MenuItem chosenItem = order.getMenuItemsForSelection().get(index-1);
             order.getOrderItems().add(new OrderItem((long)1, chosenItem.getPrice(), chosenItem));
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+            output = String.format("You have chosen %s at %s. Respond with CONFIRM to confirm your selection, RETURN to try again, or CANCEL to end your order", chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             output = "Please provide a number between 1-3";
         }
@@ -129,7 +129,6 @@ public class DefaultOrderProcessor implements OrderProcessor {
         String output = "";
         switch (message.toUpperCase()) {
             case "CONFIRM":
-                //TODO create new completed order
                 Order finalOrder = new Order();
                 finalOrder.setUserId(order.getUser().getId());
                 finalOrder.setOrderDate(new Date());
@@ -137,12 +136,14 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 finalOrder.setOrderItems(order.getOrderItems());
                 finalOrder.setSubTotal(order.getOrderItems().stream().map(item -> (item.getAmount() * item.getQuantity())).reduce(0.0, Double::sum));
                 orderDAO.save(finalOrder);
+                partialOrderDAO.delete(order);
+                output = "Your order has been confirmed, please wait for more information about when to pick up your meal";
                 break;
-            case "CONTINUE":
-                order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
+            case "RETURN":
+                output = chooseLocation(order.getAddress(), order);
                 break;
             default:
-                output = "Please respond with CONFIRM or CONTINUE";
+                output = "Please respond with RETURN, CONTINUE, or CANCEL";
         }
         return output;
     }

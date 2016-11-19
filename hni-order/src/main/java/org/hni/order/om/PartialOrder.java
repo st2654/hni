@@ -54,6 +54,8 @@ public class PartialOrder implements Persistable, Serializable {
     @Column(name = "transaction_phase")
     private TransactionPhase transactionPhase;
 
+    @Column(name = "address")
+    private String address;
 
     @Override
     public Long getId() {
@@ -110,5 +112,13 @@ public class PartialOrder implements Persistable, Serializable {
 
     public void setTransactionPhase(TransactionPhase transactionPhase) {
         this.transactionPhase = transactionPhase;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
