@@ -8,7 +8,7 @@ import org.hni.security.om.OrganizationUserRolePermission;
 import org.hni.user.om.User;
 
 public interface UserTokenService {
-	public static final String TOKEN_HEADER = "X-hni-token";
+	public static final String TOKEN_HEADER = "x-hni-token";
 
 	// TODO: make these values dynamically injected
 	public static final String KEY = "YbpWo521Z/aF7DqpiIpIHQ==";

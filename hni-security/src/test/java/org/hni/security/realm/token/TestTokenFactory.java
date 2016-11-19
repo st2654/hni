@@ -19,13 +19,14 @@ public class TestTokenFactory {
 	public void testValidateToken() {
 		String subject = "testtoken";
 		Long ttlMillis = 3600000L;
-		Long userId = 123L;
+		Long userId = 1L;
 		String permissions = "test permissions";
 		String token = JWTTokenFactory.encode(KEY, ISSUER, subject, ttlMillis, userId, permissions);
 		Claims claims = JWTTokenFactory.decode(token, KEY, ISSUER);
 		assertNotNull(claims);
 		assertEquals(permissions, claims.get("permissions", String.class));
 		assertEquals(userId, new Long(claims.get("userId", Integer.class).longValue()));
+		System.out.println(token);
 	}
 
 	@Test(expected=IncorrectClaimException.class)

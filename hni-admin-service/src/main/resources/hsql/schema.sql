@@ -1,5 +1,4 @@
 SET MODE MySQL;
-
 -- MySQL Workbench Forward Engineering
 
 -- -----------------------------------------------------
@@ -167,7 +166,12 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `activation_codes` (
   `activation_code` VARCHAR(255) NOT NULL,
   `organization_id` INT NOT NULL,
+  `meals_authorized` INT NULL,
+  `meals_remaining` INT NULL,
+  `activated` TINYINT NULL COMMENT 'true/false whether this voucher can be used',
+  `comments` VARCHAR(255) NULL,
   `created` VARCHAR(45) NULL,
+  `user_id` INT NULL COMMENT 'the user who “owns” this voucher',
   PRIMARY KEY (`activation_code`))
 ENGINE = InnoDB;
 
@@ -249,17 +253,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `user_hashes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_hashes` (
-  `users_id` INT NOT NULL,
-  `hashed_secret` VARCHAR(255) NULL,
-  `salt` VARCHAR(255) NULL,
-  PRIMARY KEY (`users_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `payment_instruments`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `payment_instruments` (
@@ -271,8 +264,10 @@ CREATE TABLE IF NOT EXISTS `payment_instruments` (
   `orginal_balance` DECIMAL(10,2) NULL,
   `balance` DECIMAL(10,2) NULL,
   `last_used_datetime` DATETIME NULL,
+  `pin_number` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `order_payments`
