@@ -62,7 +62,23 @@ public class TestDefaultOrderProcessorService {
         MockitoAnnotations.initMocks(this);
         argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
         partialOrder = new PartialOrder();
+
+    }
+
+    private void standardTestData() {
         user = new User("John", "Handcock", "1234567890");
+
+        ProviderLocation providerLocation = new ProviderLocation(1L);
+        providerLocation.setName("Subway");
+        providerLocationList.add(providerLocation);
+
+        providerLocation = new ProviderLocation(2L);
+        providerLocation.setName("McDonalds");
+        providerLocationList.add(providerLocation);
+
+        providerLocation = new ProviderLocation(3L);
+        providerLocation.setName("Waffle House");
+        providerLocationList.add(providerLocation);
     }
 
     @Test
@@ -89,7 +105,7 @@ public class TestDefaultOrderProcessorService {
         partialOrder.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
 
         Mockito.when(partialOrderDAO.get(user)).thenReturn(partialOrder);
-        Mockito.when(geoCodingService.resolveAddress(Mockito.anyString())).thenReturn();
+        Mockito.when(geoCodingService.searchNearbyLocations(Mockito.anyString())).thenReturn();
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
