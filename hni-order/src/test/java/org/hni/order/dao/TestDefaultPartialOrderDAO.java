@@ -1,6 +1,6 @@
 package org.hni.order.dao;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.hni.order.om.OrderItem;
 import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 

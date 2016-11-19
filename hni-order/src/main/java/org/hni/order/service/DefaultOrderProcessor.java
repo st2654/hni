@@ -9,7 +9,7 @@ import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.GeoCodingException;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.ProviderLocation;
-import org.hni.provider.service.DefaultProviderLocationService;
+import org.hni.provider.service.ProviderLocationService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     private DefaultPartialOrderDAO partialOrderDAO;
 
     @Inject
-    private DefaultProviderLocationService locationService;
+    private ProviderLocationService locationService;
 
     @Inject
     private OrderDAO orderDAO;
@@ -92,8 +92,9 @@ public class DefaultOrderProcessor implements OrderProcessor {
                     items.add(location.getProvider().getMenus().iterator().next().getMenuItems().iterator().next());
                 }
                 order.setMenuItemsForSelection(items);
+                output += "Please provide a number between 1-3\n";
                 for (int i = 0 ; i < 3; i++) {
-                    output += i + ") " + nearbyProviders.get(i).getName() + "(" + items.get(i).getName() + ")\n";
+                    output += (i + 1) + ") " + nearbyProviders.get(i).getName() + " (" + items.get(i).getName() + ")\n";
                 }
                 order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
             } else {
@@ -114,13 +115,18 @@ public class DefaultOrderProcessor implements OrderProcessor {
             if (index < 1 || index > 3) {
                 throw new IndexOutOfBoundsException();
             }
-            ProviderLocation location = order.getProviderLocationsForSelection().get(index-1);
+            ProviderLocation location = order.getProviderLocationsForSelection().get(index - 1);
             order.setChosenProvider(location);
-            MenuItem chosenItem = order.getMenuItemsForSelection().get(index-1);
+            MenuItem chosenItem = order.getMenuItemsForSelection().get(index - 1);
             order.getOrderItems().add(new OrderItem((long)1, chosenItem.getPrice(), chosenItem));
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output = "Please provide a number between 1-3";
+            output += "Invalid input\n";
+            output += "Please provide a number between 1-3\n";
+            for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
+                output += (i + 1) + ") " + order.getProviderLocationsForSelection().get(i).getName()
+                        + " (" + order.getProviderLocationsForSelection().get(i).getName() + ")\n";
+            }
         }
         return output;
     }
