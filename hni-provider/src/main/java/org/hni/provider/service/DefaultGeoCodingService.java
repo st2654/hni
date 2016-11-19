@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.apache.http.client.fluent.Request;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.Address;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +16,7 @@ import java.util.Optional;
 /**
  * Created by walmart on 11/14/16.
  */
+@Component
 public class DefaultGeoCodingService implements GeoCodingService {
 
     private static final String GOOGLE_MAP_API_KEY="AIzaSyBCmt3RMn46CIpxUx20hmlpPbx6ws-lbkI";

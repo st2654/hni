@@ -1,5 +1,6 @@
 package org.hni.order.service;
 
+import org.hni.order.dao.DefaultPartialOrderDAO;
 import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.MenuItem;
@@ -9,17 +10,22 @@ import org.hni.provider.service.MenuService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Address;
 import org.hni.user.om.User;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class DefaultOrderProcessor implements OrderProcessor {
     private static final double PROVIDER_SEARCH_RADIUS = 5;
 
     @Inject
     private UserDAO userDao;
+
+    @Inject
+    DefaultPartialOrderDAO partialOrderDAO;
 
     @Inject
     private GeoCodingService geoService;
@@ -29,7 +35,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     public String processMessage(User user, String message) {
         //this partial order is the one I get for this user
-        PartialOrder order = new PartialOrder();
+        PartialOrder order = partialOrderDAO.get(user);
         if (order == null) {
             order = new PartialOrder();
             order.setTransactionPhase(TransactionPhase.MEAL);
@@ -64,7 +70,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         return processMessage(userDao.get(userId), message);
     }
 
-    private String findNearbyMeals(String addressString, PartialOrder order) {
+    protected String findNearbyMeals(String addressString, PartialOrder order) {
         String output = "";
         Optional<Address> address = geoService.resolveAddress(addressString);
         if (address.isPresent()) {
