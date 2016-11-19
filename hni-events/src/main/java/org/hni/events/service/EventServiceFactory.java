@@ -48,9 +48,7 @@ public class EventServiceFactory {
                 // clear previous workflow as a new keyword is received
                 sessionStateDao.delete(sessionId);
             }
-            if (!sessionStateDao.insert(new SessionState(eventName, event.getSessionId(), event.getPhoneNumber()))) {
-                throw new RuntimeException("Insert failed. Maybe the state is inserted by others. Retry or Reset");
-            }
+            sessionStateDao.insert(new SessionState(eventName, event.getSessionId(), event.getPhoneNumber()));
         }
         // set value to current workflow's value when it is not a keyword value
         return eventServiceMap.get(eventName).handleEvent(event);
