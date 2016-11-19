@@ -1,6 +1,6 @@
 package org.hni.events.service;
 
-import org.hni.events.service.dao.SessionStateDao;
+import org.hni.events.service.dao.SessionStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.SessionState;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class EventServiceFactory {
 
     @Autowired
-    private SessionStateDao sessionStateDao;
+    private SessionStateDAO sessionStateDAO;
 
     @Autowired
     private RegisterService registerService;
@@ -34,7 +34,7 @@ public class EventServiceFactory {
 
     public String handleEvent(final Event event) {
         final String sessionId = event.getSessionId();
-        final SessionState state = sessionStateDao.get(sessionId);
+        final SessionState state = sessionStateDAO.get(sessionId);
         EventName eventName = parseKeyWordToEventName(event.getTextMessage());
         if (eventName == null) {
             if (state == null) {
@@ -46,9 +46,9 @@ public class EventServiceFactory {
         } else {
             if (state != null) {
                 // clear previous workflow as a new keyword is received
-                sessionStateDao.delete(sessionId);
+                sessionStateDAO.delete(sessionId);
             }
-            sessionStateDao.insert(new SessionState(eventName, event.getSessionId(), event.getPhoneNumber()));
+            sessionStateDAO.insert(new SessionState(eventName, event.getSessionId(), event.getPhoneNumber()));
         }
         // set value to current workflow's value when it is not a keyword value
         return eventServiceMap.get(eventName).handleEvent(event);

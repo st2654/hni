@@ -2,7 +2,7 @@ package org.hni.events.service.dao;
 
 import org.hni.events.service.om.SessionState;
 
-public interface SessionStateDao {
+public interface SessionStateDAO {
 
     SessionState get(String sessionId);
 

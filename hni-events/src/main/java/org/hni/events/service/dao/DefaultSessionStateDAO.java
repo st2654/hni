@@ -5,12 +5,12 @@ import org.hni.events.service.om.SessionState;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultSessionStateDao implements SessionStateDao {
+public class DefaultSessionStateDAO implements SessionStateDAO {
 
     //TODO get rid of this with real DAO
     Map<String, SessionState> sessionStateMap;
 
-    public DefaultSessionStateDao() {
+    public DefaultSessionStateDAO() {
         sessionStateMap = new HashMap<>();
     }
 

@@ -1,7 +1,7 @@
 package org.hni.events.service;
 
-import org.hni.events.service.dao.DefaultSessionStateDao;
-import org.hni.events.service.dao.SessionStateDao;
+import org.hni.events.service.dao.DefaultSessionStateDAO;
+import org.hni.events.service.dao.SessionStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.EventState;
@@ -10,14 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -36,7 +30,7 @@ public class EventServiceFactoryIntTest {
     private RegisterService registerService = new RegisterService();
 
     @Spy
-    private SessionStateDao sessionStateDao = new DefaultSessionStateDao();
+    private SessionStateDAO sessionStateDao = new DefaultSessionStateDAO();
 
     @Before
     public void setUp() {

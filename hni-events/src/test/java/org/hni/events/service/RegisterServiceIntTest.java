@@ -1,7 +1,7 @@
 package org.hni.events.service;
 
-import org.hni.events.service.dao.DefaultSessionStateDao;
-import org.hni.events.service.dao.SessionStateDao;
+import org.hni.events.service.dao.DefaultSessionStateDAO;
+import org.hni.events.service.dao.SessionStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.EventState;
@@ -9,20 +9,9 @@ import org.hni.events.service.om.SessionState;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.*;
 
 public class RegisterServiceIntTest {
 
@@ -33,7 +22,7 @@ public class RegisterServiceIntTest {
     private RegisterService registerService;
 
     @Spy
-    SessionStateDao sessionStateDao = new DefaultSessionStateDao();
+    SessionStateDAO sessionStateDAO = new DefaultSessionStateDAO();
 
     private SessionState state;
 
@@ -41,7 +30,7 @@ public class RegisterServiceIntTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, null, EventState.STATE_REGISTER_START);
-        sessionStateDao.insert(state);
+        sessionStateDAO.insert(state);
     }
 
     @Test
@@ -50,7 +39,7 @@ public class RegisterServiceIntTest {
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?", returnString);
-        SessionState nextState = sessionStateDao.get(SESSION_ID);
+        SessionState nextState = sessionStateDAO.get(SESSION_ID);
 
         Assert.assertEquals(SESSION_ID, nextState.getSessionId());
         Assert.assertEquals(PHONE_NUMBER, nextState.getPhoneNumber());

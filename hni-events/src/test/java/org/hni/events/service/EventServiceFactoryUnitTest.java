@@ -1,6 +1,6 @@
 package org.hni.events.service;
 
-import org.hni.events.service.dao.SessionStateDao;
+import org.hni.events.service.dao.SessionStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.SessionState;
@@ -25,7 +25,7 @@ public class EventServiceFactoryUnitTest {
     private EventServiceFactory factory;
 
     @Mock
-    private SessionStateDao sessionStateDao;
+    private SessionStateDAO sessionStateDAO;
 
     @Mock
     private RegisterService registerService;
@@ -38,49 +38,49 @@ public class EventServiceFactoryUnitTest {
         MockitoAnnotations.initMocks(this);
         factory.init();
         event = new Event(SESSION_ID, PHONE_NUMBER, "message");
-        when(sessionStateDao.insert(any(SessionState.class))).thenReturn(new SessionState());
+        when(sessionStateDAO.insert(any(SessionState.class))).thenReturn(new SessionState());
         when(registerService.handleEvent(eq(event))).thenReturn(REUTRN_MESSAGE);
     }
 
     @Test
     public void testInvalidEventAndNoActiveWorkFlow() {
-        when(sessionStateDao.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         Assert.assertEquals("Unknown keyword " + event.getTextMessage(), factory.handleEvent(event));
-        verify(sessionStateDao, times(0)).insert(any(SessionState.class));
+        verify(sessionStateDAO, times(0)).insert(any(SessionState.class));
     }
 
     @Test
     public void testInvalidEventWithActiveWorkFlow() {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER);
-        when(sessionStateDao.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         Assert.assertEquals(REUTRN_MESSAGE, factory.handleEvent(event));
-        verify(sessionStateDao, times(0)).insert(any(SessionState.class));
+        verify(sessionStateDAO, times(0)).insert(any(SessionState.class));
     }
 
     @Test
     public void testStartRegisterWorkFlow() {
-        when(sessionStateDao.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         event.setTextMessage("SIGNUP");
         Assert.assertEquals(REUTRN_MESSAGE, factory.handleEvent(event));
-        verify(sessionStateDao, never()).delete(eq(SESSION_ID));
-        verify(sessionStateDao, times(1)).insert(any(SessionState.class));
+        verify(sessionStateDAO, never()).delete(eq(SESSION_ID));
+        verify(sessionStateDAO, times(1)).insert(any(SessionState.class));
     }
 
     @Test
     public void testInterruptExistingWorkFlow() {
         state = new SessionState(EventName.MEAL, SESSION_ID, PHONE_NUMBER);
-        when(sessionStateDao.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         event.setTextMessage("SIGNUP");
         Assert.assertEquals(REUTRN_MESSAGE, factory.handleEvent(event));
-        verify(sessionStateDao, times(1)).delete(eq(SESSION_ID));
-        verify(sessionStateDao, times(1)).insert(any(SessionState.class));
+        verify(sessionStateDAO, times(1)).delete(eq(SESSION_ID));
+        verify(sessionStateDAO, times(1)).insert(any(SessionState.class));
     }
 
     @Test
     public void testContinueRegisterWorkFlow() {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER);
-        when(sessionStateDao.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         Assert.assertEquals(REUTRN_MESSAGE, factory.handleEvent(event));
-        verify(sessionStateDao, never()).insert(any(SessionState.class));
+        verify(sessionStateDAO, never()).insert(any(SessionState.class));
     }
 }
