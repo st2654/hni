@@ -1,11 +1,8 @@
 package org.hni.order.service;
 
-<<<<<<< HEAD
 import org.hni.order.dao.DefaultPartialOrderDAO;
-=======
 import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
->>>>>>> 57f7293bebddbdfa9fc190eaa06f4f1fb3ac0db3
 import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.MenuItem;
