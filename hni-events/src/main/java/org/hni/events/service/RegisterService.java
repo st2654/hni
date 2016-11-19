@@ -5,22 +5,22 @@ import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.user.om.User;
+import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class RegisterService extends AbstractEventService<User> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterService.class);
 
-    @Autowired
-    @Qualifier("customerService")
-    private CustomerService customerService;
+    @Inject
+    private UserService customerService;
 
-    @Autowired
+    @Inject
     private ActivationCodeService activationCodeService;
 
     @Override
