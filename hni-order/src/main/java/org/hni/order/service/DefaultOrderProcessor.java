@@ -49,6 +49,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
         switch (phase) {
             case MEAL:
+                output = requestingMeal(message, order);
                 break;
             case PROVIDING_ADDRESS:
                 output = findNearbyMeals(message, order);
@@ -65,7 +66,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             default:
                 //shouldn't get here
         }
-
+        partialOrderDAO.save(order);
         return output;
     }
 
@@ -73,7 +74,12 @@ public class DefaultOrderProcessor implements OrderProcessor {
         return processMessage(userDao.get(userId), message);
     }
 
-    protected String findNearbyMeals(String addressString, PartialOrder order) {
+    private String requestingMeal(String request, PartialOrder order) {
+        order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
+        return "Please provide your address";
+    }
+
+    private String findNearbyMeals(String addressString, PartialOrder order) {
         String output = "";
         Optional<Address> address = geoService.resolveAddress(addressString);
         if (address.isPresent()) {
@@ -86,7 +92,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             }
             order.setMenuItemsForSelection(items);
             for (int i = 0 ; i < 3; i++) {
-                output += i + "." + nearbyProviders.get(i).getName() + "(" + items.get(i).getName() + ")";
+                output += i + ") " + nearbyProviders.get(i).getName() + "(" + items.get(i).getName() + ")\n";
             }
             order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
         } else {

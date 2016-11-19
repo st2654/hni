@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Verifies that the PartialOrder DAO is working
@@ -33,7 +36,9 @@ public class TestDefaultPartialOrderDAO {
 
         partialOrder.setChosenProvider(new ProviderLocation(1L));
         partialOrder.setMenuItemsForSelection(Arrays.asList(new MenuItem(1L)));
-        partialOrder.setOrderItems(Arrays.asList(new OrderItem(1L)));
+        Set set = new HashSet<>();
+        set.add(new OrderItem(1L));
+        partialOrder.setOrderItems(set);
         partialOrder.setProviderLocationsForSelection(Arrays.asList(new ProviderLocation(2L)));
         partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
 
