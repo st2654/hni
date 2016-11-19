@@ -8,10 +8,11 @@ import org.hni.order.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.springframework.stereotype.Component;
 
-@Singleton
+import javax.inject.Inject;
+
+@Component
 public class OrderingService extends AbstractEventService<Order> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderingService.class);

@@ -1,21 +1,21 @@
 package org.hni.events.service;
 
-import org.hni.events.service.dao.SessionStateDao;
+import org.hni.events.service.dao.SessionStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.SessionState;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 
-@Singleton
+@Component
 public class EventServiceFactory {
 
     @Inject
-    private SessionStateDao sessionStateDao;
+    private SessionStateDAO sessionStateDAO;
 
     @Inject
     private RegisterService registerService;
@@ -34,7 +34,7 @@ public class EventServiceFactory {
 
     public String handleEvent(final Event event) {
         final String sessionId = event.getSessionId();
-        final SessionState state = sessionStateDao.get(sessionId);
+        final SessionState state = sessionStateDAO.get(sessionId);
         EventName eventName = parseKeyWordToEventName(event.getTextMessage());
         if (eventName == null) {
             if (state == null) {
@@ -46,11 +46,9 @@ public class EventServiceFactory {
         } else {
             if (state != null) {
                 // clear previous workflow as a new keyword is received
-                sessionStateDao.delete(sessionId);
+                sessionStateDAO.delete(sessionId);
             }
-            if (!sessionStateDao.insert(new SessionState(eventName, event.getSessionId(), event.getPhoneNumber()))) {
-                throw new RuntimeException("Insert failed. Maybe the state is inserted by others. Retry or Reset");
-            }
+            sessionStateDAO.insert(new SessionState(eventName, event.getSessionId(), event.getPhoneNumber()));
         }
         // set value to current workflow's value when it is not a keyword value
         return eventServiceMap.get(eventName).handleEvent(event);

@@ -1,7 +1,8 @@
 package org.hni.events.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hni.events.service.dao.SessionStateDao;
+
+import org.hni.events.service.dao.SessionStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
@@ -17,12 +18,14 @@ import java.io.IOException;
  */
 public abstract class AbstractEventService<T> implements EventService {
 
-    protected SessionStateDao sessionStateDao;
+    protected SessionStateDAO sessionStateDAO;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public String handleEvent(Event event) {
-        final SessionState state = sessionStateDao.get(event.getSessionId());
+    @Override
+    public String handleEvent(final Event event) {
+        SessionState state = sessionStateDAO.get(event.getSessionId());
+
         // perform the workflow logic
         final WorkFlowStepResult stepResult = performWorkFlowStep(event, state);
 
@@ -30,7 +33,8 @@ public abstract class AbstractEventService<T> implements EventService {
             final SessionState nextState =
                     new SessionState(state.getEventName(), state.getSessionId(), state.getPhoneNumber(),
                             stepResult.getPayload(), stepResult.getNextStateCode());
-            sessionStateDao.update(nextState);
+
+            sessionStateDAO.update(nextState);
         }
         return stepResult.getReturnString();
     }
@@ -54,8 +58,8 @@ public abstract class AbstractEventService<T> implements EventService {
     }
 
     @Inject
-    public void setSessionStateDao(final SessionStateDao sessionStateDao) {
-        this.sessionStateDao = sessionStateDao;
+    public void setSessionStateDAO(final SessionStateDAO sessionStateDAO) {
+        this.sessionStateDAO = sessionStateDAO;
     }
 
     protected static class WorkFlowStepResult {

@@ -1,6 +1,7 @@
 package org.hni.events.service;
 
-import org.hni.events.service.dao.SessionStateDao;
+import org.hni.events.service.dao.DefaultSessionStateDAO;
+import org.hni.events.service.dao.SessionStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.EventState;
@@ -9,15 +10,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.*;
+import org.mockito.Spy;
 
 public class RegisterServiceIntTest {
 
@@ -27,32 +22,17 @@ public class RegisterServiceIntTest {
     @InjectMocks
     private RegisterService registerService;
 
-    @Mock
-    private SessionStateDao sessionStateDao;
 
-    private Map<String, SessionState> sessionStateDbMock = new HashMap<>();
+    @Spy
+    SessionStateDAO sessionStateDAO = new DefaultSessionStateDAO();
+
+    private SessionState state;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        SessionState state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, null, EventState.STATE_REGISTER_START);
-        sessionStateDbMock.put(SESSION_ID, state);
-
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return sessionStateDbMock.get(invocationOnMock.getArguments()[0]);
-            }
-        }).when(sessionStateDao).get(eq(SESSION_ID));
-
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                SessionState updatedState = (SessionState) invocationOnMock.getArguments()[0];
-                sessionStateDbMock.put(updatedState.getSessionId(), updatedState);
-                return true;
-            }
-        }).when(sessionStateDao).update(any(SessionState.class));
+        state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, null, EventState.STATE_REGISTER_START);
+        sessionStateDAO.insert(state);
     }
 
     @Test
@@ -61,8 +41,7 @@ public class RegisterServiceIntTest {
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?", returnString);
-        verify(sessionStateDao, times(1)).update(any(SessionState.class));
-        SessionState nextState = sessionStateDao.get(SESSION_ID);
+        SessionState nextState = sessionStateDAO.get(SESSION_ID);
         Assert.assertEquals(SESSION_ID, nextState.getSessionId());
         Assert.assertEquals(PHONE_NUMBER, nextState.getPhoneNumber());
         Assert.assertEquals(EventName.REGISTER, nextState.getEventName());
