@@ -16,6 +16,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.hni.common.Constants;
+import org.hni.common.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.om.AuthenticationResult;
@@ -113,7 +115,7 @@ public class UserSecurityController extends AbstractBaseController {
 			User user = organizationUserService.byEmailAddress(userInfo.getEmail());
 			if ( null == user ) { // create the user
 				user = fromUserInfo(userInfo);
-				user = organizationUserService.save(user, new Organization(VOLUNTEER_ORG_ID));
+				user = organizationUserService.save(user, new Organization(VOLUNTEER_ORG_ID), Role.get(Constants.USER));
 			}
 			JWTAuthenticationToken token = new JWTAuthenticationToken(user.getEmail(), user.getId());
 			Subject subject = SecurityUtils.getSubject();

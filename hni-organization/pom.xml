@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>org.hni</groupId>
 		<artifactId>hni-db-parent</artifactId>
-		<version>1.0</version>
+		<version>1.0-SNAPSHOT</version>
 		<relativePath>../hni-db-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>hni-organization</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>hni-organization</name>
 	<url>http://maven.apache.org</url>
 	<properties>

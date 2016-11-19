@@ -1,4 +1,4 @@
-insert into users values(1,'Super','User','M','mphone', 'superuser@hni.com', 0, 'qqIDI/cPs/CqdMo15uDhwAN/Zc+Z9VOUjLNGgxlC864=', '42M7kr4oektqA6Jgy9u1YQ==', now(), '0');
+insert into users values('Super','User','M','mphone', 'superuser@hni.com', 0, 'qqIDI/cPs/CqdMo15uDhwAN/Zc+Z9VOUjLNGgxlC864=', '42M7kr4oektqA6Jgy9u1YQ==', now(), '0');
 insert into users values(2,'Freddy','Fikes','M','479-555-1212', '', 0, '', '', now(), '0');
 insert into users values(3,'Mikey','Multiphone','M','479-555-4321', '', 0, '', '', now(), '0');
 insert into users values(4,'Mikey','Multiphone','M','479-555-5678', '', 0, '', '', now(), '0');
@@ -90,22 +90,3 @@ insert into security_role_permissions values(5,12,0);
 
 insert into activation_codes values('1234567890', 2, 10, 10, 1, null, now(), null);
 insert into activation_codes values('7h-1234567890', 2, 10, 10, 2, 'freddy has activated this', now(), 2);
-
-insert into providers values(2, 'KFC', now(), 1);
-insert into providers values(3, 'Wendys', now(), 1);
-
-insert into provider_locations values(2, 'KFC #1', 1, now(), 1);
-insert into provider_locations values(3, 'Wendy #1', 1, now(), 1);
-
-insert into addresses values
-(1, 'subway addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
-
-
-insert into addresses values
-(2, 'subway addr', '10790 parkridge blvd', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');
-
-
-insert into provider_location_addresses values(1, 1);
-insert into provider_location_addresses values(1, 2);
-insert into provider_location_addresses values(2, 2);
-insert into provider_location_addresses values(3, 2);

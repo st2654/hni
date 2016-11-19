@@ -6,10 +6,9 @@
 	<parent>
 		<groupId>org.hni</groupId>
 		<artifactId>hni-parent</artifactId>
-		<version>1.0</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>hni-admin-service</artifactId>
-	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>hni-admin-service</name>
 	<properties>
