@@ -6,6 +6,7 @@ import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
 import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
+import org.hni.provider.om.GeoCodingException;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.DefaultProviderLocationService;
@@ -80,23 +81,28 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String findNearbyMeals(String addressString, PartialOrder order) {
         String output = "";
-        List<ProviderLocation> nearbyProviders = (ArrayList) locationService.providersNearCustomer(addressString, 3);
-        if (!nearbyProviders.isEmpty()) {
-            //TODO actually find nearby addresses
-            order.setProviderLocationsForSelection(nearbyProviders);
-            List<MenuItem> items = new ArrayList<>();
-            for (ProviderLocation location : nearbyProviders) {
-                //TODO get the currently available menu items, not just first
-                items.add(location.getProvider().getMenus().iterator().next().getMenuItems().iterator().next());
+        try {
+            List<ProviderLocation> nearbyProviders = (ArrayList) locationService.providersNearCustomer(addressString, 3);
+            if (!nearbyProviders.isEmpty()) {
+                //TODO actually find nearby addresses
+                order.setProviderLocationsForSelection(nearbyProviders);
+                List<MenuItem> items = new ArrayList<>();
+                for (ProviderLocation location : nearbyProviders) {
+                    //TODO get the currently available menu items, not just first
+                    items.add(location.getProvider().getMenus().iterator().next().getMenuItems().iterator().next());
+                }
+                order.setMenuItemsForSelection(items);
+                for (int i = 0 ; i < 3; i++) {
+                    output += i + ") " + nearbyProviders.get(i).getName() + "(" + items.get(i).getName() + ")\n";
+                }
+                order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
+            } else {
+                output = "No provider locations near this address.";
             }
-            order.setMenuItemsForSelection(items);
-            for (int i = 0 ; i < 3; i++) {
-                output += i + ") " + nearbyProviders.get(i).getName() + "(" + items.get(i).getName() + ")\n";
-            }
-            order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
-        } else {
-            output = "Invalid address, please try again";
+        } catch (GeoCodingException e) {
+            output = e.getMessage();
         }
+
         return output;
     }
 
