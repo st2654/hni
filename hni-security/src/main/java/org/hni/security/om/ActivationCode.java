@@ -24,7 +24,7 @@ public class ActivationCode implements Serializable, Persistable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "activation_code")
-	private String id;
+	private Long id;
 
 	@Column(name = "organization_id") private Long organizationId;
 	@Column(name = "meals_authorized") private Long mealsAuthorized;
@@ -39,11 +39,11 @@ public class ActivationCode implements Serializable, Persistable {
 	private User user;
 
 	@Override
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

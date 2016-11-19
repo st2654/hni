@@ -57,9 +57,10 @@ public class TestCustomerService {
         user.setLastName("Taletiya");
         user.setMobilePhone("9876543210");
         user.setEmail("sourabh.taletiya@test.com");
-        String authCode = "1234567890";
+        Long authCode = 123456L;
+
         customerService.registerCustomer(user, authCode);
-        ActivationCode activationCode = activationCodeService.get(authCode);
+        ActivationCode activationCode = activationCodeService.getByCode(authCode);
         assertThat(activationCode.getUser().getId(), is(user.getId()));
         assertThat(activationCode.getUser().getMobilePhone(), is("9876543210"));
     }
@@ -72,11 +73,11 @@ public class TestCustomerService {
     @Test
     public void testRegisterSameCustomer() {
         User user = customerService.get(3l);
-        String authCode = "1234567890";
+        Long authCode = 123456L;
         customerService.registerCustomer(user, authCode);
 
         assertThat(customerService.byMobilePhone("479-555-4321").size(), is(1));
-        ActivationCode activationCode = activationCodeService.get(authCode);
+        ActivationCode activationCode = activationCodeService.getByCode(authCode);
         assertThat(user.getId(), is(activationCode.getUser().getId()));
         List<UserOrganizationRole> uors = organizationUserService.getUserOrganizationRoles(user).stream()
                 .filter(userOrganizationRole -> userOrganizationRole.getId().getRoleId().equals(Role.get(Constants.CLIENT).getId()))
@@ -92,9 +93,9 @@ public class TestCustomerService {
     @Test
     public void testRegisterCustomerWithMultipleAuthCode() {
         User user = customerService.get(3l);
-        String authCode = "1234567890";
+        Long authCode = 123456L;
         customerService.registerCustomer(user, authCode);
-        ActivationCode activationCode = activationCodeService.get(authCode);
+        ActivationCode activationCode = activationCodeService.getByCode(authCode);
         List<UserOrganizationRole> uors = organizationUserService.getUserOrganizationRoles(user).stream()
                 .filter(userOrganizationRole -> userOrganizationRole.getId().getRoleId().equals(Role.get(Constants.CLIENT).getId()))
                 .filter(userOrganizationRole -> userOrganizationRole.getId().getOrgId().equals(activationCode.getOrganizationId()))

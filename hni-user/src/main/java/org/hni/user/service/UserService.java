@@ -27,7 +27,7 @@ public interface UserService extends BaseService<User> {
         return true;
     }
 
-    default User registerCustomer(User user, String authCode) {
+    default User registerCustomer(User user, Long authCode) {
         //do nothing
         return user;
     }

@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.hni.common.service.AbstractService;
 import org.hni.security.dao.ActivationCodeDAO;
 import org.hni.security.om.ActivationCode;
+import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,20 +29,37 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 	}
 
 	@Override
-	public boolean validate(String id) {
-		ActivationCode code = activationCodeDao.get(id);
-		return (code == null);
+	public boolean validate(String authCode) {
+        Long authCodeId;
+
+        try {
+            authCodeId = Long.valueOf(authCode);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+		ActivationCode code = activationCodeDao.get(decode(authCodeId));
+		return code != null
+            && code.getOrganizationId() != null
+			&& !code.isActivated()
+			&& code.getMealsRemaining() > 0
+			&& code.getMealsAuthorized() > 0;
 	}
-	
+
 	@Override
-	public String encode(Long authCode)
-	{   long encodedCode;
-		encodedCode=(305914*(authCode-LARGE_BASE)+OFFSET) % LARGE_PRIME; 
+    public ActivationCode getByCode(Long authCode) {
+        return activationCodeDao.get(decode(authCode));
+    }
+
+	@Override
+	public String encode(Long authCodeId) {
+        long encodedCode;
+		encodedCode=(305914*(authCodeId-LARGE_BASE)+OFFSET) % LARGE_PRIME;
 		return String.format("%06d", encodedCode);
 	}
 	
 	@Override
-	public Long decode(Long authCode )
+	public Long decode(Long authCode)
 	{   
 		return (605673*(authCode -OFFSET)+LARGE_BASE) % LARGE_PRIME ;
  		
