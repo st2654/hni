@@ -33,14 +33,13 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 		this.uorDao = uorDao;
 	}
 
-	@Override
-	public User save(User user, Organization org) {
-		super.save(user);
-
-		UserOrganizationRole uor = new UserOrganizationRole(user, org, Role.get(Constants.USER));
-		uorDao.save(uor);
-		return user;
-	}
+    @Override
+    public User save(User user, Organization org, Role role) {
+        super.save(user);
+        UserOrganizationRole uor = new UserOrganizationRole(user, org, role);
+        uorDao.save(uor);
+        return user;
+    }
 
 	@Override
 	public Collection<User> getByRole(Organization org, Role role) {

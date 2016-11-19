@@ -18,7 +18,7 @@ public interface OrganizationUserService extends UserService {
 	 * @param role
 	 * @return
 	 */
-	User save(User user, Organization org);
+	User save(User user, Organization org, Role role);
 
 	/**
 	 * Removes the user and all their data from the organization. Sets the
