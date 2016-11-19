@@ -13,5 +13,4 @@ public interface GeoCodingService {
 
     Optional<Address> resolveAddress(String address);
 
-    List<ProviderLocation> searchNearbyLocations(Address address, double distanceMiles);
 }
