@@ -1,8 +1,5 @@
 package org.hni.admin.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -18,9 +15,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.shiro.util.ThreadContext;
 import org.hni.common.Constants;
+import org.hni.common.exception.HNIException;
 import org.hni.common.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
@@ -30,6 +29,9 @@ import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
@@ -48,10 +50,11 @@ public class UserServiceController {
 	, notes = ""
 	, response = User.class
 	, responseContainer = "")
-	public User getUser(@PathParam("id") Long id) {
-		return orgUserService.get(id);
+	public Response getUser(@PathParam("id") Long id) {
+		//return orgUserService.get(id);
+		return Response.ok(orgUserService.get(id), MediaType.APPLICATION_JSON).build();
 	}
-
+	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})

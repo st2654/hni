@@ -1,6 +1,7 @@
 package org.hni.order.service;
 
 import org.hni.order.dao.DefaultPartialOrderDAO;
+import org.hni.order.dao.OrderDAO;
 import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
 import org.hni.order.om.PartialOrder;
@@ -8,7 +9,6 @@ import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.GeoCodingService;
-import org.hni.provider.service.MenuService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Address;
 import org.hni.user.om.User;
@@ -31,10 +31,11 @@ public class DefaultOrderProcessor implements OrderProcessor {
     DefaultPartialOrderDAO partialOrderDAO;
 
     @Inject
-    private GeoCodingService geoService;
+    OrderDAO orderDAO;
 
     @Inject
-    private MenuService menuService;
+    private GeoCodingService geoService;
+
 
     public String processMessage(User user, String message) {
         //this partial order is the one I get for this user
@@ -83,7 +84,9 @@ public class DefaultOrderProcessor implements OrderProcessor {
         String output = "";
         Optional<Address> address = geoService.resolveAddress(addressString);
         if (address.isPresent()) {
-            List<ProviderLocation> nearbyProviders = geoService.searchNearbyLocations(address.get(), PROVIDER_SEARCH_RADIUS);
+            //TODO actually find nearby addresses
+            // List<ProviderLocation> nearbyProviders = geoService.resolveAddress(address.get(), PROVIDER_SEARCH_RADIUS);
+            List<ProviderLocation> nearbyProviders = new ArrayList<>();
             order.setProviderLocationsForSelection(nearbyProviders);
             List<MenuItem> items = new ArrayList<>();
             for (ProviderLocation location : nearbyProviders) {
@@ -131,6 +134,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 finalOrder.setProviderLocation(order.getChosenProvider());
                 finalOrder.setOrderItems(order.getOrderItems());
                 finalOrder.setSubTotal(order.getOrderItems().stream().map(item -> (item.getAmount() * item.getQuantity())).reduce(0.0, Double::sum));
+                orderDAO.save(finalOrder);
                 break;
             case "CONTINUE":
                 order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
