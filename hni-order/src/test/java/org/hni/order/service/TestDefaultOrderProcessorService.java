@@ -258,6 +258,29 @@ public class TestDefaultOrderProcessorService {
     }
 
     @Test
+    public void processMessage_confirmOrRedo_cancel() {
+        // Setup
+        String message = "Cancel";
+
+        user.setId(1L);
+        partialOrder.setUser(user);
+        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+        partialOrder.setProviderLocationsForSelection(providerLocationList);
+
+        Mockito.when(partialOrderDAO.get(user)).thenReturn(partialOrder);
+        Mockito.when(orderDAO.save(Mockito.any())).thenReturn(null);
+
+        Date orderDate = new Date();
+        // Execute
+        String output = orderProcessor.processMessage(user, message);
+        String expectedOutput = "You have successfully cancelled your order.";
+
+        // Verify
+        Assert.assertEquals(expectedOutput, output);
+        Mockito.verify(partialOrderDAO, Mockito.times(1)).delete(partialOrder);
+    }
+
+    @Test
     public void processMessage_confirmOrRed_redo() {
         // Setup
         String message = "REDO";
@@ -312,6 +335,40 @@ public class TestDefaultOrderProcessorService {
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
         Mockito.verify(partialOrderDAO, Mockito.times(1)).save(argumentCaptor.capture());
         Assert.assertEquals(TransactionPhase.CONFIRM_OR_CONTINUE, argumentCaptor.getValue().getTransactionPhase());
+    }
+
+    @Test
+    public void processMessage_cancel_noOrder() {
+        // Setup
+        String message = "Cancel";
+
+        user.setId(1L);
+
+        Mockito.when(partialOrderDAO.get(user)).thenReturn(null);
+
+        // Execute
+        String output = orderProcessor.processMessage(user, message);
+        String expectedOutput = "You are not currently ordering, please respond with MEAL to place an order.";
+
+        // Verify
+        Assert.assertEquals(expectedOutput, output);
+    }
+
+    @Test
+    public void processMessage_junk_noOrder() {
+        // Setup
+        String message = "(o.o)7";
+
+        user.setId(1L);
+
+        Mockito.when(partialOrderDAO.get(user)).thenReturn(null);
+
+        // Execute
+        String output = orderProcessor.processMessage(user, message);
+        String expectedOutput = "I don't understand that, please say MEAL to request a meal.";
+
+        // Verify
+        Assert.assertEquals(expectedOutput, output);
     }
 
 }

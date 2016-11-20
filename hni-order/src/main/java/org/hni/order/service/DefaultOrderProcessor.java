@@ -38,9 +38,16 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public String processMessage(User user, String message) {
         //this partial order is the one I get for this user
         PartialOrder order = partialOrderDAO.get(user);
-        if (order == null) {
+        boolean cancellation = message.equalsIgnoreCase("CANCEL");
+
+        if (order == null && cancellation) {
+            return "You are not currently ordering, please respond with MEAL to place an order.";
+        } else if (order == null) {
             order = new PartialOrder();
             order.setTransactionPhase(TransactionPhase.MEAL);
+        } else if (cancellation) {
+            partialOrderDAO.delete(order);
+            return "You have successfully cancelled your order.";
         }
 
         TransactionPhase phase = order.getTransactionPhase();
@@ -75,7 +82,11 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String requestingMeal(String request, PartialOrder order) {
         order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
-        return "Please provide your address or CANCEL to quit";
+        if (request.equalsIgnoreCase("MEAL")) {
+            return "Please provide your address or CANCEL to quit";
+        } else {
+            return "I don't understand that, please say MEAL to request a meal.";
+        }
     }
 
     private String findNearbyMeals(String addressString, PartialOrder order) {
