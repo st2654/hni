@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +56,11 @@ public class PartialOrder implements Persistable, Serializable {
     @Column(name = "transaction_phase")
     private TransactionPhase transactionPhase;
 
+    public PartialOrder() {
+        this.providerLocationsForSelection = new ArrayList<>();
+        this.menuItemsForSelection = new ArrayList<>();
+        this.orderItems = new HashSet<>();
+    }
 
     @Override
     public Long getId() {
