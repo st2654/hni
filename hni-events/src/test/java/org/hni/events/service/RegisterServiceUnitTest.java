@@ -54,7 +54,7 @@ public class RegisterServiceUnitTest {
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?", returnString);
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first and last name?", returnString);
         verify(sessionStateDAO, times(1)).update(any(SessionState.class));
     }
 

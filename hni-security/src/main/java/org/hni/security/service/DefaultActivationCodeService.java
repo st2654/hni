@@ -1,7 +1,6 @@
 package org.hni.security.service;
 
-import javax.inject.Inject;
-
+import org.apache.commons.codec.binary.Base64;
 import org.hni.common.service.AbstractService;
 import org.hni.security.dao.ActivationCodeDAO;
 import org.hni.security.om.ActivationCode;
@@ -10,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.codec.binary.Base64;
+
+import javax.inject.Inject;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -32,7 +32,12 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 	public <T> boolean validate(T authCode) {
         Long authCodeLong;
         try {
-            authCodeLong = Long.class.cast(authCode);
+			// wmenez1: why is there a need for a generic here?
+			if (authCode instanceof String) {
+				authCodeLong = Long.valueOf((String) authCode);
+			} else {
+				authCodeLong = Long.valueOf((Long) authCode);
+			}
         } catch (ClassCastException e) {
             return false;
         }
