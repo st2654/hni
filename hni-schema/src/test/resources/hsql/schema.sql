@@ -164,7 +164,8 @@ ENGINE = InnoDB;
 -- Table `activation_codes`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `activation_codes` (
-  `activation_code` VARCHAR(255) NOT NULL,
+  `activation_code_id` VARCHAR(255) NOT NULL,
+  `activation_code` INT NOT NULL,
   `organization_id` INT NOT NULL,
   `meals_authorized` INT NULL,
   `meals_remaining` INT NULL,
