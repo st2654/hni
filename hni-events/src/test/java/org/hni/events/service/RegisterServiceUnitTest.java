@@ -5,6 +5,8 @@ import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
+import org.hni.security.service.ActivationCodeService;
+import org.hni.user.om.User;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,14 +18,22 @@ import static org.mockito.Mockito.*;
 
 public class RegisterServiceUnitTest {
 
-    private static final String SESSION_ID = "1";
+    //TODO FIX SESSION_ID and phoneNumber REFACTOR
+    private static final String SESSION_ID = "8188461238";
     private static final String PHONE_NUMBER = "8188461238";
+    private static final String AUTH_CODE = "123456";
 
     @InjectMocks
     private RegisterService registerService;
 
     @Mock
     private SessionStateDAO sessionStateDAO;
+
+    @Mock
+    private CustomerService customerService;
+
+    @Mock
+    private ActivationCodeService activationCodeService;
 
     private Event event;
     private SessionState state = null;
@@ -33,6 +43,8 @@ public class RegisterServiceUnitTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         event = new Event(SESSION_ID, PHONE_NUMBER, "message");
+        when(customerService.validate(any(User.class))).thenReturn(true);
+        when(activationCodeService.validate(eq(AUTH_CODE))).thenReturn(true);
     }
 
     @Test
@@ -82,7 +94,7 @@ public class RegisterServiceUnitTest {
     @Test
     public void testGetAuthCode() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_AUTH_CODE);
-        event.setTextMessage("123456");
+        event.setTextMessage(AUTH_CODE);
         when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Ok. You're all setup for yourself. If you have additional family"
@@ -94,6 +106,7 @@ public class RegisterServiceUnitTest {
     @Test
     public void testAddMoreAuthCodes() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_MORE_AUTH_CODES);
+        event.setTextMessage(AUTH_CODE);
         when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("We have added that authorization code to your family account. Please"

@@ -23,9 +23,10 @@ public class ActivationCode implements Serializable, Persistable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "activation_code")
+	@Column(name = "activation_code_id")
 	private String id;
 
+	@Column(name = "activation_code") private Long activationCode;
 	@Column(name = "organization_id") private Long organizationId;
 	@Column(name = "meals_authorized") private Long mealsAuthorized;
 	@Column(name = "meals_remaining") private Long mealsRemaining;
@@ -42,6 +43,10 @@ public class ActivationCode implements Serializable, Persistable {
 	public String getId() {
 		return this.id;
 	}
+
+	public void setActivationCode(Long activationCode) { this.activationCode = activationCode; }
+
+	public Long getActivationCode() { return this.activationCode; }
 
 	public void setId(String id) {
 		this.id = id;

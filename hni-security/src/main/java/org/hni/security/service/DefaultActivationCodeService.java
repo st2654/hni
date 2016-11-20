@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.codec.binary.Base64;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -28,23 +29,43 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 	}
 
 	@Override
-	public boolean validate(String id) {
-		ActivationCode code = activationCodeDao.get(id);
-		return (code == null);
+	public <T> boolean validate(T authCode) {
+        Long authCodeLong;
+        try {
+            authCodeLong = Long.class.cast(authCode);
+        } catch (ClassCastException e) {
+            return false;
+        }
+
+		ActivationCode code = getByActivationCode(authCodeLong);
+		return code != null
+            && code.getOrganizationId() != null
+			&& !code.isActivated()
+			&& code.getMealsRemaining() > 0
+			&& code.getMealsAuthorized() > 0;
 	}
-	
+
 	@Override
-	public String encode(Long authCode)
-	{   long encodedCode;
-		encodedCode=(305914*(authCode-LARGE_BASE)+OFFSET) % LARGE_PRIME; 
-		return String.format("%06d", encodedCode);
+    public ActivationCode getByActivationCode(Long authCode) {
+        return activationCodeDao.getByActivationCode(authCode);
+    }
+
+    /**
+     * WARNING This implementation WILL NOT work with JPA generated Ids. This method was implemented
+     * with the assumption that authCodes are already available, and decoded values of authCodes will be
+     * inserted to the database manually
+     * @param authCodeId
+     * @return
+     */
+	public Long encode(String authCodeId) {
+        byte[] authCodeIdBytes = authCodeId.getBytes();
+        String authCodeStr = new String(Base64.decodeBase64(authCodeIdBytes));
+        return Long.valueOf(authCodeStr);
 	}
-	
-	@Override
-	public Long decode(Long authCode )
-	{   
-		return (605673*(authCode -OFFSET)+LARGE_BASE) % LARGE_PRIME ;
- 		
+
+	public String decode(Long authCode) {
+        byte[] authCodeStr = String.valueOf(authCode).getBytes();
+        return new String(Base64.encodeBase64(authCodeStr));
 	}
 
 }

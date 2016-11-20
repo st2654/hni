@@ -3,12 +3,11 @@ package org.hni.events.service;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
+import org.hni.security.service.ActivationCodeService;
 import org.hni.user.om.User;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -19,8 +18,10 @@ public class RegisterService extends AbstractEventService<User> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterService.class);
 
     @Inject
-    @Qualifier("customerService")
-    private UserService userService;
+    private UserService customerService;
+
+    @Inject
+    private ActivationCodeService activationCodeService;
 
     @Override
     protected WorkFlowStepResult performWorkFlowStep(final Event event, final SessionState sessionState) {
@@ -42,25 +43,25 @@ public class RegisterService extends AbstractEventService<User> {
                 user.setFirstName(name[0]);
                 user.setLastName(name[1]);
                 // validate the name
-                // if (userService.validate(user)) {
-                nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
-                returnString = "Perfect! Lastly, I'd like to get your email address "
-                        + "to verify your account in case you text me from a new "
-                        + "number. So what's your email address? Thanks";
-                // } else {
-                // returnString = "We didn't get that. Please send your name again.";
-                // }
+                if (customerService.validate(user)) {
+                    nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
+                    returnString = "Perfect! Lastly, I'd like to get your email address "
+                            + "to verify your account in case you text me from a new "
+                            + "number. So what's your email address? Thanks";
+                } else {
+                    returnString = "We didn't get that. Please send your name again.";
+                }
                 break;
             case STATE_REGISTER_GET_EMAIL:
                 user.setEmail(textMessage);
                 // validate the email
-                // if (userService.validate(user)) {
-                nextStateCode = EventState.STATE_REGISTER_CONFIRM_EMAIL;
-                returnString = "Okay! I have " + textMessage + " as your email address. "
-                        + "Is that correct? Reply 1 for yes and 2 for no";
-                // } else {
-                // returnString = "We didn't get that. Please send your email address.";
-                // }
+                if (customerService.validate(user)) {
+                    nextStateCode = EventState.STATE_REGISTER_CONFIRM_EMAIL;
+                    returnString = "Okay! I have " + textMessage + " as your email address. "
+                            + "Is that correct? Reply 1 for yes and 2 for no";
+                } else {
+                    returnString = "We didn't get that. Please send your email address.";
+                }
                 break;
             case STATE_REGISTER_CONFIRM_EMAIL:
                 if ("2".equals(textMessage)) {
@@ -73,28 +74,29 @@ public class RegisterService extends AbstractEventService<User> {
                 }
                 break;
             case STATE_REGISTER_GET_AUTH_CODE:
-                // if(userService.isAuthCodeValid(textMessage)) {
-                // save the complete user
-                // userService.save(user);
-                // link auth code with user
-                nextStateCode = EventState.STATE_REGISTER_MORE_AUTH_CODES;
-                returnString = "Ok. You're all setup for yourself. If you have additional family"
-                        + " members to register please enter the additional authorization"
-                        + " codes now. When you need a meal just text MEAL back to this number.";
-                // } else {
-                // returnString = "The authorization code you entered (" + textMessage + ") is not valid."
-                // + " Please resend a valid unused authorization code";
-                // }
+                if (activationCodeService.validate(textMessage)) {
+                    customerService.save(user);
+                    //we are sure that text message is a long at this point
+                    customerService.registerCustomer(user, Long.valueOf(textMessage));
+                    nextStateCode = EventState.STATE_REGISTER_MORE_AUTH_CODES;
+                    returnString = "Ok. You're all setup for yourself. If you have additional family"
+                            + " members to register please enter the additional authorization"
+                            + " codes now. When you need a meal just text MEAL back to this number.";
+                } else {
+                    returnString = "The authorization code you entered (" + textMessage + ") is not valid."
+                            + " Please resend a valid unused authorization code";
+                }
                 break;
             case STATE_REGISTER_MORE_AUTH_CODES:
-                // if(userService.isAuthCodeValid(textMessage)) {
-                // link auth code with user
-                returnString = "We have added that authorization code to your family account. Please"
-                        + " send any additional codes you need for your family.";
-                // } else {
-                // returnString = "The authorization code you entered (" + textMessage + ") is not valid."
-                // + " Please resend a valid unused authorization code"
-                // }
+                if (activationCodeService.validate(textMessage)) {
+                    customerService.registerCustomer(user, Long.valueOf(textMessage));
+                    // link auth code with user
+                    returnString = "We have added that authorization code to your family account. Please"
+                            + " send any additional codes you need for your family.";
+                } else {
+                    returnString = "The authorization code you entered (" + textMessage + ") is not valid."
+                            + " Please resend a valid unused authorization code";
+                }
                 // no longer need to change the state at this moment.
                 break;
             default:
