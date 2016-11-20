@@ -223,11 +223,8 @@ public class TestDefaultOrderProcessorService {
         Assert.assertEquals(TransactionPhase.CHOOSING_LOCATION, argumentCaptor.getValue().getTransactionPhase());
     }
 
-    // TODO: 11/20/16 Add testing for choosing menu items when this functionality it added to the service.
-
-
     @Test
-    public void processMessage_confirmOrRedo() {
+    public void processMessage_confirmOrRedo_confirm() {
         // Setup
         String message = "CONFIRM";
 
@@ -242,16 +239,78 @@ public class TestDefaultOrderProcessorService {
         Mockito.when(partialOrderDAO.get(user)).thenReturn(partialOrder);
         Mockito.when(orderDAO.save(Mockito.any())).thenReturn(null);
 
+        Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
         String expectedOutput = "Your order has been confirmed.";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
-        Mockito.verify(partialOrderDAO.delete(partialOrder), Mockito.times(1));
+        Mockito.verify(partialOrderDAO, Mockito.times(1)).delete(partialOrder);
         ArgumentCaptor<Order> argumentCaptor = ArgumentCaptor.forClass(Order.class);
         Mockito.verify(orderDAO, Mockito.times(1)).save(argumentCaptor.capture());
-//        Assert.assertEquals(TransactionPhase.CHOOSING_LOCATION, argumentCaptor.getValue().getTransactionPhase());
+
+        Assert.assertEquals(user.getId(), argumentCaptor.getValue().getUserId());
+        Assert.assertTrue(argumentCaptor.getValue().getOrderDate().getTime() >= orderDate.getTime());
+        Assert.assertEquals(partialOrder.getChosenProvider(), argumentCaptor.getValue().getProviderLocation());
+        Assert.assertEquals(partialOrder.getOrderItems(), argumentCaptor.getValue().getOrderItems());
+        Assert.assertEquals(partialOrder.getOrderItems().iterator().next().getAmount(), argumentCaptor.getValue().getSubTotal());
+    }
+
+    @Test
+    public void processMessage_confirmOrRed_redo() {
+        // Setup
+        String message = "REDO";
+
+        user.setId(1L);
+        partialOrder.setUser(user);
+        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+        partialOrder.setProviderLocationsForSelection(providerLocationList);
+        partialOrder.setMenuItemsForSelection(menuItems);
+        partialOrder.setChosenProvider(providerLocationList.get(1));
+        partialOrder.getOrderItems().add(new OrderItem((long)1, menuItems.get(0).getPrice(), menuItems.get(0)));
+
+        Mockito.when(partialOrderDAO.get(user)).thenReturn(partialOrder);
+
+        Date orderDate = new Date();
+        // Execute
+        String output = orderProcessor.processMessage(user, message);
+        String expectedOutput = "Redoing order\n"
+                + "Please provide a number between 1-3\n"
+                + "1) Subway, Food ($12.12)\n"
+                + "2) McDonalds, Food ($12.12)\n"
+                + "3) Waffle House, Food ($12.12)\n";
+        // Verify
+        Assert.assertEquals(expectedOutput, output);
+        ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
+        Mockito.verify(partialOrderDAO, Mockito.times(1)).save(argumentCaptor.capture());
+        Assert.assertEquals(TransactionPhase.CHOOSING_LOCATION, argumentCaptor.getValue().getTransactionPhase());
+    }
+
+    @Test
+    public void processMessage_confirmOrRed_failure() {
+        // Setup
+        String message = "BadValue";
+
+        user.setId(1L);
+        partialOrder.setUser(user);
+        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+        partialOrder.setProviderLocationsForSelection(providerLocationList);
+        partialOrder.setMenuItemsForSelection(menuItems);
+        partialOrder.setChosenProvider(providerLocationList.get(1));
+        partialOrder.getOrderItems().add(new OrderItem((long)1, menuItems.get(0).getPrice(), menuItems.get(0)));
+
+        Mockito.when(partialOrderDAO.get(user)).thenReturn(partialOrder);
+
+        Date orderDate = new Date();
+        // Execute
+        String output = orderProcessor.processMessage(user, message);
+        String expectedOutput = "Please respond with CONFIRM or CONTINUE";
+        // Verify
+        Assert.assertEquals(expectedOutput, output);
+        ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
+        Mockito.verify(partialOrderDAO, Mockito.times(1)).save(argumentCaptor.capture());
+        Assert.assertEquals(TransactionPhase.CONFIRM_OR_CONTINUE, argumentCaptor.getValue().getTransactionPhase());
     }
 
 }

@@ -144,6 +144,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 break;
             case "REDO":
                 order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
+                output += "Redoing order\n";
                 output += providerLocationMenuOutput(order);
                 break;
             default:
