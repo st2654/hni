@@ -24,7 +24,7 @@ public abstract class AbstractEventService<T> implements EventService {
 
     @Override
     public String handleEvent(final Event event) {
-        SessionState state = sessionStateDAO.get(event.getSessionId());
+        SessionState state = sessionStateDAO.get(event.getPhoneNumber());
 
         // perform the workflow logic
         final WorkFlowStepResult stepResult = performWorkFlowStep(event, state);

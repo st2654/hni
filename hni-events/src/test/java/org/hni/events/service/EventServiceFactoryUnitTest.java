@@ -17,7 +17,8 @@ import static org.mockito.Mockito.*;
 
 public class EventServiceFactoryUnitTest {
 
-    private static final String SESSION_ID = "1";
+    //TODO FIX SESSION_ID and phoneNumber REFACTOR
+    private static final String SESSION_ID = "8188461238";
     private static final String PHONE_NUMBER = "8188461238";
     private static final String REUTRN_MESSAGE = "returnmessage";
 

@@ -18,7 +18,8 @@ import static org.mockito.Mockito.*;
 
 public class RegisterServiceUnitTest {
 
-    private static final String SESSION_ID = "1";
+    //TODO FIX SESSION_ID and phoneNumber REFACTOR
+    private static final String SESSION_ID = "8188461238";
     private static final String PHONE_NUMBER = "8188461238";
     private static final String AUTH_CODE = "123456";
 
