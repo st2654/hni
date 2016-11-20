@@ -121,7 +121,7 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide your address";
+        String expectedOutput = "Please provide your address or CANCEL to quit";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -188,8 +188,8 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "You've chosen McDonalds, Food ($12.12).\n"
-                + "Respond with CONFIRM to place this order or REDO to change selected provider.";
+        String expectedOutput = "You have chosen Food at McDonalds."
+                + " Respond with CONFIRM to place this order, REDO to try again, or CANCEL to end your order";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -242,7 +242,7 @@ public class TestDefaultOrderProcessorService {
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Your order has been confirmed.";
+        String expectedOutput = "Your order has been confirmed, please wait for more information about when to pick up your meal.";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -267,16 +267,17 @@ public class TestDefaultOrderProcessorService {
         partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
         partialOrder.setProviderLocationsForSelection(providerLocationList);
         partialOrder.setMenuItemsForSelection(menuItems);
+        partialOrder.setAddress("home");
         partialOrder.setChosenProvider(providerLocationList.get(1));
         partialOrder.getOrderItems().add(new OrderItem((long)1, menuItems.get(0).getPrice(), menuItems.get(0)));
 
         Mockito.when(partialOrderDAO.get(user)).thenReturn(partialOrder);
-
+        Mockito.when(providerLocationService.providersNearCustomer(Mockito.anyString(), Mockito.anyInt()))
+                .thenReturn(providerLocationList);
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Redoing order\n"
-                + "Please provide a number between 1-3\n"
+        String expectedOutput = "Please provide a number between 1-3\n"
                 + "1) Subway (Food)\n"
                 + "2) McDonalds (Food)\n"
                 + "3) Waffle House (Food)\n";
@@ -305,7 +306,7 @@ public class TestDefaultOrderProcessorService {
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please respond with CONFIRM or CONTINUE";
+        String expectedOutput = "Please respond with CONFIRM, REDO, or CANCEL";
         // Verify
         Assert.assertEquals(expectedOutput, output);
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);

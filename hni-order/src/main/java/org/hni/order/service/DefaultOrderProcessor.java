@@ -116,7 +116,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             MenuItem chosenItem = order.getMenuItemsForSelection().get(index - 1);
             order.getOrderItems().add(new OrderItem((long)1, chosenItem.getPrice(), chosenItem));
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
-            output = String.format("You have chosen %s at %s. Respond with CONFIRM to place this order, RETURN to try again, or CANCEL to end your order", chosenItem.getName(), location.getName());
+            output = String.format("You have chosen %s at %s. Respond with CONFIRM to place this order, REDO to try again, or CANCEL to end your order", chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             output += "Invalid input!\n";
             output += providerLocationMenuOutput(order);
@@ -136,13 +136,13 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 finalOrder.setSubTotal(order.getOrderItems().stream().map(item -> (item.getAmount() * item.getQuantity())).reduce(0.0, Double::sum));
                 orderDAO.save(finalOrder);
                 partialOrderDAO.delete(order);
-                output = "Your order has been confirmed, please wait for more information about when to pick up your meal";
+                output = "Your order has been confirmed, please wait for more information about when to pick up your meal.";
                 break;
             case "REDO":
-                output = chooseLocation(order.getAddress(), order);
+                output = findNearbyMeals(order.getAddress(), order);
                 break;
             default:
-                output += "Please respond with CONFIRM, CONTINUE, CANCEL";
+                output += "Please respond with CONFIRM, REDO, or CANCEL";
         }
         return output;
     }
