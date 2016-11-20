@@ -293,5 +293,6 @@ CREATE TABLE IF NOT EXISTS `partial_orders` (
   `order_item_id` INT NULL,
   `chosen_provider_id` INT NULL,
   `transaction_phase` VARCHAR(45) NULL,
+  `address` VARCHAR(160) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
