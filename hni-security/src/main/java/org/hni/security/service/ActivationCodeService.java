@@ -12,7 +12,7 @@ public interface ActivationCodeService extends BaseService<ActivationCode> {
 	 * @param authCode
 	 * @return
 	 */
-	Long decode(Long authCode);
+	String decode(Long authCode);
 
 	/**
 	 * Given an id of AuthorizationCode, return a 6 digit number that the customer will use in
@@ -20,8 +20,7 @@ public interface ActivationCodeService extends BaseService<ActivationCode> {
 	 * @param id
 	 * @return
 	 */
-	String encode(Long id);
-
+	Long encode(String id);
 
 	ActivationCode getByCode(Long authCode);
 
