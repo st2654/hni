@@ -36,7 +36,7 @@ public class RegisterService extends AbstractEventService<User> {
                 nextStateCode = EventState.STATE_REGISTER_GET_NAME;
                 returnString = "Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                         + "Any information you provide here will be kept private. "
-                        + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?";
+                        + "Reply with PRIVACY to learn more. Let's get you registered. What's your first and last name?";
                 break;
             case STATE_REGISTER_GET_NAME:
                 String[] name = textMessage.split(" ");
