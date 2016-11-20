@@ -29,16 +29,15 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 	}
 
 	@Override
-	public boolean validate(String authCode) {
-        Long authCodeId;
-
+	public <T> boolean validate(T authCode) {
+        Long authCodeLong;
         try {
-            authCodeId = Long.valueOf(authCode);
-        } catch (NumberFormatException e) {
+            authCodeLong = Long.class.cast(authCode);
+        } catch (ClassCastException e) {
             return false;
         }
 
-		ActivationCode code = activationCodeDao.get(decode(authCodeId));
+		ActivationCode code = getByCode(authCodeLong);
 		return code != null
             && code.getOrganizationId() != null
 			&& !code.isActivated()

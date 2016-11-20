@@ -22,6 +22,11 @@ public interface ActivationCodeService extends BaseService<ActivationCode> {
 	 */
 	Long encode(String id);
 
+	/**
+	 * Given a 6 digit activation code, retrieve an ActivationCode entry from database
+	 * @param authCode
+	 * @return
+	 */
 	ActivationCode getByCode(Long authCode);
 
 	/**
@@ -29,6 +34,5 @@ public interface ActivationCodeService extends BaseService<ActivationCode> {
 	 * @param id
 	 * @return
 	 */
-	boolean validate(String id);
-
+	<T> boolean validate(T id);
 }
