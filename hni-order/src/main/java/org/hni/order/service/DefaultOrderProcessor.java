@@ -91,10 +91,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
                     items.add(location.getProvider().getMenus().iterator().next().getMenuItems().iterator().next());
                 }
                 order.setMenuItemsForSelection(items);
-                output += "Please provide a number between 1-3\n";
-                for (int i = 0 ; i < 3; i++) {
-                    output += (i + 1) + ") " + nearbyProviders.get(i).getName() + " (" + items.get(i).getName() + ")\n";
-                }
+                output += providerLocationMenuOutput(order);
                 order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
             } else {
                 output = "No provider locations near this address. Please provide another address or CANCEL to quit";
@@ -119,14 +116,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
             MenuItem chosenItem = order.getMenuItemsForSelection().get(index - 1);
             order.getOrderItems().add(new OrderItem((long)1, chosenItem.getPrice(), chosenItem));
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
-            output = String.format("You have chosen %s at %s. Respond with CONFIRM to confirm your selection, RETURN to try again, or CANCEL to end your order", chosenItem.getName(), location.getName());
+            output = String.format("You have chosen %s at %s. Respond with CONFIRM to place this order, RETURN to try again, or CANCEL to end your order", chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output += "Invalid input\n";
-            output += "Please provide a number between 1-3\n";
-            for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
-                output += (i + 1) + ") " + order.getProviderLocationsForSelection().get(i).getName()
-                        + " (" + order.getProviderLocationsForSelection().get(i).getName() + ")\n";
-            }
+            output += "Invalid input!\n";
+            output += providerLocationMenuOutput(order);
         }
         return output;
     }
@@ -145,11 +138,29 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 partialOrderDAO.delete(order);
                 output = "Your order has been confirmed, please wait for more information about when to pick up your meal";
                 break;
-            case "RETURN":
+            case "REDO":
                 output = chooseLocation(order.getAddress(), order);
                 break;
             default:
-                output = "Please respond with RETURN, CONTINUE, or CANCEL";
+                output += "Please respond with CONFIRM, CONTINUE, CANCEL";
+        }
+        return output;
+    }
+
+    /**
+     * This method loops through the providerLocations of an order to create a string output of them the menu items
+     * they contain.
+     *
+     * @param order
+     * @return
+     */
+    private String providerLocationMenuOutput(PartialOrder order) {
+        String output = "";
+        output += "Please provide a number between 1-3\n";
+        for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
+            output += (i + 1) + ") " + order.getProviderLocationsForSelection().get(i).getName()
+                    + ", " + order.getMenuItemsForSelection().get(i).getName()
+                    + " ($" + order.getMenuItemsForSelection().get(i).getPrice() + ")\n";
         }
         return output;
     }
