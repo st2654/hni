@@ -165,8 +165,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         output += "Please provide a number between 1-3\n";
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
             output += (i + 1) + ") " + order.getProviderLocationsForSelection().get(i).getName()
-                    + ", " + order.getMenuItemsForSelection().get(i).getName()
-                    + " ($" + order.getMenuItemsForSelection().get(i).getPrice() + ")\n";
+                    + " (" + order.getMenuItemsForSelection().get(i).getName() + ")\n";
         }
         return output;
     }
