@@ -85,6 +85,8 @@ public class TestDefaultOrderProcessorService {
         MenuItem item = new MenuItem("Food", "Good Food", 12.12, new Date());
 
         Menu menu = new Menu(1L);
+        menu.setStartHourAvailable((long)0);
+        menu.setEndHourAvailable((long)23);
         Set itemSet = new HashSet<>();
         itemSet.add(item);
         menu.setMenuItems(itemSet);

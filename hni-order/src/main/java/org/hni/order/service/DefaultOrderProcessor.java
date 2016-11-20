@@ -7,6 +7,7 @@ import org.hni.order.om.OrderItem;
 import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.GeoCodingException;
+import org.hni.provider.om.Menu;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
@@ -15,9 +16,11 @@ import org.hni.user.om.User;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class DefaultOrderProcessor implements OrderProcessor {
@@ -95,12 +98,17 @@ public class DefaultOrderProcessor implements OrderProcessor {
             List<ProviderLocation> nearbyProviders = (ArrayList) locationService.providersNearCustomer(addressString, 3);
             if (!nearbyProviders.isEmpty()) {
                 order.setAddress(addressString);
-                order.setProviderLocationsForSelection(nearbyProviders);
+                List<ProviderLocation> nearbyWithMenu = new ArrayList<>();
                 List<MenuItem> items = new ArrayList<>();
                 for (ProviderLocation location : nearbyProviders) {
-                    //TODO get the currently available menu items, not just first
-                    items.add(location.getProvider().getMenus().iterator().next().getMenuItems().iterator().next());
+                    Optional<Menu> currentMenu = location.getProvider().getMenus().stream()
+                            .filter(menu -> isCurrent(menu)).findFirst();
+                    if (currentMenu.isPresent()) {
+                        nearbyWithMenu.add(location);
+                        items.add(currentMenu.get().getMenuItems().iterator().next());
+                    }
                 }
+                order.setProviderLocationsForSelection(nearbyWithMenu);
                 order.setMenuItemsForSelection(items);
                 output += providerLocationMenuOutput(order);
                 order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
@@ -173,6 +181,22 @@ public class DefaultOrderProcessor implements OrderProcessor {
                     + " (" + order.getMenuItemsForSelection().get(i).getName() + ")\n";
         }
         return output;
+    }
+
+    private boolean isCurrent(Menu menu) {
+        //TODO this has issues between 11:00 and 11:59 pm because minutes are not stored in db
+        LocalTime now = LocalTime.now();
+        LocalTime start = LocalTime.of(menu.getStartHourAvailable().intValue(), 0);
+        LocalTime end = LocalTime.of(menu.getEndHourAvailable().intValue(), 0);
+
+        if (start.compareTo(end) < 0) {
+            //eg start at 06:00 and end at 12:00
+            return start.compareTo(now) < 0 && now.compareTo(end) < 0;
+        } else {
+            //eg start at 11:00 end at 04:00
+            return (start.compareTo(now) < 0 && now.compareTo(LocalTime.MAX) < 0) ||
+                    (now.compareTo(LocalTime.MIN) > 0 && now.compareTo(end) < 0);
+        }
     }
 
 }
