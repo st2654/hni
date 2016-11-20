@@ -10,7 +10,7 @@
     <name>Hunger Not Impossible</name>
     <url>http://www.hni.org</url>
     <scm>
-        <developerConnection>scm:git:ssh://git@github.com:hungernotimpossible/hni.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com:hungernotimpossible/hni.git</developerConnection>
         <url>https://github.com/hungernotimpossible/hni.git</url>
         <tag>HEAD</tag>
     </scm>
