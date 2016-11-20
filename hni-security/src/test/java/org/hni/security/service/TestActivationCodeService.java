@@ -22,11 +22,12 @@ public class TestActivationCodeService {
 	@Inject private ActivationCodeService activationCodeService;
 	@Inject private OrganizationUserService organizationUserService;
 
+	//From test-data.sql
 	private static final Long SUPPLIED_AUTH_CODE_1 = 123456L;
-	private static final String INSERTED_ID_1 = "MTIzNDU2";
+	private static final String INSERTED_ID_1 = "MTIzNDU2WX";
 
 	private static final Long SUPPLIED_AUTH_CODE_2 = 987654L;
-	private static final String INSERTED_ID_2 = "OTg3NjU0";
+	private static final String INSERTED_ID_2 = "OTg3NjU0KZ";
 
 	public TestActivationCodeService() {}
 
@@ -40,20 +41,8 @@ public class TestActivationCodeService {
 	}
 
 	@Test
-	public void testEncodeAndDecode() {
-		//an authCode that customer received
-        Long givenCode = 123456L;
-		// an Id in the table
-		String tableId = activationCodeService.decode(givenCode);
-		//back to the decoded value
-		Long decodedCode = activationCodeService.encode(tableId);
-
-        assertEquals(decodedCode, givenCode);
-	}
-
-	@Test
 	public void testGetByCode() {
-		ActivationCode code = activationCodeService.getByCode(123456L);
+		ActivationCode code = activationCodeService.getByActivationCode(123456L);
 		assertNotNull(code);
 		assertNull(code.getUser());
 	}
@@ -76,30 +65,32 @@ public class TestActivationCodeService {
 
 	@Test
 	public void testValidateActivated() {
-		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1.toString()));
-		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_2.toString()));
+		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
+		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_2));
 	}
 
 	@Test
 	public void testValidateMealsAuthorized() {
-		ActivationCode code = activationCodeService.getByCode(SUPPLIED_AUTH_CODE_1);
+		ActivationCode code = activationCodeService.getByActivationCode(SUPPLIED_AUTH_CODE_1);
 		code.setMealsAuthorized(5L);
-		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1.toString()));
+		activationCodeService.update(code);
+		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
 
 		code.setMealsAuthorized(0L);
 		activationCodeService.update(code);
-		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_1.toString()));
+		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
 	}
 
 	@Test
 	public void testValidateMealsRemaining() {
-		ActivationCode code = activationCodeService.getByCode(SUPPLIED_AUTH_CODE_1);
+		ActivationCode code = activationCodeService.getByActivationCode(SUPPLIED_AUTH_CODE_1);
 		code.setMealsRemaining(5L);
-		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1.toString()));
+		activationCodeService.update(code);
+		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
 
 		code.setMealsRemaining(0L);
 		activationCodeService.update(code);
-		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_1.toString()));
+		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
 	}
 
 	//TODO Validation Org test?

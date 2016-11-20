@@ -75,8 +75,9 @@ public class RegisterService extends AbstractEventService<User> {
                 break;
             case STATE_REGISTER_GET_AUTH_CODE:
                 if (activationCodeService.validate(textMessage)) {
-                    // save the complete user and link auth code with user
                     customerService.save(user);
+                    //we are sure that text message is a long at this point
+                    customerService.registerCustomer(user, Long.valueOf(textMessage));
                     nextStateCode = EventState.STATE_REGISTER_MORE_AUTH_CODES;
                     returnString = "Ok. You're all setup for yourself. If you have additional family"
                             + " members to register please enter the additional authorization"
@@ -88,6 +89,7 @@ public class RegisterService extends AbstractEventService<User> {
                 break;
             case STATE_REGISTER_MORE_AUTH_CODES:
                 if (activationCodeService.validate(textMessage)) {
+                    customerService.registerCustomer(user, Long.valueOf(textMessage));
                     // link auth code with user
                     returnString = "We have added that authorization code to your family account. Please"
                             + " send any additional codes you need for your family.";

@@ -37,7 +37,7 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
             return false;
         }
 
-		ActivationCode code = getByCode(authCodeLong);
+		ActivationCode code = getByActivationCode(authCodeLong);
 		return code != null
             && code.getOrganizationId() != null
 			&& !code.isActivated()
@@ -46,8 +46,8 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 	}
 
 	@Override
-    public ActivationCode getByCode(Long authCode) {
-        return activationCodeDao.get(decode(authCode));
+    public ActivationCode getByActivationCode(Long authCode) {
+        return activationCodeDao.getByActivationCode(authCode);
     }
 
     /**
@@ -57,14 +57,12 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
      * @param authCodeId
      * @return
      */
-	@Override
 	public Long encode(String authCodeId) {
         byte[] authCodeIdBytes = authCodeId.getBytes();
         String authCodeStr = new String(Base64.decodeBase64(authCodeIdBytes));
         return Long.valueOf(authCodeStr);
 	}
 
-	@Override
 	public String decode(Long authCode) {
         byte[] authCodeStr = String.valueOf(authCode).getBytes();
         return new String(Base64.encodeBase64(authCodeStr));

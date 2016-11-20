@@ -49,7 +49,7 @@ public class CustomerService extends AbstractService<User> implements UserServic
         // Creating customer in USER table
         user = save(user);
         // get Activation_Code record
-        ActivationCode activationCode = activationCodeService.getByCode(authCode);
+        ActivationCode activationCode = activationCodeService.getByActivationCode(authCode);
         // Set User
         if (activationCode != null && activationCode.getUser() == null) {
             activationCode.setUser(user);

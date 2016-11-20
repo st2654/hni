@@ -60,7 +60,7 @@ public class TestCustomerService {
         Long authCode = 123456L;
 
         customerService.registerCustomer(user, authCode);
-        ActivationCode activationCode = activationCodeService.getByCode(authCode);
+        ActivationCode activationCode = activationCodeService.getByActivationCode(authCode);
         assertThat(activationCode.getUser().getId(), is(user.getId()));
         assertThat(activationCode.getUser().getMobilePhone(), is("9876543210"));
     }
@@ -77,7 +77,7 @@ public class TestCustomerService {
         customerService.registerCustomer(user, authCode);
 
         assertThat(customerService.byMobilePhone("479-555-4321").size(), is(1));
-        ActivationCode activationCode = activationCodeService.getByCode(authCode);
+        ActivationCode activationCode = activationCodeService.getByActivationCode(authCode);
         assertThat(user.getId(), is(activationCode.getUser().getId()));
         List<UserOrganizationRole> uors = organizationUserService.getUserOrganizationRoles(user).stream()
                 .filter(userOrganizationRole -> userOrganizationRole.getId().getRoleId().equals(Role.get(Constants.CLIENT).getId()))
@@ -95,7 +95,7 @@ public class TestCustomerService {
         User user = customerService.get(3l);
         Long authCode = 123456L;
         customerService.registerCustomer(user, authCode);
-        ActivationCode activationCode = activationCodeService.getByCode(authCode);
+        ActivationCode activationCode = activationCodeService.getByActivationCode(authCode);
         List<UserOrganizationRole> uors = organizationUserService.getUserOrganizationRoles(user).stream()
                 .filter(userOrganizationRole -> userOrganizationRole.getId().getRoleId().equals(Role.get(Constants.CLIENT).getId()))
                 .filter(userOrganizationRole -> userOrganizationRole.getId().getOrgId().equals(activationCode.getOrganizationId()))
