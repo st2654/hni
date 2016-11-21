@@ -17,7 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-@Api(value = "/auth", description = "endpoint to accept SMS messages")
+@Api(value = "/usermessage", description = "endpoint to accept SMS messages")
 @Component
 @Path("/usermessage")
 public class SMSUserMessageController extends AbstractBaseController {
@@ -32,14 +32,16 @@ public class SMSUserMessageController extends AbstractBaseController {
             , notes = ""
             , response = Provider.class
             , responseContainer = "")
-    public String RespondToMessageHTML(@QueryParam("auth_key") String authKey,
+    public String respondToMessageHTML(@QueryParam("auth_key") String authKey,
                                        @QueryParam("phonenumber") String phoneNumber,
                                        @QueryParam("sessionid") String sessionId,
                                        @QueryParam("usertext") String userMessage,
                                        @QueryParam("testmode") String testMode) {
 
-        // TODO: return html message
-        return null;
+        logger.info("HTML/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
+                "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
+        final Event event = new Event(sessionId, phoneNumber, userMessage);
+        return String.format("<html><body>%s</body></html>", eventServiceFactory.handleEvent(event));
     }
 
     @GET
@@ -48,7 +50,7 @@ public class SMSUserMessageController extends AbstractBaseController {
             , notes = ""
             , response = Provider.class
             , responseContainer = "")
-    public String RespondToMessage(@QueryParam("auth_key") String authKey,
+    public String respondToMessage(@QueryParam("auth_key") String authKey,
                                    @QueryParam("phonenumber") String phoneNumber,
                                    @QueryParam("sessionid") String sessionId,
                                    @QueryParam("usertext") String userMessage,
