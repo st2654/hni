@@ -45,7 +45,7 @@ public class CustomerService extends AbstractService<User> implements UserServic
      * Maps User with Activation_Codes and User_Organization_Role
      * This also helps you register multiple authCode
      */
-    public User registerCustomer(User user, Long authCode) {
+    public User registerCustomer(User user, String authCode) {
         // Creating customer in USER table
         user = save(user);
         // get Activation_Code record

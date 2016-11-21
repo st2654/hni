@@ -23,26 +23,17 @@ public class TestActivationCodeService {
 	@Inject private OrganizationUserService organizationUserService;
 
 	//From test-data.sql
-	private static final Long SUPPLIED_AUTH_CODE_1 = 123456L;
-	private static final String INSERTED_ID_1 = "MTIzNDU2WX";
+	private static final String SUPPLIED_AUTH_CODE_1 = "123456";
+	private static final Long INSERTED_ID_1 = 3L;
 
-	private static final Long SUPPLIED_AUTH_CODE_2 = 987654L;
-	private static final String INSERTED_ID_2 = "OTg3NjU0KZ";
+	private static final String SUPPLIED_AUTH_CODE_2 = "987654";
+	private static final Long INSERTED_ID_2 = 4L;
 
 	public TestActivationCodeService() {}
 
 	@Test
-	public void testGetAll() {
-        List<ActivationCode> getAllResult = activationCodeService.getAll();
-        assertEquals(getAllResult.size(), 2);
-		for (ActivationCode code : getAllResult) {
-			assertTrue(code.getId().equals(INSERTED_ID_1) || code.getId().equals(INSERTED_ID_2));
-		}
-	}
-
-	@Test
 	public void testGetByCode() {
-		ActivationCode code = activationCodeService.getByActivationCode(123456L);
+		ActivationCode code = activationCodeService.getByActivationCode("123456");
 		assertNotNull(code);
 		assertNull(code.getUser());
 	}
