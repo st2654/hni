@@ -1,7 +1,7 @@
 package org.hni.user.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.hni.common.StringUtils;
 import org.hni.common.service.BaseService;
 import org.hni.user.om.User;
 
@@ -17,7 +17,7 @@ public interface UserService extends BaseService<User> {
             return false;
         }
         if (user.getMobilePhone() != null
-                && (!StringUtils.isNumber(user.getMobilePhone()) || user.getMobilePhone().length() != 10)) {
+                && (!StringUtils.isNumeric(user.getMobilePhone()) || user.getMobilePhone().length() != 10)) {
             return false;
         }
         if (user.getEmail() != null && !EmailValidator.getInstance().isValid(user.getEmail())) {
