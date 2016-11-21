@@ -55,12 +55,12 @@ public class RegisterServiceIntTest {
         String returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "message"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first and last name?", returnString);
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         SessionState nextState = sessionStateDAO.get(SESSION_ID);
         Assert.assertEquals(SESSION_ID, nextState.getSessionId());
         Assert.assertEquals(PHONE_NUMBER, nextState.getPhoneNumber());
         Assert.assertEquals(EventName.REGISTER, nextState.getEventName());
-        Assert.assertEquals(EventState.STATE_REGISTER_GET_NAME, nextState.getEventState());
+        Assert.assertEquals(EventState.STATE_REGISTER_GET_FIRST_NAME, nextState.getEventState());
     }
 
     @Test
@@ -69,9 +69,12 @@ public class RegisterServiceIntTest {
         String returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "ENROLL"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first and last name?", returnString);
-        // name
-        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john doe"));
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
+        // first name
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john"));
+        Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
+        // last name
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
                 + "number. So what's your email address? Thanks", returnString);
@@ -100,9 +103,12 @@ public class RegisterServiceIntTest {
         String returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "ENROLL"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first and last name?", returnString);
-        // name
-        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john doe"));
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
+        // first name
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john"));
+        Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
+        // last name
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
                 + "number. So what's your email address? Thanks", returnString);
@@ -133,9 +139,12 @@ public class RegisterServiceIntTest {
         String returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "ENROLL"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first and last name?", returnString);
-        // name
-        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john doe"));
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
+        // first name
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john"));
+        Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
+        // last name
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
                 + "number. So what's your email address? Thanks", returnString);

@@ -1,11 +1,12 @@
 package org.hni.events.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.hni.events.service.dao.SessionStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -18,6 +19,8 @@ import java.io.IOException;
  */
 public abstract class AbstractEventService<T> implements EventService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEventService.class);
+
     protected SessionStateDAO sessionStateDAO;
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -25,6 +28,8 @@ public abstract class AbstractEventService<T> implements EventService {
     @Override
     public String handleEvent(final Event event) {
         SessionState state = sessionStateDAO.get(event.getPhoneNumber());
+        LOGGER.info("Handling {} at state {} in {} flow", event, state.getEventState().getStateCode(),
+                state.getEventName().name());
 
         // perform the workflow logic
         final WorkFlowStepResult stepResult = performWorkFlowStep(event, state);

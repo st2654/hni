@@ -40,4 +40,13 @@ public class Event {
     public void setTextMessage(String textMessage) {
         this.textMessage = textMessage;
     }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "sessionId='" + sessionId + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", textMessage='" + textMessage + '\'' +
+                '}';
+    }
 }
