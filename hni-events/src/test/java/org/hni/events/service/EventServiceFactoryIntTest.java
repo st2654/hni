@@ -56,14 +56,14 @@ public class EventServiceFactoryIntTest {
         String returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "REGISTER"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?", returnString);
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         verify(sessionStateDao, times(1)).insert(any(SessionState.class));
         verify(sessionStateDao, times(1)).update(any(SessionState.class));
         SessionState nextState = sessionStateDao.get(SESSION_ID);
         Assert.assertEquals(SESSION_ID, nextState.getSessionId());
         Assert.assertEquals(PHONE_NUMBER, nextState.getPhoneNumber());
         Assert.assertEquals(EventName.REGISTER, nextState.getEventName());
-        Assert.assertEquals(EventState.STATE_REGISTER_GET_NAME, nextState.getEventState());
+        Assert.assertEquals(EventState.STATE_REGISTER_GET_FIRST_NAME, nextState.getEventState());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class EventServiceFactoryIntTest {
         String returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "REGISTER"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?", returnString);
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         verify(sessionStateDao, times(1)).delete(eq(SESSION_ID));
         verify(sessionStateDao, times(2)).insert(any(SessionState.class));
     }
@@ -83,9 +83,12 @@ public class EventServiceFactoryIntTest {
         String returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "ENROLL"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?", returnString);
-        // name
-        returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john doe"));
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
+        // first name
+        returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john"));
+        Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
+        // last name
+        returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
                 + "number. So what's your email address? Thanks", returnString);

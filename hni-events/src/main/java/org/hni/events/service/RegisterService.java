@@ -33,23 +33,31 @@ public class RegisterService extends AbstractEventService<User> {
         switch (EventState.fromStateCode(sessionState.getEventState().getStateCode())) {
             case STATE_REGISTER_START:
                 user.setMobilePhone(event.getPhoneNumber());
-                nextStateCode = EventState.STATE_REGISTER_GET_NAME;
+                nextStateCode = EventState.STATE_REGISTER_GET_FIRST_NAME;
                 returnString = "Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                         + "Any information you provide here will be kept private. "
-                        + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?";
+                        + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?";
                 break;
-            case STATE_REGISTER_GET_NAME:
-                String[] name = textMessage.split(" ");
-                user.setFirstName(name[0]);
-                user.setLastName(name[1]);
-                // validate the name
+            case STATE_REGISTER_GET_FIRST_NAME:
+                user.setFirstName(textMessage);
+                // validate the first name
+                if (customerService.validate(user)) {
+                    nextStateCode = EventState.STATE_REGISTER_GET_LAST_NAME;
+                    returnString = "Thanks " + textMessage + ". What's your last name?";
+                } else {
+                    returnString = "We didn't get that. Please send your first name again.";
+                }
+                break;
+            case STATE_REGISTER_GET_LAST_NAME:
+                user.setLastName(textMessage);
+                // validate the last name
                 if (customerService.validate(user)) {
                     nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
                     returnString = "Perfect! Lastly, I'd like to get your email address "
                             + "to verify your account in case you text me from a new "
                             + "number. So what's your email address? Thanks";
                 } else {
-                    returnString = "We didn't get that. Please send your name again.";
+                    returnString = "We didn't get that. Please send your last name again.";
                 }
                 break;
             case STATE_REGISTER_GET_EMAIL:

@@ -53,6 +53,8 @@ public class SMSUserMessageController extends AbstractBaseController {
                                    @QueryParam("sessionid") String sessionId,
                                    @QueryParam("usertext") String userMessage,
                                    @QueryParam("testmode") String testMode) {
+        logger.info("Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
+                "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
         final Event event = new Event(sessionId, phoneNumber, userMessage);
         return eventServiceFactory.handleEvent(event);
 

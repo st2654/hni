@@ -54,14 +54,24 @@ public class RegisterServiceUnitTest {
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your name?", returnString);
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         verify(sessionStateDAO, times(1)).update(any(SessionState.class));
     }
 
     @Test
-    public void testGetName() throws Exception {
-        state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_NAME);
-        event.setTextMessage("firstname lastname");
+    public void testGetFirstName() throws Exception {
+        state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_FIRST_NAME);
+        event.setTextMessage("firstname");
+        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        String returnString = registerService.handleEvent(event);
+        Assert.assertEquals("Thanks " + "firstname" + ". What's your last name?", returnString);
+        verify(sessionStateDAO, times(1)).update(any(SessionState.class));
+    }
+
+    @Test
+    public void testGetLastName() throws Exception {
+        state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_LAST_NAME);
+        event.setTextMessage("lastname");
         when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
