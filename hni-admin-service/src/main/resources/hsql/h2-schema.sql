@@ -66,6 +66,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `providers` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
+  `address_id` INT NULL,
   `created` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   PRIMARY KEY (`id`))
@@ -79,7 +80,8 @@ CREATE TABLE IF NOT EXISTS `provider_locations` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
   `provider_id` INT NOT NULL,
-  `created` VARCHAR(45) NOT NULL,
+  `address_id` INT NULL,
+  `created` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -98,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `subtotal` DECIMAL(10,2) NULL,
   `tax` DECIMAL(10,2) NULL,
   `created_by` INT NULL COMMENT 'surrogate to users',
+  `status_id` INT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -187,25 +190,6 @@ CREATE TABLE IF NOT EXISTS `user_provider_role` (
 ENGINE = InnoDB;
 
 
--- -----------------------------------------------------
--- Table `provider_addresses`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `provider_addresses` (
-  `provider_id` INT NOT NULL,
-  `address_id` INT NOT NULL,
-  PRIMARY KEY (`provider_id`, `address_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `provider_location_addresses`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `provider_location_addresses` (
-  `provider_location_id` INT NOT NULL,
-  `address_id` INT NOT NULL,
-  PRIMARY KEY (`provider_location_id`, `address_id`))
-ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `organization_addresses`
@@ -257,7 +241,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `payment_instruments` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `providers_id` INT NULL,
+  `provider_id` INT NULL,
   `card_type` VARCHAR(45) NULL,
   `card_number` VARCHAR(45) NULL COMMENT 'hashed value',
   `status` VARCHAR(45) NULL COMMENT 'activated or not',

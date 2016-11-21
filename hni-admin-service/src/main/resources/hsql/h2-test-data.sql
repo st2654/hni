@@ -1,4 +1,4 @@
-insert into users values('Super','User','M','mphone', 'superuser@hni.com', 0, 'qqIDI/cPs/CqdMo15uDhwAN/Zc+Z9VOUjLNGgxlC864=', '42M7kr4oektqA6Jgy9u1YQ==', now(), '0');
+insert into users values(1,'Super','User','M','mphone', 'superuser@hni.com', 0, 'qqIDI/cPs/CqdMo15uDhwAN/Zc+Z9VOUjLNGgxlC864=', '42M7kr4oektqA6Jgy9u1YQ==', now(), '0');
 insert into users values(2,'Freddy','Fikes','M','479-555-1212', '', 0, '', '', now(), '0');
 insert into users values(3,'Mikey','Multiphone','M','479-555-4321', '', 0, '', '', now(), '0');
 insert into users values(4,'Mikey','Multiphone','M','479-555-5678', '', 0, '', '', now(), '0');
@@ -22,15 +22,15 @@ insert into user_organization_role values(6, 4, 2);
 insert into user_organization_role values(6, 2, 5);
 insert into user_organization_role values(6, 2, 2);
 
-insert into providers values(1, 'Subway', now(), 1);
-insert into provider_locations values(1, 'Subway #1', 1, now(), 1);
 insert into menus values(1, '"Subway Lunch', 1, 10, 16); /* 10am to 4pm */
 insert into menu_items values(1, 1, 'Ham Sandwich', 'ham and cheese with LTP', 6.99, null);
 insert into menu_items values(2, 1, 'Turkey Sandwich', 'turkey and cheese with LTP', 7.99, null);
 insert into menu_items values(3, 1, 'Roast beef Sandwich', 'beef and cheese with LTP', 8.99, null);
 insert into menu_items values(4, 1, 'Club Sandwich', 'turkey, ham and cheese with LTP', 7.95, null);
 
-insert into orders values(1, 2, 1, dateadd('DAY', -2, current_date), dateadd('DAY', -2, current_date), null, 9.95, 1.20, 1);
+insert into orders values(1, 2, 1, dateadd('DAY', -2, current_date), dateadd('DAY', -2, current_date), null, 9.95, 1.20, 1, 1);
+insert into orders values(2, 2, 1, dateadd('DAY', -2, current_date), dateadd('DAY', -2, current_date), null, 9.95, 1.20, 1, 1);
+insert into orders values(3, 2, 1, dateadd('DAY', -2, current_date), dateadd('DAY', -2, current_date), null, 9.95, 1.20, 1, 1);
 
 insert into security_roles values(1,'Super User');
 insert into security_roles values(2,'Administrator');
@@ -91,21 +91,18 @@ insert into security_role_permissions values(5,12,0);
 insert into activation_codes values('1234567890', 2, 10, 10, 1, null, now(), null);
 insert into activation_codes values('7h-1234567890', 2, 10, 10, 2, 'freddy has activated this', now(), 2);
 
-insert into providers values(2, 'KFC', now(), 1);
-insert into providers values(3, 'Wendys', now(), 1);
+insert into addresses values (1, 'subway corp addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
+insert into addresses values (2, 'kfc corp addr', '10790 parkridge blvd', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');
+insert into addresses values (3, 'wendys corp addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
+insert into addresses values (4, 'subway #1 addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
+insert into addresses values (5, 'kfc #1 addr', '10790 parkridge blvd', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');
+insert into addresses values (6, 'wendys #1 addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
 
-insert into provider_locations values(2, 'KFC #1', 1, now(), 1);
-insert into provider_locations values(3, 'Wendy #1', 1, now(), 1);
+insert into providers values(1, 'Subway', 1, now(), 1);
+insert into providers values(2, 'KFC', 2, now(), 1);
+insert into providers values(3, 'Wendys', 3, now(), 1);
 
-insert into addresses values
-(1, 'subway addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
+insert into provider_locations values(1, 'Subway #1', 1, 4, now(), 1);
+insert into provider_locations values(2, 'KFC #1', 2, 5, now(), 1);
+insert into provider_locations values(3, 'Wendy #1', 3, 6, now(), 1);
 
-
-insert into addresses values
-(2, 'subway addr', '10790 parkridge blvd', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');
-
-
-insert into provider_location_addresses values(1, 1);
-insert into provider_location_addresses values(1, 2);
-insert into provider_location_addresses values(2, 2);
-insert into provider_location_addresses values(3, 2);

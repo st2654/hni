@@ -80,7 +80,7 @@ public class ProviderController {
 	public Provider addAddressToProvider(@PathParam("id") Long id, Address address) {
 		Provider provider = providerService.get(id);
 		if (null != provider) {
-			provider.getAddresses().add(address);
+			provider.setAddress(address);
 			providerService.save(provider);
 		}
 		return provider;
@@ -98,7 +98,7 @@ public class ProviderController {
 		if (null != provider) {
 			Address address = addressDao.get(addressId);
 			if ( null != address ) {
-				provider.getAddresses().remove(address); // Hibernate will manage the mapping table for us.
+				provider.setAddress(null); // Hibernate will manage the mapping table for us.
 				providerService.save(provider);
 			}
 		}
@@ -175,7 +175,7 @@ public class ProviderController {
 	public ProviderLocation addAddressToProviderLocation(@PathParam("id") Long id, @PathParam("plid") Long plid, Address address) {
 		ProviderLocation providerLocation = providerLocationService.get(plid);
 		if (providerLocation.getProvider().getId().equals(id)) {
-			providerLocation.getAddresses().add(address);
+			providerLocation.setAddress(address);
 			providerLocationService.save(providerLocation);
 		}
 
@@ -194,7 +194,7 @@ public class ProviderController {
 		if (providerLocation.getProvider().getId().equals(id)) {
 			Address address = addressDao.get(addressId);
 			if ( null != address ) {
-				providerLocation.getAddresses().remove(address); // Hibernate will manage the mapping table for us.
+				providerLocation.setAddress(null); // Hibernate will manage the mapping table for us.
 				providerLocationService.save(providerLocation);
 			}			
 		}
