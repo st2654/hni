@@ -62,8 +62,8 @@
 			
 	        <!-- In Memory Database Configuration -->
 	        <jdbc:embedded-database id="dataSource" type="H2">
-	            <jdbc:script location="classpath:hsql/h2-schema.sql"/>
-	            <jdbc:script location="classpath:hsql/h2-test-data.sql"/>
+	            <jdbc:script location="classpath:hsql/schema.sql"/>
+	            <jdbc:script location="classpath:hsql/test-data.sql"/>
 	        </jdbc:embedded-database>			
 		</beans>	
 
