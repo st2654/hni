@@ -1,12 +1,14 @@
 package org.hni.order.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.hni.common.DateUtils;
 import org.hni.common.service.AbstractService;
 import org.hni.order.dao.OrderDAO;
 import org.hni.order.om.Order;
@@ -33,6 +35,17 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 		this.lockingService = lockingService;
 	}
 
+	@Override
+	public Order save(Order order) {
+		if (null == order.getStatusId()) {
+			order.setStatus(OrderStatus.OPEN);
+		}
+		if ( null == order.getOrderDate()) {
+			order.setOrderDate(new Date());
+		}
+		return super.save(order);
+	}
+	
 	@Override
 	public Collection<Order> get(User user, LocalDate startDate) {
 		return get(user, startDate, LocalDate.now());
@@ -86,8 +99,8 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	}
 
 	@Override
-	public Order complete(Order order, LocalDate pickupDate) {
-		order.setPickupDate(Date.from(pickupDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+	public Order complete(Order order, LocalDateTime pickupDate) {
+		order.setPickupDate(DateUtils.asDate(pickupDate));
 		order.setStatusId(OrderStatus.ORDERED.getId());		
 		return save(order);
 	}

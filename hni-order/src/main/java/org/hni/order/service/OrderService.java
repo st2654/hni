@@ -1,8 +1,8 @@
 package org.hni.order.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 
 import org.hni.common.service.BaseService;
 import org.hni.order.om.Order;
@@ -42,7 +42,7 @@ public interface OrderService extends BaseService<Order> {
 	 * @param order
 	 * @return
 	 */
-	Order complete(Order order, LocalDate pickupDate);
+	Order complete(Order order, LocalDateTime pickupDate);
 	
 	/**
 	 * Returns a count of open orders

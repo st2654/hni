@@ -149,7 +149,9 @@ public class Order implements Persistable, Serializable {
 	public void setStatusId(Long statusId) {
 		this.statusId = statusId;
 	}
-	
+	public void setStatus(OrderStatus orderStatus) {
+		this.statusId = orderStatus.getId();
+	}
 	public OrderStatus getOrderStatus() {
 		return OrderStatus.get(this.statusId);
 	}

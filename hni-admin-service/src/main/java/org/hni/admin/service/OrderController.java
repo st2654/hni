@@ -90,7 +90,7 @@ public class OrderController {
 		, responseContainer = "")
 	public void completeOrder(@PathParam("id") Long id, @QueryParam("pickupDate") String pickupDateString) {
 		// also need payment info
-		orderService.complete(orderService.get(id), DateUtils.parseDate(pickupDateString));
+		orderService.complete(orderService.get(id), DateUtils.parseDateTime(pickupDateString));
 	}
 
 	private static final String ORDER_COUNT = "{\"order-count\":\"%d\"}";
