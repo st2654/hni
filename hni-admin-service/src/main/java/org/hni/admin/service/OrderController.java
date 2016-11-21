@@ -1,27 +1,31 @@
 package org.hni.admin.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
-import org.hni.common.DateUtils;
-import org.hni.order.om.Order;
-import org.hni.order.service.OrderService;
-import org.hni.user.om.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import java.time.LocalDate;
+import java.util.Collection;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.time.LocalDate;
-import java.util.Collection;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hni.common.DateUtils;
+import org.hni.order.om.Order;
+import org.hni.order.service.OrderService;
+import org.hni.provider.om.Provider;
+import org.hni.user.om.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/orders", description = "Operations on Orders and OrderItems")
 @Component
@@ -63,6 +67,48 @@ public class OrderController {
 		return orderService.delete(new Order(id));
 	}
 
+	@GET
+	@Path("/next")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the next order obtaining a lock on it so others cannot work on it at the same time.  You may pass an optional parameter 'providerId' to filter to a specific provider"
+		, notes = ""
+		, response = Order.class
+		, responseContainer = "")
+	public Order getNextOrder(@QueryParam("providerId") Long providerId) {
+		if ( null != providerId ) {
+			return orderService.next(new Provider(providerId));
+		}
+		return orderService.next();
+	}
+
+	@PUT
+	@Path("/completed/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the next order obtaining a lock on it so others cannot work on it at the same time.  You may pass an optional parameter 'providerId' to filter to a specific provider"
+		, notes = ""
+		, response = Order.class
+		, responseContainer = "")
+	public void completeOrder(@PathParam("id") Long id, @QueryParam("pickupDate") String pickupDateString) {
+		// also need payment info
+		orderService.complete(orderService.get(id), DateUtils.parseDate(pickupDateString));
+	}
+
+	private static final String ORDER_COUNT = "{\"order-count\":\"%d\"}";
+	@GET
+	@Path("/count")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the # pending orders. You may pass an optional parameter 'providerId' to filter to a specific provider"
+		, notes = ""
+		, response = Order.class
+		, responseContainer = "")
+	public String getOrderCount(@QueryParam("providerId") Long providerId) {
+		if ( null != providerId ) {
+			return String.format(ORDER_COUNT, orderService.countOrders(new Provider(providerId)));
+		}
+		return String.format(ORDER_COUNT, orderService.countOrders());
+	}
+	
+	
 	@GET
 	@Path("/users/{id}")
 	@Produces({MediaType.APPLICATION_JSON})

@@ -1,8 +1,22 @@
 package org.hni.order.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Date;
+
+import javax.inject.Inject;
+
 import org.apache.log4j.BasicConfigurator;
 import org.hni.common.DateUtils;
 import org.hni.order.om.Order;
+import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
 import org.junit.Test;
@@ -10,15 +24,6 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Date;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:test-applicationContext.xml"} )
@@ -59,7 +64,7 @@ public class TestOrderService {
 		// Checks that the pickup date is null prior to the completion methods
 		assertEquals(null, order.getPickupDate());
 
-		Order returnOrder = orderService.complete(order);
+		Order returnOrder = orderService.complete(order, LocalDate.now());
 		// Verifies that the pickup date has been updated
 		assertTrue(pickupDate.before(returnOrder.getPickupDate())
 				|| pickupDate.getTime() == returnOrder.getPickupDate().getTime());
@@ -83,12 +88,12 @@ public class TestOrderService {
 
 		//Gets the next order, checks its time/date is good, marks it complete, and repeats.
 		for (int i = 5; i > 0; i --) {
-			Order order = orderService.next(new ProviderLocation(1L));
+			Order order = orderService.next(new Provider(1L));
 
 			assertEquals(DateUtils.asDate(fromDate.minus(i - 1, ChronoUnit.MINUTES)), order.getOrderDate());
 			assertNull(order.getPickupDate());
 			assertEquals(new Long(1L) , order.getProviderLocation().getId());
-			orderService.complete(order);
+			orderService.complete(order, LocalDate.now());
 		}
 
 	}
@@ -105,7 +110,7 @@ public class TestOrderService {
 		}
 
 		//Search from tomorrow to today (backwards)
-		Order order = orderService.next(new ProviderLocation(10L), LocalDateTime.now().plus(1, ChronoUnit.DAYS));
+		Order order = orderService.next(new Provider(10L));
 		//No object should be returned for searches in the future
 		assertNull(order);
 	}

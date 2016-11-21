@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hni.common.om.Persistable;
+import org.hni.order.om.type.OrderStatus;
 import org.hni.provider.om.ProviderLocation;
 
 /**
@@ -45,6 +46,7 @@ public class Order implements Persistable, Serializable {
 	@Column(name="subtotal") private Double subTotal;
 	@Column(name="tax") private Double tax;
 	@Column(name="created_by") private Long createdById;
+	@Column(name="status_id") private Long statusId;
 	
 	@ManyToOne
 	@JoinColumn(name="provider_location_id", referencedColumnName = "id")
@@ -141,6 +143,15 @@ public class Order implements Persistable, Serializable {
 	public void setOrderItems(Set<OrderItem> orderItems) {
 		this.orderItems = orderItems;
 	}
+	public Long getStatusId() {
+		return statusId;
+	}
+	public void setStatusId(Long statusId) {
+		this.statusId = statusId;
+	}
 	
+	public OrderStatus getOrderStatus() {
+		return OrderStatus.get(this.statusId);
+	}
 	
 }
