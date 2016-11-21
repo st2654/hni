@@ -27,32 +27,41 @@ public class RedisLockingService implements LockingService, Lifecycle {
 	
 	@Override
 	public boolean acquireLock(String key) {
-		RLock lock = redisson.getLock(key);
-		if (lock.isLocked()) {
-			return false;
+		if ( null != redisson ) {
+			RLock lock = redisson.getLock(key);
+			if (lock.isLocked()) {
+				return false;
+			}
+			lock.lock();
 		}
-		lock.lock();
 		return true;
 	}
 
 	@Override
 	public boolean isLocked(String key) {
-		RLock lock = redisson.getLock(key);
-		return lock.isLocked();
+		if ( null != redisson ) {
+			RLock lock = redisson.getLock(key);
+			return lock.isLocked();
+		}
+		return false;
 	}
 
 	@Override
 	public void releaseLock(String key) {
-		RLock lock = redisson.getLock(key);
-		if (lock.isLocked()) {
-			lock.forceUnlock();
+		if ( null != redisson ) {
+			RLock lock = redisson.getLock(key);
+			if (lock.isLocked()) {
+				lock.forceUnlock();
+			}
 		}
 	}
 
 	@Override
 	public void shutdown() {
 		logger.info("Shutting down RedisLockingService...");
-		redisson.shutdown();
+		if ( null != redisson ) {
+			redisson.shutdown();
+		}
 	}
 
 	@Override
