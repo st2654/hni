@@ -72,14 +72,22 @@ public class RegisterService extends AbstractEventService<User> {
                 }
                 break;
             case STATE_REGISTER_CONFIRM_EMAIL:
-                if ("2".equals(textMessage)) {
-                    user.setEmail(null);
-                    nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
-                    returnString = "So what's your email address?";
-                } else {
-                    nextStateCode = EventState.STATE_REGISTER_GET_AUTH_CODE;
-                    returnString = "Please enter the 6 digit authorization code provided to you for this program.";
-                }
+                switch (textMessage){
+            		case "2":
+            			user.setEmail(null);
+                        nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
+                        returnString = "So what's your email address?";
+                        break;
+            		case "1":
+            			nextStateCode = EventState.STATE_REGISTER_GET_AUTH_CODE;
+                        returnString = "Please enter the 6 digit authorization code provided to you for this program.";
+                        break;
+            		default:
+            			nextStateCode=EventState.STATE_REGISTER_CONFIRM_EMAIL;
+            			returnString="Invalid Response - Reply 1 for yes and 2 for no to confirm your email address";
+            			break;
+            	}          		
+                
                 break;
             case STATE_REGISTER_GET_AUTH_CODE:
                 if (activationCodeService.validate(textMessage)) {
