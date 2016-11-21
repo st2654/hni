@@ -18,8 +18,7 @@ import static org.mockito.Mockito.*;
 
 public class RegisterServiceUnitTest {
 
-    //TODO FIX SESSION_ID and phoneNumber REFACTOR
-    private static final String SESSION_ID = "8188461238";
+    private static final String SESSION_ID = "123";
     private static final String PHONE_NUMBER = "8188461238";
     private static final String AUTH_CODE = "123456";
 
@@ -50,7 +49,7 @@ public class RegisterServiceUnitTest {
     @Test
     public void testStartRegister() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_START);
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
@@ -62,7 +61,7 @@ public class RegisterServiceUnitTest {
     public void testGetFirstName() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_FIRST_NAME);
         event.setTextMessage("firstname");
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Thanks " + "firstname" + ". What's your last name?", returnString);
         verify(sessionStateDAO, times(1)).update(any(SessionState.class));
@@ -72,7 +71,7 @@ public class RegisterServiceUnitTest {
     public void testGetLastName() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_LAST_NAME);
         event.setTextMessage("lastname");
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
@@ -84,7 +83,7 @@ public class RegisterServiceUnitTest {
     public void testGetEmail() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_EMAIL);
         event.setTextMessage("johndoe@gmail.com");
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
                 + "Is that correct? Reply 1 for yes and 2 for no", returnString);
@@ -95,7 +94,7 @@ public class RegisterServiceUnitTest {
     public void testConfirmEmail() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_CONFIRM_EMAIL);
         event.setTextMessage("1");
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Please enter the 6 digit authorization code provided to you for this program.", returnString);
         verify(sessionStateDAO, times(1)).update(any(SessionState.class));
@@ -105,7 +104,7 @@ public class RegisterServiceUnitTest {
     public void testGetAuthCode() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_AUTH_CODE);
         event.setTextMessage(AUTH_CODE);
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Ok. You're all setup for yourself. If you have additional family"
                 + " members to register please enter the additional authorization"
@@ -117,7 +116,7 @@ public class RegisterServiceUnitTest {
     public void testAddMoreAuthCodes() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_MORE_AUTH_CODES);
         event.setTextMessage(AUTH_CODE);
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("We have added that authorization code to your family account. Please"
                 + " send any additional codes you need for your family.", returnString);

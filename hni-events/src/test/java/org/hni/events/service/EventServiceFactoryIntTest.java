@@ -22,8 +22,7 @@ import static org.mockito.Mockito.*;
 
 public class EventServiceFactoryIntTest {
 
-    //TODO FIX SESSION_ID and phoneNumber REFACTOR
-    private static final String SESSION_ID = "8188461238";
+    private static final String SESSION_ID = "123";
     private static final String PHONE_NUMBER = "8188461238";
     private static final String AUTH_CODE = "123456";
 
@@ -59,7 +58,7 @@ public class EventServiceFactoryIntTest {
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         verify(sessionStateDao, times(1)).insert(any(SessionState.class));
         verify(sessionStateDao, times(1)).update(any(SessionState.class));
-        SessionState nextState = sessionStateDao.get(SESSION_ID);
+        SessionState nextState = sessionStateDao.getByPhoneNumber(PHONE_NUMBER);
         Assert.assertEquals(SESSION_ID, nextState.getSessionId());
         Assert.assertEquals(PHONE_NUMBER, nextState.getPhoneNumber());
         Assert.assertEquals(EventName.REGISTER, nextState.getEventName());
@@ -73,7 +72,7 @@ public class EventServiceFactoryIntTest {
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
-        verify(sessionStateDao, times(1)).delete(eq(SESSION_ID));
+        verify(sessionStateDao, times(1)).delete(eq(PHONE_NUMBER));
         verify(sessionStateDao, times(2)).insert(any(SessionState.class));
     }
 
