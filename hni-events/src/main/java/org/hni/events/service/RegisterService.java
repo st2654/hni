@@ -74,7 +74,7 @@ public class RegisterService extends AbstractEventService<User> {
                                 + "Is that correct? Reply 1 for yes and 2 for no";
                     }
                 } else {
-                    returnString = "We didn't get that. Please send your email address.";
+                    returnString = "I'm sorry that is not a valid email. Please send a valid email addresss.";
                 }
                 break;
             case STATE_REGISTER_CONFIRM_EMAIL:
