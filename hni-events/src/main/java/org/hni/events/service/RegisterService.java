@@ -55,7 +55,8 @@ public class RegisterService extends AbstractEventService<User> {
                     nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
                     returnString = "Perfect! Lastly, I'd like to get your email address "
                             + "to verify your account in case you text me from a new "
-                            + "number. So what's your email address? Thanks";
+                            + "number. So what's your email address? Type 'none' if you "
+                            + "don't have an email. Thanks";
                 } else {
                     returnString = "We didn't get that. Please send your last name again.";
                 }
@@ -65,27 +66,40 @@ public class RegisterService extends AbstractEventService<User> {
                 // validate the email
                 if (customerService.validate(user)) {
                     nextStateCode = EventState.STATE_REGISTER_CONFIRM_EMAIL;
-                    returnString = "Okay! I have " + textMessage + " as your email address. "
-                            + "Is that correct? Reply 1 for yes and 2 for no";
+                    if ("none".equalsIgnoreCase(textMessage)) {
+                        returnString = "Okay! You don't have an email address. "
+                                + "Is that correct? Reply 1 for yes and 2 for no";
+                    } else {
+                        returnString = "Okay! I have " + textMessage + " as your email address. "
+                                + "Is that correct? Reply 1 for yes and 2 for no";
+                    }
                 } else {
                     returnString = "We didn't get that. Please send your email address.";
                 }
                 break;
             case STATE_REGISTER_CONFIRM_EMAIL:
-                if ("2".equals(textMessage)) {
-                    user.setEmail(null);
-                    nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
-                    returnString = "So what's your email address?";
-                } else {
-                    nextStateCode = EventState.STATE_REGISTER_GET_AUTH_CODE;
-                    returnString = "Please enter the 6 digit authorization code provided to you for this program.";
-                }
+                switch (textMessage){
+            		case "2":
+            			user.setEmail(null);
+                        nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
+                        returnString = "So what's your email address?";
+                        break;
+            		case "1":
+            			nextStateCode = EventState.STATE_REGISTER_GET_AUTH_CODE;
+                        returnString = "Please enter the 6 digit authorization code provided to you for this program.";
+                        break;
+            		default:
+            			nextStateCode=EventState.STATE_REGISTER_CONFIRM_EMAIL;
+            			returnString="Invalid Response - Reply 1 for yes and 2 for no to confirm your email address";
+            			break;
+            	}          		
+                
                 break;
             case STATE_REGISTER_GET_AUTH_CODE:
                 if (activationCodeService.validate(textMessage)) {
                     customerService.save(user);
                     //we are sure that text message is a long at this point
-                    customerService.registerCustomer(user, Long.valueOf(textMessage));
+                    customerService.registerCustomer(user, textMessage);
                     nextStateCode = EventState.STATE_REGISTER_MORE_AUTH_CODES;
                     returnString = "Ok. You're all setup for yourself. If you have additional family"
                             + " members to register please enter the additional authorization"
@@ -97,7 +111,7 @@ public class RegisterService extends AbstractEventService<User> {
                 break;
             case STATE_REGISTER_MORE_AUTH_CODES:
                 if (activationCodeService.validate(textMessage)) {
-                    customerService.registerCustomer(user, Long.valueOf(textMessage));
+                    customerService.registerCustomer(user, textMessage);
                     // link auth code with user
                     returnString = "We have added that authorization code to your family account. Please"
                             + " send any additional codes you need for your family.";

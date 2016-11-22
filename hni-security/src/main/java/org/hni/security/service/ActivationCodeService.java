@@ -11,12 +11,12 @@ public interface ActivationCodeService extends BaseService<ActivationCode> {
 	 * @param authCode
 	 * @return
 	 */
-	ActivationCode getByActivationCode(Long authCode);
+	ActivationCode getByActivationCode(String authCode);
 
 	/**
 	 * Validate whether an activation code is valid or not
 	 * @param id
 	 * @return
 	 */
-	<T> boolean validate(T id);
+	boolean validate(String authCode);
 }

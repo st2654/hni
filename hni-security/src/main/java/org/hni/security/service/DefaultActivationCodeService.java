@@ -29,29 +29,18 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 	}
 
 	@Override
-	public <T> boolean validate(T authCode) {
-        Long authCodeLong;
-        try {
-			// wmenez1: why is there a need for a generic here?
-			if (authCode instanceof String) {
-				authCodeLong = Long.valueOf((String) authCode);
-			} else {
-				authCodeLong = Long.valueOf((Long) authCode);
-			}
-        } catch (ClassCastException e) {
-            return false;
-        }
+	public boolean validate(String authCode) {
 
-		ActivationCode code = getByActivationCode(authCodeLong);
+		ActivationCode code = getByActivationCode(authCode);
 		return code != null
             && code.getOrganizationId() != null
-			&& !code.isActivated()
+			&& code.isEnabled()
 			&& code.getMealsRemaining() > 0
 			&& code.getMealsAuthorized() > 0;
 	}
 
 	@Override
-    public ActivationCode getByActivationCode(Long authCode) {
+    public ActivationCode getByActivationCode(String authCode) {
         return activationCodeDao.getByActivationCode(authCode);
     }
 

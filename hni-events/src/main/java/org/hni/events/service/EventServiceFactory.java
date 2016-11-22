@@ -33,9 +33,8 @@ public class EventServiceFactory {
     }
 
     public String handleEvent(final Event event) {
-        //TODO refactor sessionId with phone number. For explaination, go to line number 52 and 53
-        final String sessionId = event.getPhoneNumber();
-        final SessionState state = sessionStateDAO.get(sessionId);
+        final String phoneNumber = event.getPhoneNumber();
+        final SessionState state = sessionStateDAO.getByPhoneNumber(phoneNumber);
         EventName eventName = parseKeyWordToEventName(event.getTextMessage());
         if (eventName == null) {
             if (state == null) {
@@ -47,12 +46,9 @@ public class EventServiceFactory {
         } else {
             if (state != null) {
                 // clear previous workflow as a new keyword is received
-                sessionStateDAO.delete(sessionId);
+                sessionStateDAO.delete(phoneNumber);
             }
-            //This is a quick hack. Phone number is the only unique identifier for a customer.
-            //sessionId, in the other hand, expires in 90 seconds. When this piece of code was written, this
-            //information was unavailable. TODO There should be a refactor regarding this issue.
-            sessionStateDAO.insert(new SessionState(eventName, event.getPhoneNumber(), event.getPhoneNumber()));
+            sessionStateDAO.insert(new SessionState(eventName, event.getSessionId(), event.getPhoneNumber()));
         }
         // set value to current workflow's value when it is not a keyword value
         return eventServiceMap.get(eventName).handleEvent(event);

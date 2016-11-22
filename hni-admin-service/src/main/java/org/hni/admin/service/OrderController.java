@@ -19,10 +19,15 @@ import org.hni.common.DateUtils;
 import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
 import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.monitorjbl.json.JsonView;
+import com.monitorjbl.json.Match;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,11 +35,11 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "/orders", description = "Operations on Orders and OrderItems")
 @Component
 @Path("/orders")
-public class OrderController {
+public class OrderController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	
 	@Inject private OrderService orderService;
-	
+		
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -42,8 +47,8 @@ public class OrderController {
 		, notes = ""
 		, response = Order.class
 		, responseContainer = "")
-	public Order getOrder(@PathParam("id") Long id) {
-		return orderService.get(id);
+	public String getOrder(@PathParam("id") Long id) {
+		return serializeOrderToJson(orderService.get(id));
 	}
 
 	@POST
@@ -52,8 +57,8 @@ public class OrderController {
 		, notes = "An order without an ID field will be created"
 		, response = Order.class
 		, responseContainer = "")
-	public Order saveOrder(Order order) {
-		return orderService.save(order);
+	public String saveOrder(Order order) {
+		return serializeOrderToJson(orderService.save(order));
 	}
 
 	@DELETE
@@ -63,8 +68,8 @@ public class OrderController {
 		, notes = ""
 		, response = Order.class
 		, responseContainer = "")
-	public Order getDelete(@PathParam("id") Long id) {
-		return orderService.delete(new Order(id));
+	public String getDelete(@PathParam("id") Long id) {
+		return serializeOrderToJson(orderService.delete(new Order(id)));
 	}
 
 	@GET
@@ -74,23 +79,34 @@ public class OrderController {
 		, notes = ""
 		, response = Order.class
 		, responseContainer = "")
-	public Order getNextOrder(@QueryParam("providerId") Long providerId) {
+	public String getNextOrder(@QueryParam("providerId") Long providerId) {
 		if ( null != providerId ) {
-			return orderService.next(new Provider(providerId));
+			return serializeOrderToJson(orderService.next(new Provider(providerId)));
 		}
-		return orderService.next();
+		return serializeOrderToJson(orderService.next());
 	}
 
 	@PUT
 	@Path("/completed/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns the next order obtaining a lock on it so others cannot work on it at the same time.  You may pass an optional parameter 'providerId' to filter to a specific provider"
+	@ApiOperation(value = "compeletes the order, updating the status and removing the lock."
 		, notes = ""
 		, response = Order.class
 		, responseContainer = "")
 	public void completeOrder(@PathParam("id") Long id, @QueryParam("pickupDate") String pickupDateString) {
-		// also need payment info
+		// TODO also need payment info
 		orderService.complete(orderService.get(id), DateUtils.parseDateTime(pickupDateString));
+	}
+
+	@DELETE
+	@Path("/lock/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Forcibly, removes a lock, if it exists, from the order"
+		, notes = ""
+		, response = Order.class
+		, responseContainer = "")
+	public void removeLock(@PathParam("id") Long id) {
+		orderService.releaseLock(orderService.get(id));
 	}
 
 	private static final String ORDER_COUNT = "{\"order-count\":\"%d\"}";
@@ -126,5 +142,16 @@ public class OrderController {
 		return orderService.get(new User(id), start, end);
 	}
 
-
+	private String serializeOrderToJson(Order order) {
+		try {
+			String json = mapper.writeValueAsString(JsonView.with(order)
+					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName"))
+					.onClass(ProviderLocation.class, Match.match().include("*").exclude("created", "createdById"))
+					.onClass(Provider.class, Match.match().include("*").exclude("created", "createdById")));
+			return json;
+		} catch (JsonProcessingException e) {
+			logger.error("Serializing User object:"+e.getMessage(), e);
+		}
+		return "{}";
+	}
 }

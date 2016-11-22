@@ -45,6 +45,12 @@ public interface OrderService extends BaseService<Order> {
 	Order complete(Order order, LocalDateTime pickupDate);
 	
 	/**
+	 * Forcibly unlock an order.
+	 * @param order
+	 */
+	Order releaseLock(Order order);
+	
+	/**
 	 * Returns a count of open orders
 	 * @return
 	 */

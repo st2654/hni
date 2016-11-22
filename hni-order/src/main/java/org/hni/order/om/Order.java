@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import org.hni.common.om.Persistable;
 import org.hni.order.om.type.OrderStatus;
 import org.hni.provider.om.ProviderLocation;
+import org.hni.user.om.User;
 
 /**
  * Represents a request for something/a meal.  The order is related to a User/client,
@@ -39,7 +40,7 @@ public class Order implements Persistable, Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name="user_id") private Long userId;
+	//@Column(name="user_id") private Long userId;
 	@Column(name="order_date") private Date orderDate;
 	@Column(name="ready_date") private Date readyDate;
 	@Column(name="pickup_date") private Date pickupDate;
@@ -47,6 +48,10 @@ public class Order implements Persistable, Serializable {
 	@Column(name="tax") private Double tax;
 	@Column(name="created_by") private Long createdById;
 	@Column(name="status_id") private Long statusId;
+	
+	@ManyToOne
+	@JoinColumn(name="user_id", referencedColumnName = "id")
+	private User user;
 	
 	@ManyToOne
 	@JoinColumn(name="provider_location_id", referencedColumnName = "id")
@@ -68,12 +73,15 @@ public class Order implements Persistable, Serializable {
 		this.id = id;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public void setUserId(Long userId) {
-		this.userId = userId;
+		this.user = new User(userId);
 	}
 
 	public Date getOrderDate() {

@@ -17,7 +17,7 @@ public class DefaultActivationCodeDAO extends AbstractDAO<ActivationCode> implem
 		super(ActivationCode.class);		
 	}
 
-	public ActivationCode getByActivationCode(Long actCode) {
+	public ActivationCode getByActivationCode(String actCode) {
 		try {
 			Query q = em.createQuery("SELECT x FROM ActivationCode x WHERE x.activationCode = :actCode")
 				.setParameter("actCode", actCode);
@@ -26,4 +26,5 @@ public class DefaultActivationCodeDAO extends AbstractDAO<ActivationCode> implem
 			return null;
 		}
 	}
+
 }

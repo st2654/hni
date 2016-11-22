@@ -8,6 +8,7 @@ import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.user.om.User;
+import org.hni.user.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +23,7 @@ import static org.mockito.Mockito.*;
 
 public class EventServiceFactoryIntTest {
 
-    //TODO FIX SESSION_ID and phoneNumber REFACTOR
-    private static final String SESSION_ID = "8188461238";
+    private static final String SESSION_ID = "123";
     private static final String PHONE_NUMBER = "8188461238";
     private static final String AUTH_CODE = "123456";
 
@@ -38,7 +38,7 @@ public class EventServiceFactoryIntTest {
     private SessionStateDAO sessionStateDao = new DefaultSessionStateDAO();
 
     @Mock
-    private CustomerService customerService;
+    private UserService customerService;
 
     @Mock
     private ActivationCodeService activationCodeService;
@@ -59,7 +59,7 @@ public class EventServiceFactoryIntTest {
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         verify(sessionStateDao, times(1)).insert(any(SessionState.class));
         verify(sessionStateDao, times(1)).update(any(SessionState.class));
-        SessionState nextState = sessionStateDao.get(SESSION_ID);
+        SessionState nextState = sessionStateDao.getByPhoneNumber(PHONE_NUMBER);
         Assert.assertEquals(SESSION_ID, nextState.getSessionId());
         Assert.assertEquals(PHONE_NUMBER, nextState.getPhoneNumber());
         Assert.assertEquals(EventName.REGISTER, nextState.getEventName());
@@ -73,7 +73,7 @@ public class EventServiceFactoryIntTest {
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
-        verify(sessionStateDao, times(1)).delete(eq(SESSION_ID));
+        verify(sessionStateDao, times(1)).delete(eq(PHONE_NUMBER));
         verify(sessionStateDao, times(2)).insert(any(SessionState.class));
     }
 
@@ -91,7 +91,7 @@ public class EventServiceFactoryIntTest {
         returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Thanks", returnString);
+                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
         // email
         returnString = factory.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "

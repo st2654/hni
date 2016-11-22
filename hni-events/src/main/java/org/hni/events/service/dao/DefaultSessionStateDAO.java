@@ -16,19 +16,19 @@ public class DefaultSessionStateDAO implements SessionStateDAO {
         sessionStateMap = new HashMap<>();
     }
 
-    public SessionState get(String sessionId) {
-        return sessionStateMap.get(sessionId);
+    public SessionState getByPhoneNumber(String phoneNumber) {
+        return sessionStateMap.get(phoneNumber);
     }
 
     public SessionState insert(SessionState state) {
-        return sessionStateMap.put(state.getSessionId(), state);
+        return sessionStateMap.put(state.getPhoneNumber(), state);
     }
 
     public SessionState update(SessionState state) {
-        return sessionStateMap.put(state.getSessionId(), state);
+        return sessionStateMap.put(state.getPhoneNumber(), state);
     }
 
-    public SessionState delete(String sessionId) {
-        return sessionStateMap.remove(sessionId);
+    public SessionState delete(String phoneNumber) {
+        return sessionStateMap.remove(phoneNumber);
     }
 }

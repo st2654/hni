@@ -88,8 +88,10 @@ insert into security_role_permissions values(3,67,1);
 insert into security_role_permissions values(4,12,0);
 insert into security_role_permissions values(5,12,0);
 
-insert into activation_codes values('1234567890', 2, 10, 10, 1, null, now(), null);
-insert into activation_codes values('7h-1234567890', 2, 10, 10, 2, 'freddy has activated this', now(), 2);
+insert into activation_codes values(1, '1234567890', 2, 10, 10, 1, null, now(), null);
+insert into activation_codes values(2, '7h-1234567890', 2, 10, 10, 1, 'freddy has activated this', now(), 2);
+insert into activation_codes values(3, '123456', 2, 10, 10, 1, null, now(), null);
+insert into activation_codes values(4, '987654', 2, 10, 10, 0, null, now(), null);
 
 insert into addresses values (1, 'subway corp addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
 insert into addresses values (2, 'kfc corp addr', '10790 parkridge blvd', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');

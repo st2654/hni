@@ -57,7 +57,7 @@ public class TestCustomerService {
         user.setLastName("Taletiya");
         user.setMobilePhone("9876543210");
         user.setEmail("sourabh.taletiya@test.com");
-        Long authCode = 123456L;
+        String authCode = "123456";
 
         customerService.registerCustomer(user, authCode);
         ActivationCode activationCode = activationCodeService.getByActivationCode(authCode);
@@ -73,7 +73,7 @@ public class TestCustomerService {
     @Test
     public void testRegisterSameCustomer() {
         User user = customerService.get(3l);
-        Long authCode = 123456L;
+        String authCode = "123456";
         customerService.registerCustomer(user, authCode);
 
         assertThat(customerService.byMobilePhone("479-555-4321").size(), is(1));
@@ -93,7 +93,7 @@ public class TestCustomerService {
     @Test
     public void testRegisterCustomerWithMultipleAuthCode() {
         User user = customerService.get(3l);
-        Long authCode = 123456L;
+        String authCode = "123456";
         customerService.registerCustomer(user, authCode);
         ActivationCode activationCode = activationCodeService.getByActivationCode(authCode);
         List<UserOrganizationRole> uors = organizationUserService.getUserOrganizationRoles(user).stream()

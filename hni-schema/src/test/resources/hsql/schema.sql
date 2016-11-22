@@ -167,15 +167,17 @@ ENGINE = InnoDB;
 -- Table `activation_codes`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `activation_codes` (
-  `activation_code` VARCHAR(255) NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `activation_code` VARCHAR(128) NOT NULL,
   `organization_id` INT NOT NULL,
   `meals_authorized` INT NULL,
   `meals_remaining` INT NULL,
-  `activated` TINYINT NULL COMMENT 'true/false whether this voucher can be used',
+  `enabled` TINYINT NULL COMMENT 'true/false whether this voucher can be used',
   `comments` VARCHAR(255) NULL,
   `created` VARCHAR(45) NULL,
   `user_id` INT NULL COMMENT 'the user who “owns” this voucher',
-  PRIMARY KEY (`activation_code`))
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_activation_code` (`activation_code`))
 ENGINE = InnoDB;
 
 

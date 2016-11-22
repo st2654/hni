@@ -28,7 +28,7 @@
 			</bean>	
 			<util:properties id="hniProperties" location="classpath:config/production/application.properties" />
 			<bean id="redisLockingService" class=" org.hni.order.service.RedisLockingService">
-				<property name="configLocation" value="classpath:config/production/redis-cache.json" />
+				<property name="configLocation" value="/config/production/redis-cache.json" />
 			</bean>
 			<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
 			    <property name="poolName" value="springHikariCP" />

@@ -4,7 +4,7 @@ import org.hni.events.service.om.SessionState;
 
 public interface SessionStateDAO {
 
-    SessionState get(String sessionId);
+    SessionState getByPhoneNumber(String phoneNumber);
 
     SessionState insert(SessionState state);
 
