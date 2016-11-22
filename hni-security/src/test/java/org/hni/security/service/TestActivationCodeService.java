@@ -93,6 +93,16 @@ public class TestActivationCodeService {
 		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
 	}
 
+	@Test
+	public void testValidateAlreadyUsedCode() {
+		ActivationCode code = activationCodeService.getByActivationCode(SUPPLIED_AUTH_CODE_1);
+		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
+
+		code.setUser(organizationUserService.get(3L));
+		activationCodeService.update(code);
+		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
+	}
+
 	//TODO Validation Org test?
 }
 
