@@ -289,3 +289,18 @@ CREATE TABLE IF NOT EXISTS `order_payments` (
   PRIMARY KEY (`order_id`, `payment_instrument_id`))
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `partial_orders`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `partial_orders` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NULL,
+  `provider_location_id` INT NULL,
+  `menu_item_id` INT NULL,
+  `order_item_id` INT NULL,
+  `chosen_provider_id` INT NULL,
+  `transaction_phase` VARCHAR(45) NULL,
+  `address` VARCHAR(160) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;

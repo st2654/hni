@@ -30,6 +30,14 @@ public class EventRouter {
         eventServiceMap.put(EventName.REGISTER, registerService);
     }
 
+    public void registerService(EventName eventName, EventService service) {
+        eventServiceMap.put(eventName, service);
+    }
+
+    public EventService getRegistered(EventName eventName) {
+        return eventServiceMap.get(eventName);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public String handleEvent(final Event event) {
 
@@ -48,12 +56,15 @@ public class EventRouter {
             }
         } else {
             if (state != null) {
-                // clear previous workflow as a new keyword is received
-                eventStateDao.delete(state);
+                if (eventName != state.getEventName()) {
+                    // update the state to have the new eventName
+                    state.setEventName(eventName);
+                    eventStateDao.update(state);
+                }
+            } else {
+                // Insert the new event
+                eventStateDao.insert(new EventState(eventName, phoneNumber));
             }
-
-            // Insert the new event
-            eventStateDao.insert(new EventState(eventName, event.getPhoneNumber()));
         }
 
         // Route the event to the appropriate service

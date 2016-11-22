@@ -1,5 +1,9 @@
 package org.hni.order.service;
 
+import org.hni.common.exception.HNIException;
+import org.hni.events.service.EventRouter;
+import org.hni.events.service.om.Event;
+import org.hni.events.service.om.EventName;
 import org.hni.order.dao.DefaultPartialOrderDAO;
 import org.hni.order.dao.OrderDAO;
 import org.hni.order.om.Order;
@@ -13,9 +17,13 @@ import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +32,8 @@ import java.util.Optional;
 
 @Component
 public class DefaultOrderProcessor implements OrderProcessor {
+
+    private static Logger logger = LoggerFactory.getLogger(DefaultOrderProcessor.class);
 
     @Inject
     private UserDAO userDao;
@@ -37,10 +47,21 @@ public class DefaultOrderProcessor implements OrderProcessor {
     @Inject
     private OrderDAO orderDAO;
 
+    @Inject
+    private EventRouter eventRouter;
+
+    @PostConstruct
+    void init() {
+        if (eventRouter.getRegistered(EventName.MEAL) != this) {
+            eventRouter.registerService(EventName.MEAL, this);
+        }
+
+    }
+
 
     public String processMessage(User user, String message) {
         //this partial order is the one I get for this user
-        PartialOrder order = partialOrderDAO.get(user);
+        PartialOrder order = partialOrderDAO.byUser(user);
         boolean cancellation = message.equalsIgnoreCase("CANCEL");
 
         if (order == null && cancellation) {
@@ -199,4 +220,20 @@ public class DefaultOrderProcessor implements OrderProcessor {
         }
     }
 
+    @Override
+    public String handleEvent(Event event) {
+
+        // Look up the user
+        String phoneNumber = event.getPhoneNumber();
+        List<User> users = userDao.byMobilePhone(phoneNumber);
+
+        if (users != null && !users.isEmpty()) {
+            // process the text message
+            return processMessage(users.get(0), event.getTextMessage());
+        } else {
+            String message = "OrderProcessor failed to lookup user by phone " + phoneNumber;
+            logger.error(message);
+            throw new HNIException("Please sign up first by saying MEAL");
+        }
+    }
 }

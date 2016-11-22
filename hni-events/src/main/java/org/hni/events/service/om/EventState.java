@@ -52,6 +52,10 @@ public class EventState implements Persistable, Serializable {
         return eventName;
     }
 
+    public void setEventName(EventName eventName) {
+        this.eventName = eventName;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }

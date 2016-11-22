@@ -73,8 +73,8 @@ public class EventRouterUnitTest {
         when(eventStateDao.byPhoneNumber(eq(PHONE_NUMBER))).thenReturn(eventState);
         event.setTextMessage("SIGNUP");
         Assert.assertEquals(RETURN_MESSAGE, eventRouter.handleEvent(event));
-        verify(eventStateDao, times(1)).delete(eq(eventState));
-        verify(eventStateDao, times(1)).insert(any(EventState.class));
+        verify(eventStateDao, times(1)).update(eq(eventState));
+        verify(eventStateDao, times(0)).insert(any(EventState.class));
     }
 
     @Test
