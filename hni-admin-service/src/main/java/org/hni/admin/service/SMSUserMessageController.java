@@ -7,7 +7,6 @@ import org.hni.events.service.om.Event;
 import org.hni.provider.om.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -40,7 +39,7 @@ public class SMSUserMessageController extends AbstractBaseController {
 
         logger.info("HTML/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
                 "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
-        final Event event = Event.createEvent(sessionId, phoneNumber, userMessage);
+        final Event event = Event.createEvent("text/html", phoneNumber, userMessage);
         return String.format("<html><body>%s</body></html>", eventRouter.handleEvent(event));
     }
 
@@ -57,7 +56,7 @@ public class SMSUserMessageController extends AbstractBaseController {
                                    @QueryParam("testmode") String testMode) {
         logger.info("Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
                 "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
-        final Event event = Event.createEvent(sessionId, phoneNumber, userMessage);
+        final Event event = Event.createEvent("text/plain", phoneNumber, userMessage);
         return eventRouter.handleEvent(event);
 
     }

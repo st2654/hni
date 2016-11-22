@@ -21,9 +21,6 @@ public class RegistrationState implements Persistable, Serializable {
     @Column(name = "id")
     protected Long id;
 
-    @Column(name = "sessionid", nullable = false)
-    private String sessionId;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "eventname", nullable = false)
     private EventName eventName;
@@ -41,16 +38,14 @@ public class RegistrationState implements Persistable, Serializable {
     public RegistrationState() {
     }
 
-    public RegistrationState(EventName eventName, String sessionId, String phoneNumber) {
-        this.sessionId = sessionId;
+    public RegistrationState(EventName eventName, String phoneNumber) {
         this.eventName = eventName;
         this.phoneNumber = phoneNumber;
         payload = null;
         registrationStep = RegistrationStep.getInitalState(eventName);
     }
 
-    public RegistrationState(EventName eventName, String sessionId, String phoneNumber, String payload, RegistrationStep registrationStep) {
-        this.sessionId = sessionId;
+    public RegistrationState(EventName eventName, String phoneNumber, String payload, RegistrationStep registrationStep) {
         this.eventName = eventName;
         this.phoneNumber = phoneNumber;
         this.payload = payload;
@@ -60,10 +55,6 @@ public class RegistrationState implements Persistable, Serializable {
     @Override
     public Long getId() {
         return id;
-    }
-
-    public String getSessionId() {
-        return sessionId;
     }
 
     public EventName getEventName() {

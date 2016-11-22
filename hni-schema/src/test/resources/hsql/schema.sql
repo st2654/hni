@@ -1,3 +1,4 @@
+SET MODE MySQL;
 -- MySQL Workbench Forward Engineering
 
 -- -----------------------------------------------------
@@ -19,7 +20,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `registration_state` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `sessionid` VARCHAR(255) NOT NULL,
   `eventname` VARCHAR(255) NOT NULL,
   `phoneno` VARCHAR(45) NOT NULL,
   `payload` VARCHAR(255) NULL,

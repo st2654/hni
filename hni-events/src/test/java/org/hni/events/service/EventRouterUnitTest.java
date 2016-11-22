@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 public class EventRouterUnitTest {
 
-    private static final Long SESSION_STATE_ID = 1L;
+    private static final Long EVENT_STATE_ID = 1L;
     private static final String PHONE_NUMBER = "8188461238";
     private static final String RETURN_MESSAGE = "returnmessage";
 
@@ -38,7 +38,7 @@ public class EventRouterUnitTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         eventRouter.init();
-        event = Event.createEvent("1", PHONE_NUMBER, "message");
+        event = Event.createEvent("text/plain", PHONE_NUMBER, "message");
         when(eventStateDao.insert(any(EventState.class))).thenReturn(new EventState());
         when(registerService.handleEvent(eq(event))).thenReturn(RETURN_MESSAGE);
     }
@@ -52,7 +52,7 @@ public class EventRouterUnitTest {
 
     @Test
     public void testInvalidEventWithActiveWorkFlow() {
-        eventState = new EventState(SESSION_STATE_ID, EventName.REGISTER, PHONE_NUMBER);
+        eventState = new EventState(EVENT_STATE_ID, EventName.REGISTER, PHONE_NUMBER);
         when(eventStateDao.byPhoneNumber(eq(PHONE_NUMBER))).thenReturn(eventState);
         Assert.assertEquals(RETURN_MESSAGE, eventRouter.handleEvent(event));
         verify(eventStateDao, times(0)).insert(any(EventState.class));
@@ -69,7 +69,7 @@ public class EventRouterUnitTest {
 
     @Test
     public void testInterruptExistingWorkFlow() {
-        eventState = new EventState(SESSION_STATE_ID, EventName.MEAL, PHONE_NUMBER);
+        eventState = new EventState(EVENT_STATE_ID, EventName.MEAL, PHONE_NUMBER);
         when(eventStateDao.byPhoneNumber(eq(PHONE_NUMBER))).thenReturn(eventState);
         event.setTextMessage("SIGNUP");
         Assert.assertEquals(RETURN_MESSAGE, eventRouter.handleEvent(event));
@@ -79,7 +79,7 @@ public class EventRouterUnitTest {
 
     @Test
     public void testContinueRegisterWorkFlow() {
-        eventState = new EventState(SESSION_STATE_ID, EventName.REGISTER, PHONE_NUMBER);
+        eventState = new EventState(EVENT_STATE_ID, EventName.REGISTER, PHONE_NUMBER);
         when(eventStateDao.byPhoneNumber(eq(PHONE_NUMBER))).thenReturn(eventState);
         Assert.assertEquals(RETURN_MESSAGE, eventRouter.handleEvent(event));
         verify(eventStateDao, never()).insert(any(EventState.class));

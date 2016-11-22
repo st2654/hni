@@ -10,25 +10,25 @@ import java.util.Map;
 public class DefaultRegistrationStateDAO implements RegistrationStateDAO {
 
     //TODO get rid of this with real DAO
-    Map<String, RegistrationState> sessionStateMap;
+    Map<String, RegistrationState> registrationStateMap;
 
     public DefaultRegistrationStateDAO() {
-        sessionStateMap = new HashMap<>();
+        registrationStateMap = new HashMap<>();
     }
 
     public RegistrationState get(String sessionId) {
-        return sessionStateMap.get(sessionId);
+        return registrationStateMap.get(sessionId);
     }
 
     public RegistrationState insert(RegistrationState state) {
-        return sessionStateMap.put(state.getSessionId(), state);
+        return registrationStateMap.put(state.getPhoneNumber(), state);
     }
 
     public RegistrationState update(RegistrationState state) {
-        return sessionStateMap.put(state.getSessionId(), state);
+        return registrationStateMap.put(state.getPhoneNumber(), state);
     }
 
     public RegistrationState delete(String sessionId) {
-        return sessionStateMap.remove(sessionId);
+        return registrationStateMap.remove(sessionId);
     }
 }

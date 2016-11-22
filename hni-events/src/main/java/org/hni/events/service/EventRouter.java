@@ -36,7 +36,7 @@ public class EventRouter {
         final String phoneNumber = event.getPhoneNumber();
 
         // Lookup routing state by phone number
-        final EventState state = eventStateDao.byPhoneNumber(phoneNumber);
+        EventState state = eventStateDao.byPhoneNumber(phoneNumber);
 
         EventName eventName = parseKeyWordToEventName(event.getTextMessage());
         if (eventName == null) {

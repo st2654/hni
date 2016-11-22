@@ -3,6 +3,7 @@ package org.hni.events.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hni.events.service.dao.RegistrationStateDAO;
 import org.hni.events.service.om.Event;
+import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.RegistrationStep;
 import org.hni.events.service.om.RegistrationState;
 import org.slf4j.Logger;
@@ -26,6 +27,12 @@ public abstract class AbstractRegistrationService<T> implements EventService{
     @Override
     public String handleEvent(final Event event) {
         RegistrationState state = registrationStateDAO.get(event.getPhoneNumber());
+        if (state == null) {
+            // No state, so we're just beginning.
+            state = new RegistrationState(EventName.REGISTER, event.getPhoneNumber(),
+                    null, RegistrationStep.STATE_REGISTER_START);
+            registrationStateDAO.insert(state);
+        }
         LOGGER.info("Handling {} at state {} in {} flow", event, state.getRegistrationStep().getStateCode(),
                 state.getEventName().name());
 
@@ -34,7 +41,7 @@ public abstract class AbstractRegistrationService<T> implements EventService{
 
         if (!state.getRegistrationStep().equals(stepResult.getNextStateCode())) {
             final RegistrationState nextState =
-                    new RegistrationState(state.getEventName(), state.getSessionId(), state.getPhoneNumber(),
+                    new RegistrationState(state.getEventName(), state.getPhoneNumber(),
                             stepResult.getPayload(), stepResult.getNextStateCode());
 
             registrationStateDAO.update(nextState);
@@ -48,7 +55,7 @@ public abstract class AbstractRegistrationService<T> implements EventService{
         try {
             return objectMapper.readValue(payload, clazz);
         } catch (IOException ex) {
-            throw new RuntimeException();
+            throw new RuntimeException("deserialize failed " + payload, ex);
         }
     }
 
@@ -56,7 +63,7 @@ public abstract class AbstractRegistrationService<T> implements EventService{
         try {
             return objectMapper.writeValueAsString(object);
         } catch (IOException ex) {
-            throw new RuntimeException();
+            throw new RuntimeException("serialize failed", ex);
         }
     }
 

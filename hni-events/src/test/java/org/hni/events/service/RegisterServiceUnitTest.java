@@ -3,8 +3,8 @@ package org.hni.events.service;
 import org.hni.events.service.dao.RegistrationStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
-import org.hni.events.service.om.RegistrationStep;
 import org.hni.events.service.om.RegistrationState;
+import org.hni.events.service.om.RegistrationStep;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.user.om.User;
 import org.junit.Assert;
@@ -42,14 +42,14 @@ public class RegisterServiceUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        event = Event.createEvent(SESSION_ID, PHONE_NUMBER, "message");
+        event = Event.createEvent("text/plain", PHONE_NUMBER, "message");
         when(customerService.validate(any(User.class))).thenReturn(true);
         when(activationCodeService.validate(eq(AUTH_CODE))).thenReturn(true);
     }
 
     @Test
     public void testStartRegister() throws Exception {
-        state = new RegistrationState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_START);
+        state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_START);
         when(registrationStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
@@ -60,7 +60,7 @@ public class RegisterServiceUnitTest {
 
     @Test
     public void testGetFirstName() throws Exception {
-        state = new RegistrationState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_FIRST_NAME);
+        state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_FIRST_NAME);
         event.setTextMessage("firstname");
         when(registrationStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
@@ -70,7 +70,7 @@ public class RegisterServiceUnitTest {
 
     @Test
     public void testGetLastName() throws Exception {
-        state = new RegistrationState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_LAST_NAME);
+        state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_LAST_NAME);
         event.setTextMessage("lastname");
         when(registrationStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
@@ -82,7 +82,7 @@ public class RegisterServiceUnitTest {
 
     @Test
     public void testGetEmail() throws Exception {
-        state = new RegistrationState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_EMAIL);
+        state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_EMAIL);
         event.setTextMessage("johndoe@gmail.com");
         when(registrationStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
@@ -93,7 +93,7 @@ public class RegisterServiceUnitTest {
 
     @Test
     public void testConfirmEmail() throws Exception {
-        state = new RegistrationState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_CONFIRM_EMAIL);
+        state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_CONFIRM_EMAIL);
         event.setTextMessage("1");
         when(registrationStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
@@ -103,7 +103,7 @@ public class RegisterServiceUnitTest {
 
     @Test
     public void testGetAuthCode() throws Exception {
-        state = new RegistrationState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_AUTH_CODE);
+        state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_AUTH_CODE);
         event.setTextMessage(AUTH_CODE);
         when(registrationStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
@@ -115,7 +115,7 @@ public class RegisterServiceUnitTest {
 
     @Test
     public void testAddMoreAuthCodes() throws Exception {
-        state = new RegistrationState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_MORE_AUTH_CODES);
+        state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_MORE_AUTH_CODES);
         event.setTextMessage(AUTH_CODE);
         when(registrationStateDAO.get(eq(SESSION_ID))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
