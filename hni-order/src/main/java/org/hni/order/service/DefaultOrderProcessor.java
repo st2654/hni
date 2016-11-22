@@ -69,6 +69,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         } else if (order == null) {
             order = new PartialOrder();
             order.setTransactionPhase(TransactionPhase.MEAL);
+            order.setUser(user);
         } else if (cancellation) {
             partialOrderDAO.delete(order);
             return "You have successfully cancelled your order.";
@@ -233,7 +234,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         } else {
             String message = "OrderProcessor failed to lookup user by phone " + phoneNumber;
             logger.error(message);
-            throw new HNIException("Please sign up first by saying MEAL");
+            throw new HNIException("Please sign up first by saying REGISTER");
         }
     }
 }

@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS `providers` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
   `address_id` INT NULL,
+  `menu_id` INT NOT NULL,
   `created` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   PRIMARY KEY (`id`))
@@ -190,7 +191,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `activation_codes` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `activation_code` VARCHAR(128) NOT NULL,
+  `activation_code` VARCHAR(255) NOT NULL,
   `organization_id` INT NOT NULL,
   `meals_authorized` INT NULL,
   `meals_remaining` INT NULL,

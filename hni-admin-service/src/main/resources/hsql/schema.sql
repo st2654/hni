@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS `providers` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
   `address_id` INT NULL,
+  `menu_id` INT NOT NULL,
   `created` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   PRIMARY KEY (`id`))

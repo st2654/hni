@@ -109,14 +109,14 @@ truncate table addresses;
 insert into addresses values (1, 'subway corp addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
 insert into addresses values (2, 'kfc corp addr', '10790 parkridge blvd', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');
 insert into addresses values (3, 'wendys corp addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
-insert into addresses values (4, 'subway #1 addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
-insert into addresses values (5, 'kfc #1 addr', '10790 parkridge blvd', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');
+insert into addresses values (4, 'subway #1 addr', '10790 parkridge blvd', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
+insert into addresses values (5, 'kfc #1 addr', '1251 Phoenician way', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');
 insert into addresses values (6, 'wendys #1 addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
 
 truncate table providers;
-insert into providers values(1, 'Subway', 1, now(), 1);
-insert into providers values(2, 'KFC', 2, now(), 1);
-insert into providers values(3, 'Wendys', 3, now(), 1);
+insert into providers values(1, 'Subway', 1, 1, now(), 1);
+insert into providers values(2, 'KFC', 2, 1, now(), 1);
+insert into providers values(3, 'Wendys', 3, 1, now(), 1);
 
 truncate table provider_locations;
 insert into provider_locations values(1, 'Subway #1', 1, 4, now(), 1);

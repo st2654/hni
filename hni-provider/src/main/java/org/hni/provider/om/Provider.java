@@ -1,10 +1,7 @@
 package org.hni.provider.om;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.hni.common.om.Persistable;
+import org.hni.user.om.Address;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,14 +11,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hni.common.om.Persistable;
-import org.hni.user.om.Address;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A Provider is an entity that provides meals to clients.  There will be
@@ -48,8 +45,7 @@ public class Provider implements Serializable, Persistable {
 	@JoinColumn(name="address_id", referencedColumnName = "id")
 	private Address address;
 
-	@OneToMany
-	@JoinColumn(name="menu_id", referencedColumnName = "id")
+	@OneToMany(fetch= FetchType.EAGER, mappedBy="provider", cascade = {CascadeType.ALL}, orphanRemoval=true)
 	private Set<Menu> menus = new HashSet<>();
 
 	public Provider() {}
