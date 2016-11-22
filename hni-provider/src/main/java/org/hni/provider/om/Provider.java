@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hni.common.om.Persistable;
@@ -43,14 +44,13 @@ public class Provider implements Serializable, Persistable {
 	@Column(name="created") private Date created;
 	@Column(name="created_by") private Long createdById;
 
-	/*
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "provider_addresses", joinColumns = { @JoinColumn(name = "provider_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "address_id", referencedColumnName = "id") })
-	private Set<Address> addresses = new HashSet<Address>();
-	*/
 	@ManyToOne
 	@JoinColumn(name="address_id", referencedColumnName = "id")
 	private Address address;
+
+	@OneToMany
+	@JoinColumn(name="menu_id", referencedColumnName = "id")
+	private Set<Menu> menus = new HashSet<>();
 
 	public Provider() {}
 	public Provider(Long id) {
@@ -96,6 +96,14 @@ public class Provider implements Serializable, Persistable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Set<Menu> getMenus() {
+		return menus;
+	}
+
+	public void setMenus(Set<Menu> menu) {
+		this.menus = menu;
 	}
 
 	
