@@ -55,7 +55,8 @@ public class RegisterService extends AbstractEventService<User> {
                     nextStateCode = EventState.STATE_REGISTER_GET_EMAIL;
                     returnString = "Perfect! Lastly, I'd like to get your email address "
                             + "to verify your account in case you text me from a new "
-                            + "number. So what's your email address? Thanks";
+                            + "number. So what's your email address? Type 'none' if you "
+                            + "don't have an email. Thanks";
                 } else {
                     returnString = "We didn't get that. Please send your last name again.";
                 }
@@ -65,8 +66,13 @@ public class RegisterService extends AbstractEventService<User> {
                 // validate the email
                 if (customerService.validate(user)) {
                     nextStateCode = EventState.STATE_REGISTER_CONFIRM_EMAIL;
-                    returnString = "Okay! I have " + textMessage + " as your email address. "
-                            + "Is that correct? Reply 1 for yes and 2 for no";
+                    if ("none".equalsIgnoreCase(textMessage)) {
+                        returnString = "Okay! You don't have an email address. "
+                                + "Is that correct? Reply 1 for yes and 2 for no";
+                    } else {
+                        returnString = "Okay! I have " + textMessage + " as your email address. "
+                                + "Is that correct? Reply 1 for yes and 2 for no";
+                    }
                 } else {
                     returnString = "We didn't get that. Please send your email address.";
                 }

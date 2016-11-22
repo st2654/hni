@@ -27,7 +27,7 @@ public abstract class AbstractEventService<T> implements EventService {
 
     @Override
     public String handleEvent(final Event event) {
-        SessionState state = sessionStateDAO.get(event.getPhoneNumber());
+        SessionState state = sessionStateDAO.getByPhoneNumber(event.getPhoneNumber());
         LOGGER.info("Handling {} at state {} in {} flow", event, state.getEventState().getStateCode(),
                 state.getEventName().name());
 
