@@ -22,8 +22,7 @@ import static org.mockito.Mockito.when;
 
 public class RegisterServiceIntTest {
 
-    //TODO FIX SESSION_ID and phoneNumber REFACTOR
-    private static final String SESSION_ID = "8188461238";
+    private static final String SESSION_ID = "123";
     private static final String PHONE_NUMBER = "8188461238";
     private static final String AUTH_CODE = "123456";
 
@@ -56,7 +55,7 @@ public class RegisterServiceIntTest {
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
-        SessionState nextState = sessionStateDAO.get(SESSION_ID);
+        SessionState nextState = sessionStateDAO.getByPhoneNumber(PHONE_NUMBER);
         Assert.assertEquals(SESSION_ID, nextState.getSessionId());
         Assert.assertEquals(PHONE_NUMBER, nextState.getPhoneNumber());
         Assert.assertEquals(EventName.REGISTER, nextState.getEventName());

@@ -17,8 +17,7 @@ import static org.mockito.Mockito.*;
 
 public class EventServiceFactoryUnitTest {
 
-    //TODO FIX SESSION_ID and phoneNumber REFACTOR
-    private static final String SESSION_ID = "8188461238";
+    private static final String SESSION_ID = "123";
     private static final String PHONE_NUMBER = "8188461238";
     private static final String REUTRN_MESSAGE = "returnmessage";
 
@@ -45,7 +44,7 @@ public class EventServiceFactoryUnitTest {
 
     @Test
     public void testInvalidEventAndNoActiveWorkFlow() {
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         Assert.assertEquals("Unknown keyword " + event.getTextMessage(), factory.handleEvent(event));
         verify(sessionStateDAO, times(0)).insert(any(SessionState.class));
     }
@@ -53,14 +52,14 @@ public class EventServiceFactoryUnitTest {
     @Test
     public void testInvalidEventWithActiveWorkFlow() {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER);
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         Assert.assertEquals(REUTRN_MESSAGE, factory.handleEvent(event));
         verify(sessionStateDAO, times(0)).insert(any(SessionState.class));
     }
 
     @Test
     public void testStartRegisterWorkFlow() {
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         event.setTextMessage("SIGNUP");
         Assert.assertEquals(REUTRN_MESSAGE, factory.handleEvent(event));
         verify(sessionStateDAO, never()).delete(eq(SESSION_ID));
@@ -70,17 +69,17 @@ public class EventServiceFactoryUnitTest {
     @Test
     public void testInterruptExistingWorkFlow() {
         state = new SessionState(EventName.MEAL, SESSION_ID, PHONE_NUMBER);
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         event.setTextMessage("SIGNUP");
         Assert.assertEquals(REUTRN_MESSAGE, factory.handleEvent(event));
-        verify(sessionStateDAO, times(1)).delete(eq(SESSION_ID));
+        verify(sessionStateDAO, times(1)).delete(eq(PHONE_NUMBER));
         verify(sessionStateDAO, times(1)).insert(any(SessionState.class));
     }
 
     @Test
     public void testContinueRegisterWorkFlow() {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER);
-        when(sessionStateDAO.get(eq(SESSION_ID))).thenReturn(state);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         Assert.assertEquals(REUTRN_MESSAGE, factory.handleEvent(event));
         verify(sessionStateDAO, never()).insert(any(SessionState.class));
     }
