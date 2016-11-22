@@ -100,9 +100,9 @@ insert into addresses values (4, 'subway #1 addr', '1251 Phoenician way', '', 'c
 insert into addresses values (5, 'kfc #1 addr', '10790 parkridge blvd', '', 'reston','va','20191', '-77.316008', '38.9455603','etc');
 insert into addresses values (6, 'wendys #1 addr', '1251 Phoenician way', '', 'columbus','oh','43240', '-82.98402279999999', '40.138686','etc');
 
-insert into providers values(1, 'Subway', 1, now(), 1);
-insert into providers values(2, 'KFC', 2, now(), 1);
-insert into providers values(3, 'Wendys', 3, now(), 1);
+insert into providers values(1, 'Subway', 1, 'http://www.subway.com', now(), 1);
+insert into providers values(2, 'KFC', 2, 'http://www.kfc.com', now(), 1);
+insert into providers values(3, 'Wendys', 3, 'http://www.wendys.com', now(), 1);
 
 insert into provider_locations values(1, 'Subway #1', 1, 4, now(), 1);
 insert into provider_locations values(2, 'KFC #1', 2, 5, now(), 1);

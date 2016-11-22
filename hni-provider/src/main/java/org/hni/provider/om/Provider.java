@@ -40,6 +40,7 @@ public class Provider implements Serializable, Persistable {
 	private Long id;
 	
 	@Column(name="name") private String name;
+	@Column(name="website_url") private String websiteUrl;
 	@Column(name="created") private Date created;
 	@Column(name="created_by") private Long createdById;
 
@@ -96,6 +97,12 @@ public class Provider implements Serializable, Persistable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public String getWebsiteUrl() {
+		return websiteUrl;
+	}
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
 	}
 
 	
