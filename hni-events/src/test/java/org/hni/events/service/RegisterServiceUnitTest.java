@@ -7,6 +7,7 @@ import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.user.om.User;
+import org.hni.user.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class RegisterServiceUnitTest {
     private SessionStateDAO sessionStateDAO;
 
     @Mock
-    private CustomerService customerService;
+    private UserService customerService;
 
     @Mock
     private ActivationCodeService activationCodeService;
@@ -75,7 +76,7 @@ public class RegisterServiceUnitTest {
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Thanks", returnString);
+                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
         verify(sessionStateDAO, times(1)).update(any(SessionState.class));
     }
 
@@ -86,6 +87,17 @@ public class RegisterServiceUnitTest {
         when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
+                + "Is that correct? Reply 1 for yes and 2 for no", returnString);
+        verify(sessionStateDAO, times(1)).update(any(SessionState.class));
+    }
+
+    @Test
+    public void testGetNoneEmail() throws Exception {
+        state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_EMAIL);
+        event.setTextMessage("none");
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
+        String returnString = registerService.handleEvent(event);
+        Assert.assertEquals("Okay! You don't have an email address. "
                 + "Is that correct? Reply 1 for yes and 2 for no", returnString);
         verify(sessionStateDAO, times(1)).update(any(SessionState.class));
     }

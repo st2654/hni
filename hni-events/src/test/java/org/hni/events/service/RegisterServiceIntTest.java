@@ -8,6 +8,7 @@ import org.hni.events.service.om.EventState;
 import org.hni.events.service.om.SessionState;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.user.om.User;
+import org.hni.user.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class RegisterServiceIntTest {
     SessionStateDAO sessionStateDAO = new DefaultSessionStateDAO();
 
     @Mock
-    private CustomerService customerService;
+    private UserService customerService;
 
     @Mock
     private ActivationCodeService activationCodeService;
@@ -76,7 +77,7 @@ public class RegisterServiceIntTest {
         returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Thanks", returnString);
+                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
         // email
         returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
@@ -110,7 +111,7 @@ public class RegisterServiceIntTest {
         returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Thanks", returnString);
+                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
         // wrong email
         returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
@@ -119,8 +120,8 @@ public class RegisterServiceIntTest {
         returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "2"));
         Assert.assertEquals("So what's your email address?", returnString);
         // email
-        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "johndoe2@gmail.com"));
-        Assert.assertEquals("Okay! I have " + "johndoe2@gmail.com" + " as your email address. "
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "none"));
+        Assert.assertEquals("Okay! You don't have an email address. "
                 + "Is that correct? Reply 1 for yes and 2 for no", returnString);
         // confirm email
         returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "1"));
@@ -146,7 +147,7 @@ public class RegisterServiceIntTest {
         returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Thanks", returnString);
+                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
         // email
         returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
