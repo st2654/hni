@@ -39,13 +39,19 @@ public class RegisterService extends AbstractEventService<User> {
                         + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?";
                 break;
             case STATE_REGISTER_GET_FIRST_NAME:
-                user.setFirstName(textMessage);
-                // validate the first name
-                if (customerService.validate(user)) {
-                    nextStateCode = EventState.STATE_REGISTER_GET_LAST_NAME;
-                    returnString = "Thanks " + textMessage + ". What's your last name?";
+                if (!textMessage.equalsIgnoreCase("privacy")) {
+                    user.setFirstName(textMessage);
+                    // validate the first name
+                    if (customerService.validate(user)) {
+                        nextStateCode = EventState.STATE_REGISTER_GET_LAST_NAME;
+                        returnString = "Thanks " + textMessage + ". What's your last name?";
+                    } else {
+                        returnString = "We didn't get that. Please send your first name again.";
+                    }
                 } else {
-                    returnString = "We didn't get that. Please send your first name again.";
+                    returnString = "HNI respects your privacy and protects your data. "
+                        + "For more details on our privacy please visit http://hungernotimpossible.com/Privacy. "
+                        + "In order to continue the registration. Please send us your first name.";
                 }
                 break;
             case STATE_REGISTER_GET_LAST_NAME:

@@ -98,6 +98,45 @@ public class RegisterServiceIntTest {
     }
 
     @Test
+    public void testRegisterWithPrivacy() throws Exception {
+        // enroll keyword to start register workflow
+        String returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "ENROLL"));
+        Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
+                + "Any information you provide here will be kept private. "
+                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
+        //privacy
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "privacy"));
+        Assert.assertEquals("HNI respects your privacy and protects your data. "
+                        + "For more details on our privacy please visit http://hungernotimpossible.com/Privacy. "
+                        + "In order to continue the registration. Please send us your first name.", returnString);
+        // first name
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "john"));
+        Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
+        // last name
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "doe"));
+        Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
+                + "to verify your account in case you text me from a new "
+                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
+        // email
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "johndoe@gmail.com"));
+        Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
+                + "Is that correct? Reply 1 for yes and 2 for no", returnString);
+        // confirm email
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "1"));
+        Assert.assertEquals("Please enter the 6 digit authorization code provided to you for this program.", returnString);
+        // auth code
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "123456"));
+        Assert.assertEquals("Ok. You're all setup for yourself. If you have additional family"
+                + " members to register please enter the additional authorization"
+                + " codes now. When you need a meal just text MEAL back to this number.", returnString);
+        // addition auth code
+        when(activationCodeService.validate(eq("111111"))).thenReturn(true);
+        returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "111111"));
+        Assert.assertEquals("We have added that authorization code to your family account. Please"
+                + " send any additional codes you need for your family.", returnString);
+    }
+
+    @Test
     public void testCorrectEmailOnce() throws Exception {
         // enroll keyword to start register workflow
         String returnString = registerService.handleEvent(new Event(SESSION_ID, PHONE_NUMBER, "ENROLL"));
