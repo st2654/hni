@@ -59,6 +59,18 @@ public class RegisterServiceUnitTest {
     }
 
     @Test
+    public void testPrivacy() throws Exception {
+        state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_FIRST_NAME);
+        when(sessionStateDAO.getByPhoneNumber(eq(PHONE_NUMBER))).thenReturn(state);
+        event.setTextMessage("privacy");
+        String returnString = registerService.handleEvent(event);
+        Assert.assertEquals("HNI respects your privacy and protects your data. "
+                        + "For more details on our privacy please visit http://hungernotimpossible.com/Privacy. "
+                        + "In order to continue the registration. Please send us your first name.", returnString);
+        verify(sessionStateDAO, never()).update(any(SessionState.class));
+    }
+
+    @Test
     public void testGetFirstName() throws Exception {
         state = new SessionState(EventName.REGISTER, SESSION_ID, PHONE_NUMBER, payload, EventState.STATE_REGISTER_GET_FIRST_NAME);
         event.setTextMessage("firstname");
