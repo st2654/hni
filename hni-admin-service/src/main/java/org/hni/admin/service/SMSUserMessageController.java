@@ -2,7 +2,7 @@ package org.hni.admin.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.hni.events.service.EventServiceFactory;
+import org.hni.events.service.EventRouter;
 import org.hni.events.service.om.Event;
 import org.hni.provider.om.Provider;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class SMSUserMessageController extends AbstractBaseController {
     private static final Logger logger = LoggerFactory.getLogger(SMSUserMessageController.class);
 
     @Inject
-    private EventServiceFactory eventServiceFactory;
+    private EventRouter eventRouter;
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -40,8 +40,8 @@ public class SMSUserMessageController extends AbstractBaseController {
 
         logger.info("HTML/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
                 "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
-        final Event event = new Event(sessionId, phoneNumber, userMessage);
-        return String.format("<html><body>%s</body></html>", eventServiceFactory.handleEvent(event));
+        final Event event = Event.createEvent(sessionId, phoneNumber, userMessage);
+        return String.format("<html><body>%s</body></html>", eventRouter.handleEvent(event));
     }
 
     @GET
@@ -57,8 +57,8 @@ public class SMSUserMessageController extends AbstractBaseController {
                                    @QueryParam("testmode") String testMode) {
         logger.info("Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
                 "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
-        final Event event = new Event(sessionId, phoneNumber, userMessage);
-        return eventServiceFactory.handleEvent(event);
+        final Event event = Event.createEvent(sessionId, phoneNumber, userMessage);
+        return eventRouter.handleEvent(event);
 
     }
 }

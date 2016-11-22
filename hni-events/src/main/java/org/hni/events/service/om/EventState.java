@@ -1,56 +1,85 @@
 package org.hni.events.service.om;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import org.hni.common.om.Persistable;
 
-public enum EventState {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-    STATE_REGISTER_START(100, EventName.REGISTER),
-    STATE_REGISTER_GET_FIRST_NAME(101, EventName.REGISTER),
-    STATE_REGISTER_GET_LAST_NAME(102, EventName.REGISTER),
-    STATE_REGISTER_GET_EMAIL(103, EventName.REGISTER),
-    STATE_REGISTER_CONFIRM_EMAIL(104, EventName.REGISTER),
-    STATE_REGISTER_GET_AUTH_CODE(105, EventName.REGISTER),
-    STATE_REGISTER_MORE_AUTH_CODES(106, EventName.REGISTER),
+import java.io.Serializable;
 
-    STATE_MEAL_START(200, EventName.MEAL),
-    STATE_MEAL_GET_ADDRESS(201, EventName.MEAL),
-    STATE_MEAL_GET_LOCATION(202, EventName.MEAL);
+@Entity
+@Table(name = "event_state")
+public class EventState implements Persistable, Serializable {
 
-    private static final Map<EventName, EventState> INITIAL_STATES;
-    private static final Map<Integer, EventState> ALL_STATES;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    protected Long id;
 
-    static {
-        INITIAL_STATES = new HashMap<>();
-        INITIAL_STATES.put(EventName.REGISTER, STATE_REGISTER_START);
-        INITIAL_STATES.put(EventName.MEAL, STATE_MEAL_START);
+    @Enumerated(EnumType.STRING)
+    @Column(name = "eventname", nullable = false)
+    private EventName eventName;
 
-        ALL_STATES = new HashMap<>();
-        Arrays.stream(values()).forEach(s -> ALL_STATES.put(s.getStateCode(), s));
+    @Column(name = "phoneno", nullable = false, unique = true)
+    private String phoneNumber;
+
+    public EventState() {
     }
 
-    int stateCode;
-    EventName eventName;
-
-    EventState(int stateCode, EventName eventName) {
-        this.stateCode = stateCode;
+    public EventState(Long id, EventName eventName, String phoneNumber) {
+        this.id = id;
         this.eventName = eventName;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public EventState(EventName eventName, String phoneNumber) {
+        this.eventName = eventName;
+        this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
     public EventName getEventName() {
         return eventName;
     }
 
-    public int getStateCode() {
-        return stateCode;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public static EventState getInitalState(final EventName eventName) {
-        return INITIAL_STATES.get(eventName);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        EventState that = (EventState) o;
+
+        if (id == null) {
+            if (that.id != null)
+                return false;
+        } else if (!id.equals(that.id))
+            return false;
+        return true;
     }
 
-    public static EventState fromStateCode(final int stateCode) {
-        return ALL_STATES.get(stateCode);
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
     }
 }

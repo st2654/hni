@@ -1,34 +1,34 @@
 package org.hni.events.service.dao;
 
-import org.hni.events.service.om.SessionState;
+import org.hni.events.service.om.RegistrationState;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class DefaultSessionStateDAO implements SessionStateDAO {
+public class DefaultRegistrationStateDAO implements RegistrationStateDAO {
 
     //TODO get rid of this with real DAO
-    Map<String, SessionState> sessionStateMap;
+    Map<String, RegistrationState> sessionStateMap;
 
-    public DefaultSessionStateDAO() {
+    public DefaultRegistrationStateDAO() {
         sessionStateMap = new HashMap<>();
     }
 
-    public SessionState get(String sessionId) {
+    public RegistrationState get(String sessionId) {
         return sessionStateMap.get(sessionId);
     }
 
-    public SessionState insert(SessionState state) {
+    public RegistrationState insert(RegistrationState state) {
         return sessionStateMap.put(state.getSessionId(), state);
     }
 
-    public SessionState update(SessionState state) {
+    public RegistrationState update(RegistrationState state) {
         return sessionStateMap.put(state.getSessionId(), state);
     }
 
-    public SessionState delete(String sessionId) {
+    public RegistrationState delete(String sessionId) {
         return sessionStateMap.remove(sessionId);
     }
 }

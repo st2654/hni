@@ -1,10 +1,10 @@
 package org.hni.events.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hni.events.service.dao.SessionStateDAO;
+import org.hni.events.service.dao.RegistrationStateDAO;
 import org.hni.events.service.om.Event;
-import org.hni.events.service.om.EventState;
-import org.hni.events.service.om.SessionState;
+import org.hni.events.service.om.RegistrationStep;
+import org.hni.events.service.om.RegistrationState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,38 +13,36 @@ import java.io.IOException;
 
 /**
  * Created by walmart on 11/14/16.
- * Handles events coming in to HNI.
- * For now these events will take the shape of SMS messages.
- * ### These are strings for now, but eventually should be Event POJOs
+ * Handles Registration events.
  */
-public abstract class AbstractEventService<T> implements EventService {
+public abstract class AbstractRegistrationService<T> implements EventService{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEventService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegistrationService.class);
 
-    protected SessionStateDAO sessionStateDAO;
+    protected RegistrationStateDAO registrationStateDAO;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public String handleEvent(final Event event) {
-        SessionState state = sessionStateDAO.get(event.getPhoneNumber());
-        LOGGER.info("Handling {} at state {} in {} flow", event, state.getEventState().getStateCode(),
+        RegistrationState state = registrationStateDAO.get(event.getPhoneNumber());
+        LOGGER.info("Handling {} at state {} in {} flow", event, state.getRegistrationStep().getStateCode(),
                 state.getEventName().name());
 
         // perform the workflow logic
         final WorkFlowStepResult stepResult = performWorkFlowStep(event, state);
 
-        if (!state.getEventState().equals(stepResult.getNextStateCode())) {
-            final SessionState nextState =
-                    new SessionState(state.getEventName(), state.getSessionId(), state.getPhoneNumber(),
+        if (!state.getRegistrationStep().equals(stepResult.getNextStateCode())) {
+            final RegistrationState nextState =
+                    new RegistrationState(state.getEventName(), state.getSessionId(), state.getPhoneNumber(),
                             stepResult.getPayload(), stepResult.getNextStateCode());
 
-            sessionStateDAO.update(nextState);
+            registrationStateDAO.update(nextState);
         }
         return stepResult.getReturnString();
     }
 
-    protected abstract WorkFlowStepResult performWorkFlowStep(Event event, SessionState currentState);
+    protected abstract WorkFlowStepResult performWorkFlowStep(Event event, RegistrationState currentState);
 
     protected T deserialize(final String payload, final Class<T> clazz) {
         try {
@@ -63,17 +61,17 @@ public abstract class AbstractEventService<T> implements EventService {
     }
 
     @Inject
-    public void setSessionStateDAO(final SessionStateDAO sessionStateDAO) {
-        this.sessionStateDAO = sessionStateDAO;
+    public void setRegistrationStateDAO(final RegistrationStateDAO registrationStateDAO) {
+        this.registrationStateDAO = registrationStateDAO;
     }
 
     protected static class WorkFlowStepResult {
 
         private String returnString;
-        private EventState nextStateCode;
+        private RegistrationStep nextStateCode;
         private String payload;
 
-        public WorkFlowStepResult(String returnString, EventState nextStateCode, String payload) {
+        public WorkFlowStepResult(String returnString, RegistrationStep nextStateCode, String payload) {
             this.returnString = returnString;
             this.nextStateCode = nextStateCode;
             this.payload = payload;
@@ -83,7 +81,7 @@ public abstract class AbstractEventService<T> implements EventService {
             return returnString;
         }
 
-        public EventState getNextStateCode() {
+        public RegistrationStep getNextStateCode() {
             return nextStateCode;
         }
 

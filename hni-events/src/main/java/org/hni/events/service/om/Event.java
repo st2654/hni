@@ -5,20 +5,24 @@ package org.hni.events.service.om;
  */
 public class Event {
 
-    private String sessionId;
+    private String eventStateId;
 
     private String phoneNumber;
 
     private String textMessage;
 
-    public Event(String sessionId, String phoneNumber, String textMessage) {
-        this.sessionId = sessionId;
+    private Event(String eventStateId, String phoneNumber, String textMessage) {
+        this.eventStateId = eventStateId;
         this.phoneNumber = phoneNumber;
         this.textMessage = textMessage;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public static Event createEvent(String sessionId, String phoneNumber, String textMessage) {
+        return new Event(sessionId, phoneNumber, textMessage);
+    }
+
+    public String getEventStateId() {
+        return eventStateId;
     }
 
     public String getPhoneNumber() {
@@ -29,8 +33,8 @@ public class Event {
         return textMessage;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setEventStateId(String eventStateId) {
+        this.eventStateId = eventStateId;
     }
 
     public void setPhoneNumber(String phoneNumber) {
@@ -44,7 +48,7 @@ public class Event {
     @Override
     public String toString() {
         return "Event{" +
-                "sessionId='" + sessionId + '\'' +
+                "eventStateId='" + eventStateId + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", textMessage='" + textMessage + '\'' +
                 '}';

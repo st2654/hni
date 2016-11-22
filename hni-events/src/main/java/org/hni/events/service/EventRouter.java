@@ -1,27 +1,26 @@
 package org.hni.events.service;
 
-import org.hni.events.service.dao.SessionStateDAO;
+import org.hni.events.service.dao.EventStateDao;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
-import org.hni.events.service.om.SessionState;
+import org.hni.events.service.om.EventState;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class EventServiceFactory {
+public class EventRouter {
 
     @Inject
-    private SessionStateDAO sessionStateDAO;
+    private EventStateDao eventStateDao;
 
     @Inject
     private RegisterService registerService;
-
-    @Inject
-    private OrderingService orderingService;
 
     private Map<EventName, EventService> eventServiceMap;
 
@@ -29,13 +28,16 @@ public class EventServiceFactory {
     void init() {
         eventServiceMap = new HashMap<>();
         eventServiceMap.put(EventName.REGISTER, registerService);
-        eventServiceMap.put(EventName.MEAL, orderingService);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public String handleEvent(final Event event) {
-        //TODO refactor sessionId with phone number. For explaination, go to line number 52 and 53
-        final String sessionId = event.getPhoneNumber();
-        final SessionState state = sessionStateDAO.get(sessionId);
+
+        final String phoneNumber = event.getPhoneNumber();
+
+        // Lookup routing state by phone number
+        final EventState state = eventStateDao.byPhoneNumber(phoneNumber);
+
         EventName eventName = parseKeyWordToEventName(event.getTextMessage());
         if (eventName == null) {
             if (state == null) {
@@ -47,14 +49,14 @@ public class EventServiceFactory {
         } else {
             if (state != null) {
                 // clear previous workflow as a new keyword is received
-                sessionStateDAO.delete(sessionId);
+                eventStateDao.delete(state);
             }
-            //This is a quick hack. Phone number is the only unique identifier for a customer.
-            //sessionId, in the other hand, expires in 90 seconds. When this piece of code was written, this
-            //information was unavailable. TODO There should be a refactor regarding this issue.
-            sessionStateDAO.insert(new SessionState(eventName, event.getPhoneNumber(), event.getPhoneNumber()));
+
+            // Insert the new event
+            eventStateDao.insert(new EventState(eventName, event.getPhoneNumber()));
         }
-        // set value to current workflow's value when it is not a keyword value
+
+        // Route the event to the appropriate service
         return eventServiceMap.get(eventName).handleEvent(event);
     }
 
