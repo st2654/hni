@@ -118,3 +118,5 @@ insert into payment_instruments values(7, 1, 'gift', '7000-0000-0000-0001','A', 
 insert into payment_instruments values(8, 1, 'gift', '8000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(9, 1, 'gift', '9000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(10, 1, 'gift', '1100-0000-0000-0001','A', 10, 10, null, '1234');
+
+insert into order_items values(null, 1, 1, 1, 6.99);
