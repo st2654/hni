@@ -213,7 +213,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
      */
     private String providerLocationMenuOutput(PartialOrder order) {
         String output = "";
-        output += "Please provide a number between 1-3. ";
+        output += "Please provide the number for your selection. ";
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
             output += (i + 1) + ") " + order.getProviderLocationsForSelection().get(i).getName()
                     + " (" + order.getMenuItemsForSelection().get(i).getName() + "). ";

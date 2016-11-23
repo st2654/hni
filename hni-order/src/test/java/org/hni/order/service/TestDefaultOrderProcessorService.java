@@ -144,7 +144,7 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide a number between 1-3. "
+        String expectedOutput = "Please provide the number for your selection. "
                 + "1) Subway (Food). "
                 + "2) McDonalds (Food). "
                 + "3) Waffle House (Food). ";
@@ -213,7 +213,7 @@ public class TestDefaultOrderProcessorService {
         // Execute
         String output = orderProcessor.processMessage(user, message);
         String expectedOutput = "Invalid input! "
-                + "Please provide a number between 1-3. "
+                + "Please provide the number for your selection. "
                 + "1) Subway (Food). "
                 + "2) McDonalds (Food). "
                 + "3) Waffle House (Food). ";
@@ -302,7 +302,7 @@ public class TestDefaultOrderProcessorService {
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide a number between 1-3. "
+        String expectedOutput = "Please provide the number for your selection. "
                 + "1) Subway (Food). "
                 + "2) McDonalds (Food). "
                 + "3) Waffle House (Food). ";
