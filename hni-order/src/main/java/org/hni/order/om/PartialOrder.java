@@ -57,11 +57,11 @@ public class PartialOrder implements Persistable, Serializable {
 
     @OneToMany
     @JoinTable(
-            name="partial_orders_order_items",
+            name="partial_orders_menu_selections",
             joinColumns = @JoinColumn( name="id"),
-            inverseJoinColumns = @JoinColumn( name="order_item_id")
+            inverseJoinColumns = @JoinColumn( name="menu_item_id")
     )
-    private Set<OrderItem> orderItems;
+    private Set<MenuItem> menuItemsSelected;
 
     @ManyToOne
     @JoinColumn(name="chosen_provider_id", referencedColumnName = "id")
@@ -76,7 +76,7 @@ public class PartialOrder implements Persistable, Serializable {
     public PartialOrder() {
         this.providerLocationsForSelection = new ArrayList<>();
         this.menuItemsForSelection = new ArrayList<>();
-        this.orderItems = new HashSet<>();
+        this.menuItemsSelected = new HashSet<>();
     }
 
     @Override
@@ -120,14 +120,6 @@ public class PartialOrder implements Persistable, Serializable {
         this.menuItemsForSelection = menuItemsForSelection;
     }
 
-    public Set<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(Set<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
-
     public TransactionPhase getTransactionPhase() {
         return transactionPhase;
     }
@@ -142,5 +134,13 @@ public class PartialOrder implements Persistable, Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Set<MenuItem> getMenuItemsSelected() {
+        return menuItemsSelected;
+    }
+
+    public void setMenuItemSelected(Set<MenuItem> menuItemSelected) {
+        this.menuItemsSelected = menuItemSelected;
     }
 }
