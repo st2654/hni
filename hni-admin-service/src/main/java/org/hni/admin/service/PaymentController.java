@@ -14,12 +14,16 @@ import javax.ws.rs.core.MediaType;
 
 import org.hni.common.exception.HNIException;
 import org.hni.order.om.Order;
+import org.hni.order.om.OrderItem;
 import org.hni.order.service.OrderService;
 import org.hni.payment.om.OrderPayment;
 import org.hni.payment.om.PaymentInfo;
 import org.hni.payment.service.OrderPaymentService;
 import org.hni.payment.service.PaymentInstrumentService;
+import org.hni.provider.om.Menu;
+import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderService;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
@@ -89,7 +93,8 @@ public class PaymentController extends AbstractBaseController {
 		try {
 			String json = mapper.writeValueAsString(JsonView.with(orderPayments)
 					.onClass(Order.class, Match.match().exclude("*").include("id", "subtotal"))
-					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName")));
+					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName"))
+			.onClass(Provider.class, Match.match().exclude("*").include("id", "name")));
 			return json;
 		} catch (JsonProcessingException e) {
 			logger.error("Serializing User object:"+e.getMessage(), e);
