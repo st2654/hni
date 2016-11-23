@@ -110,7 +110,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String requestingMeal(String request, PartialOrder order) {
         order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
-        if (request.equalsIgnoreCase("MEAL")) {
+        if (request.equalsIgnoreCase("MEAL") || request.equalsIgnoreCase("ORDER")) {
             return "Please provide your address or CANCEL to quit";
         } else {
             return "I don't understand that, please say MEAL to request a meal.";
@@ -163,7 +163,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
             output = String.format("You have chosen %s at %s. Respond with CONFIRM to place this order, REDO to try again, or CANCEL to end your order", chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output += "Invalid input!\n";
+            output += "Invalid input! ";
             output += providerLocationMenuOutput(order);
         }
         return output;
@@ -213,10 +213,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
      */
     private String providerLocationMenuOutput(PartialOrder order) {
         String output = "";
-        output += "Please provide a number between 1-3\n";
+        output += "Please provide a number between 1-3. ";
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
             output += (i + 1) + ") " + order.getProviderLocationsForSelection().get(i).getName()
-                    + " (" + order.getMenuItemsForSelection().get(i).getName() + ")\n";
+                    + " (" + order.getMenuItemsForSelection().get(i).getName() + "). ";
         }
         return output;
     }

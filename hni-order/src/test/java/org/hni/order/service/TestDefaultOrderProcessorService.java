@@ -144,10 +144,10 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide a number between 1-3\n"
-                + "1) Subway (Food)\n"
-                + "2) McDonalds (Food)\n"
-                + "3) Waffle House (Food)\n";
+        String expectedOutput = "Please provide a number between 1-3. "
+                + "1) Subway (Food). "
+                + "2) McDonalds (Food). "
+                + "3) Waffle House (Food). ";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -212,11 +212,11 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Invalid input!\n"
-                + "Please provide a number between 1-3\n"
-                + "1) Subway (Food)\n"
-                + "2) McDonalds (Food)\n"
-                + "3) Waffle House (Food)\n";
+        String expectedOutput = "Invalid input! "
+                + "Please provide a number between 1-3. "
+                + "1) Subway (Food). "
+                + "2) McDonalds (Food). "
+                + "3) Waffle House (Food). ";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -302,10 +302,10 @@ public class TestDefaultOrderProcessorService {
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide a number between 1-3\n"
-                + "1) Subway (Food)\n"
-                + "2) McDonalds (Food)\n"
-                + "3) Waffle House (Food)\n";
+        String expectedOutput = "Please provide a number between 1-3. "
+                + "1) Subway (Food). "
+                + "2) McDonalds (Food). "
+                + "3) Waffle House (Food). ";
         // Verify
         Assert.assertEquals(expectedOutput, output);
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);

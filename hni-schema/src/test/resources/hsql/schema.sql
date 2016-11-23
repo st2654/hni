@@ -300,7 +300,7 @@ CREATE TABLE IF NOT EXISTS `partial_orders` (
   `user_id` INT NULL,
   `provider_location_id` INT NULL,
   `menu_item_id` INT NULL,
-  `order_item_id` INT NULL,
+  `chosen_menu_id` INT NULL,
   `chosen_provider_id` INT NULL,
   `transaction_phase` VARCHAR(45) NULL,
   `address` VARCHAR(160) NULL,
@@ -326,10 +326,10 @@ CREATE TABLE IF NOT EXISTS `partial_orders_provider_locations` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `partial_orders_order_items`
+-- Table `partial_orders_menu_selections`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `partial_orders_order_items` (
+CREATE TABLE IF NOT EXISTS `partial_orders_menu_selections` (
   `id` INT NOT NULL,
-  `order_item_id` INT NOT NULL)
+  `menu_item_id` INT NOT NULL)
 ENGINE = InnoDB;
 
