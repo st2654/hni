@@ -17,9 +17,11 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.hni.common.DateUtils;
 import org.hni.order.om.Order;
+import org.hni.order.om.OrderItem;
 import org.hni.order.service.OrderService;
 import org.hni.payment.om.OrderPayment;
 import org.hni.payment.service.OrderPaymentService;
+import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
@@ -27,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.Match;
 
@@ -90,6 +91,8 @@ public class OrderController extends AbstractBaseController {
 			order = orderService.next();
 		}
 		if ( null != order ) {
+			logger.info("Returning Order "+order.getId());
+			logger.info(serializeOrderToJson(order));
 			return Response.status(Response.Status.OK).
 	                entity(serializeOrderToJson(order)).
 	                type(MediaType.APPLICATION_JSON).
@@ -171,9 +174,11 @@ public class OrderController extends AbstractBaseController {
 			String json = mapper.writeValueAsString(JsonView.with(order)
 					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName"))
 					.onClass(ProviderLocation.class, Match.match().include("*").exclude("created", "createdById"))
-					.onClass(Provider.class, Match.match().include("*").exclude("created", "createdById")));
+					.onClass(Provider.class, Match.match().include("*").exclude("created", "createdById"))
+					.onClass(OrderItem.class, Match.match().include("*").exclude("order"))
+					.onClass(MenuItem.class, Match.match().include("*").exclude("menu")));
 			return json;
-		} catch (JsonProcessingException e) {
+		} catch (Exception e) {
 			logger.error("Serializing User object:"+e.getMessage(), e);
 		}
 		return "{}";
