@@ -107,6 +107,12 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	}
 
 	@Override
+	public Order reset(Order order) {
+		order.setStatusId(OrderStatus.OPEN.getId());		
+		return releaseLock(save(order));
+	}
+	
+	@Override
 	public long countOrders() {
 		Collection<Order> orders = orderDao.with(OrderStatus.OPEN);
 		return orders.stream()

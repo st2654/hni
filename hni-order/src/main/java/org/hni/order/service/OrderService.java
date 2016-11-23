@@ -61,4 +61,6 @@ public interface OrderService extends BaseService<Order> {
 	 * @return
 	 */
 	long countOrders(Provider provider);
+
+	Order reset(Order order);
 }

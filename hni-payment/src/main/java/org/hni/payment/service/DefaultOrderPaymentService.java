@@ -103,6 +103,11 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		return orderPayments;
 	}
 	
+	@Override
+	public Collection<OrderPayment> paymentsFor(Order order) { 
+		return orderPaymentDao.paymentsFor(order);
+	}
+
 	private BigDecimal calcAmountToDispense(PaymentInstrument paymentInstrument, BigDecimal amount) {
 		if (paymentInstrument.getBalance().doubleValue() >= amount.doubleValue()) {
 			return amount;

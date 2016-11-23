@@ -15,4 +15,6 @@ public interface OrderPaymentService extends BaseService<OrderPayment > {
 
 	Order assignPayment(Collection<PaymentInfo> paymentInfos, User user);
 
+	Collection<OrderPayment> paymentsFor(Order order);
+
 }

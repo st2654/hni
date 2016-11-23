@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,7 +16,10 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.hni.common.DateUtils;
 import org.hni.order.om.Order;
+import org.hni.order.om.type.OrderStatus;
 import org.hni.order.service.OrderService;
+import org.hni.payment.om.OrderPayment;
+import org.hni.payment.service.OrderPaymentService;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
@@ -39,7 +41,8 @@ public class OrderController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	
 	@Inject private OrderService orderService;
-		
+	@Inject private OrderPaymentService orderPaymentService; // for resets
+	
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -82,6 +85,24 @@ public class OrderController extends AbstractBaseController {
 	public String getNextOrder(@QueryParam("providerId") Long providerId) {
 		if ( null != providerId ) {
 			return serializeOrderToJson(orderService.next(new Provider(providerId)));
+		}
+		return serializeOrderToJson(orderService.next());
+	}
+
+	@GET
+	@Path("/{id}/reset")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "resets the order for testing"
+		, notes = ""
+		, response = Order.class
+		, responseContainer = "")
+	public String resetOrder( Long id) {
+		if ( null != id ) {
+			Order order = orderService.get(id);
+			orderService.reset(order);
+			for(OrderPayment op : orderPaymentService.paymentsFor(order)) {
+				orderPaymentService.delete(op);
+			}
 		}
 		return serializeOrderToJson(orderService.next());
 	}
