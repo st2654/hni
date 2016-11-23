@@ -36,8 +36,8 @@ public class TestDefaultPartialOrderDAO {
         partialOrder.setChosenProvider(new ProviderLocation(1L));
         partialOrder.setMenuItemsForSelection(Arrays.asList(new MenuItem(1L)));
         Set set = new HashSet<>();
-        set.add(new OrderItem(1L));
-        partialOrder.setOrderItems(set);
+        set.add(new MenuItem(1L));
+        partialOrder.setMenuItemSelected(set);
         partialOrder.setProviderLocationsForSelection(Arrays.asList(new ProviderLocation(2L)));
         partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
 
@@ -47,7 +47,7 @@ public class TestDefaultPartialOrderDAO {
         Assert.assertEquals(orderReceived, partialOrder);
         Assert.assertEquals(orderReceived.getChosenProvider(), partialOrder.getChosenProvider());
         Assert.assertEquals(orderReceived.getMenuItemsForSelection(), partialOrder.getMenuItemsForSelection());
-        Assert.assertEquals(orderReceived.getOrderItems(), partialOrder.getOrderItems());
+        Assert.assertEquals(orderReceived.getMenuItemsSelected(), partialOrder.getMenuItemsSelected());
         Assert.assertEquals(orderReceived.getProviderLocationsForSelection(), partialOrder.getProviderLocationsForSelection());
         Assert.assertEquals(orderReceived.getTransactionPhase(), partialOrder.getTransactionPhase());
     }

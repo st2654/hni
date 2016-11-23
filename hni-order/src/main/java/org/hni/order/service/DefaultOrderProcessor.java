@@ -10,6 +10,7 @@ import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
 import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
+import org.hni.order.om.type.OrderStatus;
 import org.hni.provider.om.GeoCodingException;
 import org.hni.provider.om.Menu;
 import org.hni.provider.om.MenuItem;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class DefaultOrderProcessor implements OrderProcessor {
@@ -92,8 +95,8 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 //this is chosen w/ provider for now
                 break;
             case CONFIRM_OR_CONTINUE:
-                output = confirmOrContinueOrder(message, order);
-                break;
+                //don't save here because the partial order is deleted
+                return confirmOrContinueOrder(message, order);
             default:
                 //shouldn't get here
         }
@@ -107,7 +110,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String requestingMeal(String request, PartialOrder order) {
         order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
-        if (request.equalsIgnoreCase("MEAL")) {
+        if (request.equalsIgnoreCase("MEAL") || request.equalsIgnoreCase("ORDER")) {
             return "Please provide your address or CANCEL to quit";
         } else {
             return "I don't understand that, please say MEAL to request a meal.";
@@ -155,11 +158,12 @@ public class DefaultOrderProcessor implements OrderProcessor {
             ProviderLocation location = order.getProviderLocationsForSelection().get(index - 1);
             order.setChosenProvider(location);
             MenuItem chosenItem = order.getMenuItemsForSelection().get(index - 1);
-            order.getOrderItems().add(new OrderItem((long)1, chosenItem.getPrice(), chosenItem));
+            order.getMenuItemsSelected().add(chosenItem);
+            logger.debug("Location {} has been chosen with item {}", location.getName(), chosenItem.getName());
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
             output = String.format("You have chosen %s at %s. Respond with CONFIRM to place this order, REDO to try again, or CANCEL to end your order", chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output += "Invalid input!\n";
+            output += "Invalid input! ";
             output += providerLocationMenuOutput(order);
         }
         return output;
@@ -169,18 +173,30 @@ public class DefaultOrderProcessor implements OrderProcessor {
         String output = "";
         switch (message.toUpperCase()) {
             case "CONFIRM":
+                //create a final order and set initial info
                 Order finalOrder = new Order();
                 finalOrder.setUserId(order.getUser().getId());
                 finalOrder.setOrderDate(new Date());
                 finalOrder.setProviderLocation(order.getChosenProvider());
-                finalOrder.setOrderItems(order.getOrderItems());
-                finalOrder.setSubTotal(order.getOrderItems().stream().map(item -> (item.getAmount() * item.getQuantity())).reduce(0.0, Double::sum));
+                //set items being ordered
+                Set<MenuItem> chosenItems = order.getMenuItemsSelected();
+                Set<OrderItem> orderedItems = chosenItems.stream().map(mItem -> new OrderItem(1L, mItem.getPrice(), mItem))
+                        .collect(Collectors.toSet());
+                orderedItems.forEach(item -> item.setOrder(finalOrder));
+                finalOrder.setOrderItems(orderedItems);
+                finalOrder.setSubTotal(orderedItems.stream().map(item -> (item.getAmount() * item.getQuantity())).reduce(0.0, Double::sum));
+                finalOrder.setStatus(OrderStatus.OPEN);
                 orderDAO.save(finalOrder);
                 partialOrderDAO.delete(order);
+                logger.info("Successfully created order {}", finalOrder.getId());
                 output = "Your order has been confirmed, please wait for more information about when to pick up your meal.";
                 break;
             case "REDO":
+                logger.info("Reset order choices for PartialOrder {} by user request", order.getId());
+                //clear out previous choices
                 output = findNearbyMeals(order.getAddress(), order);
+                //saved here, because I know caller returns, should be refactored to be cleaner
+                partialOrderDAO.save(order);
                 break;
             default:
                 output += "Please respond with CONFIRM, REDO, or CANCEL";
@@ -197,10 +213,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
      */
     private String providerLocationMenuOutput(PartialOrder order) {
         String output = "";
-        output += "Please provide a number between 1-3\n";
+        output += "Please provide the number for your selection. ";
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
             output += (i + 1) + ") " + order.getProviderLocationsForSelection().get(i).getName()
-                    + " (" + order.getMenuItemsForSelection().get(i).getName() + ")\n";
+                    + " (" + order.getMenuItemsForSelection().get(i).getName() + "). ";
         }
         return output;
     }
@@ -230,7 +246,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
         if (users != null && !users.isEmpty()) {
             // process the text message
-            return processMessage(users.get(0), event.getTextMessage());
+            return processMessage(users.get(0), event.getTextMessage().trim());
         } else {
             String message = "OrderProcessor failed to lookup user by phone " + phoneNumber;
             logger.error(message);
