@@ -31,7 +31,7 @@ public class DefaultProviderLocationDAO extends AbstractDAO<ProviderLocation> im
 	}
 
 	@Override
-	public Collection<ProviderLocation> providersNearCustomer(Long custId, Address addr, int itemsPerPage, int pageNumber) {
+	public Collection<ProviderLocation> providersNearCustomer(Address addr, int itemsPerPage) {
 		try {
 
 			String queryString = new StringBuilder()

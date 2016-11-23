@@ -5,20 +5,23 @@ package org.hni.events.service.om;
  */
 public class Event {
 
-    private String sessionId;
+    // incoming media type
+    // this is text/plain for SMS
+    // but for the future it could be json or xml if the endpoint was called from web UI
+    private String incomingMediaType;
 
     private String phoneNumber;
 
     private String textMessage;
 
-    public Event(String sessionId, String phoneNumber, String textMessage) {
-        this.sessionId = sessionId;
+    private Event(String incomingMediaType, String phoneNumber, String textMessage) {
+        this.incomingMediaType = incomingMediaType;
         this.phoneNumber = phoneNumber;
         this.textMessage = textMessage;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public static Event createEvent(String mediaType, String phoneNumber, String textMessage) {
+        return new Event(mediaType, phoneNumber, textMessage);
     }
 
     public String getPhoneNumber() {
@@ -29,10 +32,6 @@ public class Event {
         return textMessage;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
@@ -41,10 +40,18 @@ public class Event {
         this.textMessage = textMessage;
     }
 
+    public String getIncomingMediaType() {
+        return incomingMediaType;
+    }
+
+    public void setIncomingMediaType(String incomingMediaType) {
+        this.incomingMediaType = incomingMediaType;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
-                "sessionId='" + sessionId + '\'' +
+                "incomingMediaType='" + incomingMediaType + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", textMessage='" + textMessage + '\'' +
                 '}';

@@ -131,7 +131,7 @@ public class ProviderController {
 			@QueryParam("itemsPerPage") int itemsPerPage,
 			@QueryParam("pageNumber") int pageNum) {
 		if (!StringUtils.isBlank(customerAddress)) {
-			return providerLocationService.providersNearCustomer(custId, customerAddress, itemsPerPage, pageNum);
+			return providerLocationService.providersNearCustomer(customerAddress, itemsPerPage);
 		}
 		return null;
 	}

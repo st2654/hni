@@ -75,10 +75,10 @@ public class TestProviderLocationService {
 
 	//@Test
 	public void testGetProviderLocationByCustomerId() {
-		Collection<ProviderLocation> providerLocations = providerLocationService.providersNearCustomer(1L, "bridle view way ohcolumbus", 1, 1);
+		Collection<ProviderLocation> providerLocations = providerLocationService.providersNearCustomer("bridle view way ohcolumbus", 1);
 		assertTrue(providerLocations.size() > 0);
 
-		providerLocations = providerLocationService.providersNearCustomer(1L, "reston town center reston va", 1, 1);
+		providerLocations = providerLocationService.providersNearCustomer("reston town center reston va", 1);
 		assertTrue(providerLocations.size() > 0);
 	}
 }

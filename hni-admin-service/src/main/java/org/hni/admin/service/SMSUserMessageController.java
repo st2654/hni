@@ -2,14 +2,12 @@ package org.hni.admin.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections.map.HashedMap;
 import org.hni.common.exception.HNIException;
-import org.hni.events.service.EventServiceFactory;
+import org.hni.events.service.EventRouter;
 import org.hni.events.service.om.Event;
 import org.hni.provider.om.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -17,10 +15,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.Serializable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +28,7 @@ public class SMSUserMessageController extends AbstractBaseController {
     private static final Logger logger = LoggerFactory.getLogger(SMSUserMessageController.class);
 
     @Inject
-    private EventServiceFactory eventServiceFactory;
+    private EventRouter eventRouter;
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -47,8 +44,8 @@ public class SMSUserMessageController extends AbstractBaseController {
 
         logger.info("HTML/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
                 "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
-        final Event event = new Event(sessionId, phoneNumber, userMessage);
-        return String.format("<html><body>%s</body></html>", eventServiceFactory.handleEvent(event));
+        final Event event = Event.createEvent("text/html", phoneNumber, userMessage);
+        return String.format("<html><body>%s</body></html>", eventRouter.handleEvent(event));
     }
 
     @GET
@@ -64,13 +61,13 @@ public class SMSUserMessageController extends AbstractBaseController {
                                    @QueryParam("testmode") String testMode) {
         logger.info("PLAIN/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
                 "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
-        final Event event = new Event(sessionId, phoneNumber, userMessage);
+
+        final Event event = Event.createEvent("text/plain", phoneNumber, userMessage);
         try {
-            return eventServiceFactory.handleEvent(event);
+            return eventRouter.handleEvent(event);
         } catch (Exception ex) {
             throw new HNIException("Something went wrong. Please try again later.", Response.Status.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @GET
@@ -86,10 +83,11 @@ public class SMSUserMessageController extends AbstractBaseController {
                                    @QueryParam("testmode") String testMode) {
         logger.info("JSON/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
                 "usertext={}, textmode={}", authKey, phoneNumber, sessionId, userMessage, testMode);
-        final Event event = new Event(sessionId, phoneNumber, userMessage);
+        final Event event = Event.createEvent("text/plain", phoneNumber, userMessage);
+        final String returnMessage = eventRouter.handleEvent(event);
         Map<String, Object> res = new HashMap();
         try {
-            String[] output = {eventServiceFactory.handleEvent(event)};
+            String[] output = {returnMessage};
             res.put("message", output);
             res.put("status", Response.Status.OK.getStatusCode());
         } catch (HNIException ex) {

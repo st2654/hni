@@ -13,16 +13,13 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "session_state")
-public class SessionState implements Persistable, Serializable {
+@Table(name = "registration_state")
+public class RegistrationState implements Persistable, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     protected Long id;
-
-    @Column(name = "sessionid", nullable = false)
-    private String sessionId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "eventname", nullable = false)
@@ -36,34 +33,28 @@ public class SessionState implements Persistable, Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "eventstate", nullable = false)
-    private EventState eventState;
+    private RegistrationStep registrationStep;
 
-    public SessionState() {
+    public RegistrationState() {
     }
 
-    public SessionState(EventName eventName, String sessionId, String phoneNumber) {
-        this.sessionId = sessionId;
+    public RegistrationState(EventName eventName, String phoneNumber) {
         this.eventName = eventName;
         this.phoneNumber = phoneNumber;
         payload = null;
-        eventState = EventState.getInitalState(eventName);
+        registrationStep = RegistrationStep.getInitalState(eventName);
     }
 
-    public SessionState(EventName eventName, String sessionId, String phoneNumber, String payload, EventState eventState) {
-        this.sessionId = sessionId;
+    public RegistrationState(EventName eventName, String phoneNumber, String payload, RegistrationStep registrationStep) {
         this.eventName = eventName;
         this.phoneNumber = phoneNumber;
         this.payload = payload;
-        this.eventState = eventState;
+        this.registrationStep = registrationStep;
     }
 
     @Override
     public Long getId() {
         return id;
-    }
-
-    public String getSessionId() {
-        return sessionId;
     }
 
     public EventName getEventName() {
@@ -74,8 +65,8 @@ public class SessionState implements Persistable, Serializable {
         return phoneNumber;
     }
 
-    public EventState getEventState() {
-        return eventState;
+    public RegistrationStep getRegistrationStep() {
+        return registrationStep;
     }
 
     public String getPayload() {
@@ -91,7 +82,7 @@ public class SessionState implements Persistable, Serializable {
             return false;
         }
 
-        SessionState that = (SessionState) o;
+        RegistrationState that = (RegistrationState) o;
 
         if (id == null) {
             if (that.id != null)
