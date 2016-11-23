@@ -87,7 +87,8 @@ public class OrderController extends AbstractBaseController {
 		Order order = null;
 		if ( null != providerId ) {
 			order = orderService.next(new Provider(providerId));
-		} else {
+		} 
+		if (null == order) { // if no order is availale for a provider just grab whatever comes next.
 			order = orderService.next();
 		}
 		if ( null != order ) {
