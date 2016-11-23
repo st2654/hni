@@ -86,18 +86,6 @@ public class OrderController extends AbstractBaseController {
 		return serializeOrderToJson(orderService.next());
 	}
 
-	@PUT
-	@Path("/completed/{id}")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "compeletes the order, updating the status and removing the lock."
-		, notes = ""
-		, response = Order.class
-		, responseContainer = "")
-	public void completeOrder(@PathParam("id") Long id, @QueryParam("pickupDate") String pickupDateString) {
-		// TODO also need payment info
-		orderService.complete(orderService.get(id), DateUtils.parseDateTime(pickupDateString));
-	}
-
 	@DELETE
 	@Path("/lock/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -106,6 +94,7 @@ public class OrderController extends AbstractBaseController {
 		, response = Order.class
 		, responseContainer = "")
 	public void removeLock(@PathParam("id") Long id) {
+		logger.info("Unlocking Order "+id);
 		orderService.releaseLock(orderService.get(id));
 	}
 
