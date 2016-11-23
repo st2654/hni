@@ -14,12 +14,18 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
   <dependencies>
 		<dependency>
 			<groupId>org.hni</groupId>
 			<artifactId>hni-provider</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+    <dependency>
+      <groupId>org.hni</groupId>
+      <artifactId>hni-events</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson</artifactId>
