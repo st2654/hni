@@ -305,3 +305,30 @@ CREATE TABLE IF NOT EXISTS `partial_orders` (
   `address` VARCHAR(160) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `partial_orders_menu_items`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `partial_orders_menu_items` (
+  `id` INT NOT NULL,
+  `menu_item_id` INT NOT NULL)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `partial_orders_provider_locations`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `partial_orders_provider_locations` (
+  `id` INT NOT NULL,
+  `provider_location_id` INT NOT NULL)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `partial_orders_order_items`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `partial_orders_order_items` (
+  `id` INT NOT NULL,
+  `order_item_id` INT NOT NULL)
+ENGINE = InnoDB;
+

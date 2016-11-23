@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -39,15 +40,27 @@ public class PartialOrder implements Persistable, Serializable {
     private User user;
 
     @OneToMany
-    @JoinColumn(name="provider_location_id", referencedColumnName = "id")
+    @JoinTable(
+            name="partial_orders_provider_locations",
+            joinColumns = @JoinColumn( name="id"),
+            inverseJoinColumns = @JoinColumn( name="provider_location_id")
+    )
     private List<ProviderLocation> providerLocationsForSelection;
 
     @OneToMany
-    @JoinColumn(name="menu_item_id", referencedColumnName = "id")
+    @JoinTable(
+            name="partial_orders_menu_items",
+            joinColumns = @JoinColumn( name="id"),
+            inverseJoinColumns = @JoinColumn( name="menu_item_id")
+    )
     private List<MenuItem> menuItemsForSelection;
 
     @OneToMany
-    @JoinColumn(name="order_item_id", referencedColumnName = "id")
+    @JoinTable(
+            name="partial_orders_order_items",
+            joinColumns = @JoinColumn( name="id"),
+            inverseJoinColumns = @JoinColumn( name="order_item_id")
+    )
     private Set<OrderItem> orderItems;
 
     @ManyToOne
