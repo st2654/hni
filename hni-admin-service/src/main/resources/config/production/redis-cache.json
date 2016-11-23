@@ -13,7 +13,7 @@
       "address":[
          "//hni-dev-cache.redis.cache.windows.net:6379"
       ],
-      "password":"xxxxxxxx",
+      "password":"zsvqXs8wCB9r3lmFYSGCmp3yQ50wRgYy+2gjj1BQvDY=",
       "subscriptionConnectionMinimumIdleSize":1,
       "subscriptionConnectionPoolSize":50,
       "connectionMinimumIdleSize":5,
