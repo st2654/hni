@@ -20,7 +20,10 @@
 
 		<bean id="pageTimerFilter" class="org.hni.admin.filter.PageTimerFilter"/>
 		<bean id="optionsFilter" class="org.hni.admin.filter.OptionsFilter"/>
-		<bean id="jwtAuthc" class="org.hni.admin.filter.JWTTokenAuthenticatingFilter"/>
+		<bean id="jwtAuthc" class="org.hni.admin.filter.JWTTokenAuthenticatingFilter">
+			<property name="tokenIssuer" value="${token.issuer}"/>
+			<property name="tokenKey" value="${token.key}"/>
+		</bean>
 		
         <bean id="springFilters" class="org.springframework.web.filter.CompositeFilter">
                 <property name="filters">

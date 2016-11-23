@@ -55,6 +55,9 @@
 			  use this if you don't have a database running locally
 		 -->
 		<beans profile="integration">
+			<bean  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+				<property name="locations" value="classpath:config/integration/application.properties" />	
+			</bean>	
 			<util:properties id="hniProperties" location="classpath:config/integration/application.properties" />
 			<bean id="redisLockingService" class=" org.hni.order.service.RedisLockingService">
 				<property name="configLocation" value="/config/integration/redis-cache.json" />
@@ -72,6 +75,9 @@
 		-->
 		<beans profile="localdev">
 			<util:properties id="hniProperties" location="classpath:config/localdev/application.properties" />
+			<bean  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+				<property name="locations" value="classpath:config/localdev/application.properties" />	
+			</bean>	
 			
 			<!-- this allows injection of values into the dataSource below -->
 			<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -102,6 +108,9 @@
 		<!--  remote-dev: intended for 'remove server development/testing' -->
 		<beans profile="remotedev">
 			<util:properties id="hniProperties" location="classpath:config/remotedev/application.properties" />
+			<bean  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+				<property name="locations" value="classpath:config/remotedev/application.properties" />	
+			</bean>	
 			
 			<!-- this allows injection of values into the dataSource below -->
 			<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

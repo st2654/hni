@@ -16,8 +16,8 @@ public class DefaultRegistrationStateDAO implements RegistrationStateDAO {
         registrationStateMap = new HashMap<>();
     }
 
-    public RegistrationState get(String sessionId) {
-        return registrationStateMap.get(sessionId);
+    public RegistrationState get(String phoneNumber) {
+        return registrationStateMap.get(phoneNumber);
     }
 
     public RegistrationState insert(RegistrationState state) {
@@ -28,7 +28,7 @@ public class DefaultRegistrationStateDAO implements RegistrationStateDAO {
         return registrationStateMap.put(state.getPhoneNumber(), state);
     }
 
-    public RegistrationState delete(String sessionId) {
-        return registrationStateMap.remove(sessionId);
+    public RegistrationState delete(String phoneNumber) {
+        return registrationStateMap.remove(phoneNumber);
     }
 }

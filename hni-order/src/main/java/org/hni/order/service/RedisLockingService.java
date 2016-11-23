@@ -1,6 +1,7 @@
 package org.hni.order.service;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisLockingService implements LockingService, Lifecycle {
 	private static final Logger logger = LoggerFactory.getLogger(RedisLockingService.class);
+	
 	private RedissonClient redisson;
 	
 	public RedisLockingService(){
@@ -27,12 +29,22 @@ public class RedisLockingService implements LockingService, Lifecycle {
 	
 	@Override
 	public boolean acquireLock(String key) {
+		return acquireLock(key, null);
+	}
+	
+	@Override
+	public boolean acquireLock(String key, Long ttlMinutes) {
 		if ( null != redisson ) {
 			RLock lock = redisson.getLock(key);
 			if (lock.isLocked()) {
+				logger.warn(key + " is locked");
 				return false;
 			}
-			lock.lock();
+			if ( null != ttlMinutes) {
+				lock.lock(ttlMinutes, TimeUnit.MINUTES);
+			} else {
+				lock.lock();
+			}
 		}
 		return true;
 	}

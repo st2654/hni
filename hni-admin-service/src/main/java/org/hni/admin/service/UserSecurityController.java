@@ -11,12 +11,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.hni.common.Constants;
+import org.hni.common.exception.HNIException;
 import org.hni.common.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationUserService;
@@ -30,6 +32,7 @@ import org.hni.user.om.User;
 import org.hni.user.om.type.Gender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -47,13 +50,14 @@ public class UserSecurityController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceController.class);
 	
 	private static final Long VOLUNTEER_ORG_ID = 3L;
-	private static final Long TTL_MILLIS = 3600000L;
+	private static final Long TTL_MILLIS = 3600000L * 3; // 3 hrs
 	private RestTemplate restTemplate = new RestTemplate();
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Inject	private UserTokenService userTokenService;
 	@Inject	private OrganizationUserService organizationUserService;
-	
+	@Value("#{hniProperties['token.issuer']}") private String tokenIssuer;
+	@Value("#{hniProperties['token.key']}") private String tokenKey;
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -69,7 +73,7 @@ public class UserSecurityController extends AbstractBaseController {
 			logger.info("user is authenticated");
 			Set<OrganizationUserRolePermission> permissions = userTokenService.getUserOrganizationRolePermissions(user, organizationId);
 			String permissionObject = mapPermissionsToString(permissions);
-			return JWTTokenFactory.encode(UserTokenService.KEY, UserTokenService.ISSUER, "", TTL_MILLIS, user.getId(), permissionObject);
+			return JWTTokenFactory.encode(tokenKey, tokenIssuer, "", TTL_MILLIS, user.getId(), permissionObject);
 		} catch (IncorrectCredentialsException ice) {
 			logger.error("couldn't auth user:", ice.getMessage());
 			return null;
@@ -96,11 +100,12 @@ public class UserSecurityController extends AbstractBaseController {
 	}
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.TEXT_PLAIN })
 	@Path("/loginrequired")
 	@ApiOperation(value = "Sorry buddy, you have to auth first.", notes = "", response = Set.class, responseContainer = "")
-	public String noaccess() {
-		return "Authentication is required";
+	public Response noaccess() {
+		logger.warn("User is not authenticated...");		
+		throw new HNIException("Authentication is required", Response.Status.UNAUTHORIZED);
 	}
 	
 	private static final String GOOGLE_USERINFO = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=%s";
@@ -123,7 +128,7 @@ public class UserSecurityController extends AbstractBaseController {
 			Set<OrganizationUserRolePermission> permissions = userTokenService.getUserOrganizationRolePermissions(user, organizationId);
 			String permissionObject = mapPermissionsToString(permissions);
 			return new AuthenticationResult(HttpStatus.OK.value(), user, 
-					JWTTokenFactory.encode(UserTokenService.KEY, UserTokenService.ISSUER, "", TTL_MILLIS, user.getId(), permissionObject)
+					JWTTokenFactory.encode(tokenKey, tokenIssuer, "", TTL_MILLIS, user.getId(), permissionObject)
 				   ,"Success");
 
 		} catch(Exception e) {

@@ -8,6 +8,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.hni.common.DateUtils;
 import org.hni.common.service.AbstractService;
 import org.hni.order.dao.OrderDAO;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class DefaultOrderService extends AbstractService<Order> implements OrderService {
 	private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+	private static final Long DEFAULT_TIMEOUT = 60L; // 60 minutes
 	private OrderDAO orderDao;
 	private LockingService lockingService;
 	
@@ -99,12 +101,17 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	}
 
 	@Override
-	public Order complete(Order order, LocalDateTime pickupDate) {
-		order.setPickupDate(DateUtils.asDate(pickupDate));
+	public Order complete(Order order) {
 		order.setStatusId(OrderStatus.ORDERED.getId());		
-		return save(order);
+		return releaseLock(save(order));
 	}
 
+	@Override
+	public Order reset(Order order) {
+		order.setStatusId(OrderStatus.OPEN.getId());		
+		return releaseLock(save(order));
+	}
+	
 	@Override
 	public long countOrders() {
 		Collection<Order> orders = orderDao.with(OrderStatus.OPEN);
@@ -121,22 +128,33 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 				.count();
 		
 	}
+
+	@Override
+	public Order releaseLock(Order order) {
+		lockingService.releaseLock(getLockingKey(order));
+		return order;
+	}
 	
 	private boolean isLocked(Order order) {
-		String key = String.format("order:%d", order.getId());
-		return lockingService.isLocked(key);
+		return lockingService.isLocked(getLockingKey(order));
 	}
 	
 	private synchronized boolean lockAcquired(Order order) {
-		String key = String.format("order:%d", order.getId());
+		String key = getLockingKey(order);
 		
 		if (lockingService.isLocked(key)) {
 			return false;
 		}
 		// lock the order
-		lockingService.acquireLock(key);
+		lockingService.acquireLock(key, DEFAULT_TIMEOUT);
 		return true;
 	}
-	
+
+	private static final String getLockingKey(Order order) {
+		if (null != order) {
+			return String.format("order:%d", order.getId());
+		}
+		return StringUtils.EMPTY;
+	}
 
 }

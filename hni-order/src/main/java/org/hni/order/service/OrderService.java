@@ -1,7 +1,6 @@
 package org.hni.order.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import org.hni.common.service.BaseService;
 import org.hni.order.om.Order;
@@ -41,7 +40,13 @@ public interface OrderService extends BaseService<Order> {
 	 * @param order
 	 * @return
 	 */
-	Order complete(Order order, LocalDateTime pickupDate);
+	Order complete(Order order);
+	
+	/**
+	 * Forcibly unlock an order.
+	 * @param order
+	 */
+	Order releaseLock(Order order);
 	
 	/**
 	 * Returns a count of open orders
@@ -55,4 +60,6 @@ public interface OrderService extends BaseService<Order> {
 	 * @return
 	 */
 	long countOrders(Provider provider);
+
+	Order reset(Order order);
 }

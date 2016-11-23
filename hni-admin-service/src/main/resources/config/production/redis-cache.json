@@ -8,13 +8,12 @@
       "retryInterval":1500,
       "reconnectionTimeout":3000,
       "failedAttempts":3,
-      "password":null,
       "subscriptionsPerConnection":5,
       "clientName":null,
       "address":[
          "//hni-dev-cache.redis.cache.windows.net:6379"
       ],
-      "password":"xxxxxxxxx",
+      "password":"xxxxxxxx",
       "subscriptionConnectionMinimumIdleSize":1,
       "subscriptionConnectionPoolSize":50,
       "connectionMinimumIdleSize":5,

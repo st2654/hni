@@ -40,9 +40,19 @@ import io.jsonwebtoken.MissingClaimException;
 public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 	private static final Logger logger = LoggerFactory.getLogger(JWTTokenAuthenticatingFilter.class);
 
+	private String tokenIssuer;
+	private String tokenKey;
+	
 	@Inject
 	private UserDAO userDao;
 
+	public void setTokenIssuer(String tokenIssuer) {
+		this.tokenIssuer = tokenIssuer;
+	}
+	public void setTokenKey(String tokenKey) {
+		this.tokenKey = tokenKey;
+	}
+	
 	@Override
 	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -52,11 +62,12 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 			String name = headerNames.nextElement();
 			logger.info(String.format("%s=%s", name, httpRequest.getHeader(name) ));
 		}
+		logger.info("ISSUER = "+tokenIssuer);
 		logger.info("validating token with " + tokenValue);
 		try {
 			// if the token is valid we'll put the claims onto the ThreadLocal
 			// for processing by the TokenRealm
-			Claims claims = JWTTokenFactory.decode(tokenValue, UserTokenService.KEY, UserTokenService.ISSUER);
+			Claims claims = JWTTokenFactory.decode(tokenValue, tokenKey, tokenIssuer);
 			Long userId = new Long(claims.get(Constants.USERID, Integer.class).longValue());
 
 			// place the pre-calc permissions onto the Thread.local so we don't have to calc them again
@@ -74,7 +85,7 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 		} catch (MissingClaimException | IncorrectClaimException | ExpiredJwtException e) {
 			// let this fall through so the authN fails
 			logger.error("Not able to validate token due to " + e.getMessage());
-			throw new AuthenticationException("auth-token is missing, invalid or expired:"+e.getMessage());
+			throw new AuthenticationException("auth-token is missing, invalid or expired");
 		}
 		
 		

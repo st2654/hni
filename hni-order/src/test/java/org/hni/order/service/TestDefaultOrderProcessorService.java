@@ -252,7 +252,7 @@ public class TestDefaultOrderProcessorService {
         ArgumentCaptor<Order> argumentCaptor = ArgumentCaptor.forClass(Order.class);
         Mockito.verify(orderDAO, Mockito.times(1)).save(argumentCaptor.capture());
 
-        Assert.assertEquals(user.getId(), argumentCaptor.getValue().getUserId());
+        Assert.assertEquals(user.getId(), argumentCaptor.getValue().getUser().getId());
         Assert.assertTrue(argumentCaptor.getValue().getOrderDate().getTime() >= orderDate.getTime());
         Assert.assertEquals(partialOrder.getChosenProvider(), argumentCaptor.getValue().getProviderLocation());
         //Assert.assertEquals(partialOrder.getMenuItemsSelected(), argumentCaptor.getValue().getOrderItems());
