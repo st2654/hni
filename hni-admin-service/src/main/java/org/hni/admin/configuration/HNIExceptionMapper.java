@@ -13,7 +13,7 @@ public class HNIExceptionMapper implements ExceptionMapper<HNIException> {
 	public Response toResponse(HNIException e) {
 		return Response.status(e.getResponse().getStatus()).
                 entity(e.getResponse().getEntity()).
-                type(e.getResponse().getMediaType()).
+                type("text/plain").
                 build();
 	}
 
