@@ -123,7 +123,7 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide your address or CANCEL to quit";
+        String expectedOutput = "Please provide your address or ENDMEAL to quit";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -191,7 +191,7 @@ public class TestDefaultOrderProcessorService {
         // Execute
         String output = orderProcessor.processMessage(user, message);
         String expectedOutput = "You have chosen Food at McDonalds."
-                + " Respond with CONFIRM to place this order, REDO to try again, or CANCEL to end your order";
+                + " Respond with CONFIRM to place this order, REDO to try again, or ENDMEAL to end your order";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -262,7 +262,7 @@ public class TestDefaultOrderProcessorService {
     @Test
     public void processMessage_confirmOrRedo_cancel() {
         // Setup
-        String message = "Cancel";
+        String message = "endmeal";
 
         user.setId(1L);
         partialOrder.setUser(user);
@@ -331,7 +331,7 @@ public class TestDefaultOrderProcessorService {
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please respond with CONFIRM, REDO, or CANCEL";
+        String expectedOutput = "Please respond with CONFIRM, REDO, or ENDMEAL";
         // Verify
         Assert.assertEquals(expectedOutput, output);
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
@@ -342,7 +342,7 @@ public class TestDefaultOrderProcessorService {
     @Test
     public void processMessage_cancel_noOrder() {
         // Setup
-        String message = "Cancel";
+        String message = "ENDMEAL";
 
         user.setId(1L);
 
