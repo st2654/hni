@@ -47,7 +47,7 @@ public class UserSecurityController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceController.class);
 	
 	private static final Long VOLUNTEER_ORG_ID = 3L;
-	private static final Long TTL_MILLIS = 3600000L;
+	private static final Long TTL_MILLIS = 3600000L * 3; // 3 hrs
 	private RestTemplate restTemplate = new RestTemplate();
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
