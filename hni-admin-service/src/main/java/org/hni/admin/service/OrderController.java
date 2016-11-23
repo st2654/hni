@@ -21,6 +21,7 @@ import org.hni.order.om.OrderItem;
 import org.hni.order.service.OrderService;
 import org.hni.payment.om.OrderPayment;
 import org.hni.payment.service.OrderPaymentService;
+import org.hni.provider.om.Menu;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
@@ -177,6 +178,7 @@ public class OrderController extends AbstractBaseController {
 					.onClass(ProviderLocation.class, Match.match().include("*").exclude("created", "createdById"))
 					.onClass(Provider.class, Match.match().include("*").exclude("created", "createdById"))
 					.onClass(OrderItem.class, Match.match().include("*").exclude("order"))
+					.onClass(Menu.class, Match.match().include("*").exclude("provider"))
 					.onClass(MenuItem.class, Match.match().include("*").exclude("menu")));
 			return json;
 		} catch (Exception e) {
