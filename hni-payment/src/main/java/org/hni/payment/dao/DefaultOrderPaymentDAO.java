@@ -21,7 +21,7 @@ public class DefaultOrderPaymentDAO extends AbstractDAO<OrderPayment> implements
 	@Override
 	public Collection<OrderPayment> paymentsFor(Order order) {
 		try {
-			Query q = em.createQuery("SELECT x FROM OrderPayment x WHERE x.order.id = :orderId")
+			Query q = em.createQuery("SELECT x FROM OrderPayment x WHERE x.id.order.id = :orderId")
 				.setParameter("orderId", order.getId());
 			return q.getResultList();
 		} catch(NoResultException e) {
