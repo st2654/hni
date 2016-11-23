@@ -12,11 +12,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hni.common.DateUtils;
 import org.hni.order.om.Order;
-import org.hni.order.om.type.OrderStatus;
 import org.hni.order.service.OrderService;
 import org.hni.payment.om.OrderPayment;
 import org.hni.payment.service.OrderPaymentService;
@@ -82,11 +82,24 @@ public class OrderController extends AbstractBaseController {
 		, notes = ""
 		, response = Order.class
 		, responseContainer = "")
-	public String getNextOrder(@QueryParam("providerId") Long providerId) {
+	public Response getNextOrder(@QueryParam("providerId") Long providerId) {
+		Order order = null;
 		if ( null != providerId ) {
-			return serializeOrderToJson(orderService.next(new Provider(providerId)));
+			order = orderService.next(new Provider(providerId));
+		} else {
+			order = orderService.next();
 		}
-		return serializeOrderToJson(orderService.next());
+		if ( null != order ) {
+			return Response.status(Response.Status.OK).
+	                entity(serializeOrderToJson(order)).
+	                type(MediaType.APPLICATION_JSON).
+	                build();
+		}
+		return Response.status(Response.Status.NO_CONTENT).
+                entity("{}").
+                type(MediaType.APPLICATION_JSON).
+                build();
+
 	}
 
 	@GET
