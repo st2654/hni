@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class DefaultOrderService extends AbstractService<Order> implements OrderService {
 	private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+	private static final Long DEFAULT_TIMEOUT = 60L; // 60 minutes
 	private OrderDAO orderDao;
 	private LockingService lockingService;
 	
@@ -100,8 +101,7 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	}
 
 	@Override
-	public Order complete(Order order, LocalDateTime pickupDate) {
-		order.setPickupDate(DateUtils.asDate(pickupDate));
+	public Order complete(Order order) {
 		order.setStatusId(OrderStatus.ORDERED.getId());		
 		return releaseLock(save(order));
 	}
@@ -140,7 +140,7 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 			return false;
 		}
 		// lock the order
-		lockingService.acquireLock(key);
+		lockingService.acquireLock(key, DEFAULT_TIMEOUT);
 		return true;
 	}
 

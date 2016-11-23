@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.apache.log4j.BasicConfigurator;
 import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
+import org.hni.order.om.type.OrderStatus;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
@@ -83,17 +84,12 @@ public class TestOrderService {
 		// Checks that the pickup date is null prior to the completion methods
 		assertEquals(null, order.getPickupDate());
 
-		Order returnOrder = orderService.complete(order, LocalDateTime.now());
-		// Verifies that the pickup date has been updated
-		assertNotNull(returnOrder.getPickupDate());
-		assertTrue(pickupDate.before(returnOrder.getPickupDate())
-				|| pickupDate.getTime() == returnOrder.getPickupDate().getTime());
+		Order returnOrder = orderService.complete(order);
 
 		//Checks that it was properly loaded into database
 		Order orderFromDatabase = orderService.get(order.getId());
-		assertNotNull(orderFromDatabase.getPickupDate());
-		assertTrue(pickupDate.before(orderFromDatabase.getPickupDate())
-				|| pickupDate.getTime() == orderFromDatabase.getPickupDate().getTime());
+		assertNotNull(orderFromDatabase);
+		assertEquals(OrderStatus.ORDERED, order.getOrderStatus());
 	}
 
 	@Test
@@ -113,7 +109,7 @@ public class TestOrderService {
 			//assertEquals(DateUtils.asDate(fromDate.minus(i - 1, ChronoUnit.MINUTES)), order.getOrderDate());
 			assertNull(order.getPickupDate());
 			assertEquals(new Long(1L) , order.getProviderLocation().getId());
-			orderService.complete(order, LocalDateTime.now());
+			orderService.complete(order);
 		}
 
 	}

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisLockingService implements LockingService, Lifecycle {
 	private static final Logger logger = LoggerFactory.getLogger(RedisLockingService.class);
-	private static final Long DEFAULT_TIMEOUT = 60L; // 60 minutes
+	
 	private RedissonClient redisson;
 	
 	public RedisLockingService(){
@@ -29,7 +29,7 @@ public class RedisLockingService implements LockingService, Lifecycle {
 	
 	@Override
 	public boolean acquireLock(String key) {
-		return acquireLock(key, DEFAULT_TIMEOUT);
+		return acquireLock(key, null);
 	}
 	
 	@Override
@@ -37,12 +37,14 @@ public class RedisLockingService implements LockingService, Lifecycle {
 		if ( null != redisson ) {
 			RLock lock = redisson.getLock(key);
 			if (lock.isLocked()) {
+				logger.warn(key + " is locked");
 				return false;
 			}
 			if ( null != ttlMinutes) {
-				lock.expire(ttlMinutes, TimeUnit.MINUTES);
+				lock.lock(ttlMinutes, TimeUnit.MINUTES);
+			} else {
+				lock.lock();
 			}
-			lock.lock();
 		}
 		return true;
 	}

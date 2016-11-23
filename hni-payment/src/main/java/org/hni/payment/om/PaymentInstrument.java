@@ -39,6 +39,9 @@ public class PaymentInstrument implements Serializable, Persistable {
 	@Column(name="pin_number") private String pinNumber;
 	
 	public PaymentInstrument() {}
+	public PaymentInstrument(Long id) {
+		this.id = id;
+	}
 	
 	public Long getId() {
 		return id;

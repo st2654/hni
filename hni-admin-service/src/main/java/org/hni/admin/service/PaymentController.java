@@ -1,10 +1,12 @@
 package org.hni.admin.service;
 
 import java.util.Collection;
-import java.util.Date;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -14,12 +16,10 @@ import org.hni.common.exception.HNIException;
 import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
 import org.hni.payment.om.OrderPayment;
-import org.hni.payment.om.OrderPaymentPK;
-import org.hni.payment.om.PaymentInstrument;
+import org.hni.payment.om.PaymentInfo;
 import org.hni.payment.service.OrderPaymentService;
 import org.hni.payment.service.PaymentInstrumentService;
 import org.hni.provider.om.Provider;
-import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderService;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class PaymentController extends AbstractBaseController {
 	@Inject private PaymentInstrumentService paymentInstrumentService;
 	
 	@GET
-	@Path("/paymentinstruments/")
+	@Path("/payment-instruments/")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Returns a collectio of payment instruments that can be used to pay for an order"
 		, notes = "encrypted"
@@ -69,6 +69,22 @@ public class PaymentController extends AbstractBaseController {
 		throw new HNIException("The provider specified is not valid");
 	}
 
+	@POST
+	@Path("/order-payments/")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns a collection of payment instruments that can be used to pay for an order"
+		, notes = "encrypted"
+		, response = Order.class
+		, responseContainer = "")
+	public String setPaymentInstrumentsForOrder(Set<PaymentInfo> paymentInfos) {
+		Order order = orderPaymentService.assignPayment(paymentInfos, getLoggedInUser());
+		logger.info(String.format("Marking order %d complete", order.getId()));
+		orderService.complete(order);
+		
+		return "{}";
+	}
+	
 	private String serializeOrderPaymentToJson(Collection<OrderPayment> orderPayments) {
 		try {
 			String json = mapper.writeValueAsString(JsonView.with(orderPayments)
