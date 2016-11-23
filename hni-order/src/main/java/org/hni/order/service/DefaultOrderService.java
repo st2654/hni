@@ -8,6 +8,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.hni.common.DateUtils;
 import org.hni.common.service.AbstractService;
 import org.hni.order.dao.OrderDAO;
@@ -102,7 +103,7 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	public Order complete(Order order, LocalDateTime pickupDate) {
 		order.setPickupDate(DateUtils.asDate(pickupDate));
 		order.setStatusId(OrderStatus.ORDERED.getId());		
-		return save(order);
+		return releaseLock(save(order));
 	}
 
 	@Override
@@ -121,14 +122,19 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 				.count();
 		
 	}
+
+	@Override
+	public Order releaseLock(Order order) {
+		lockingService.releaseLock(getLockingKey(order));
+		return order;
+	}
 	
 	private boolean isLocked(Order order) {
-		String key = String.format("order:%d", order.getId());
-		return lockingService.isLocked(key);
+		return lockingService.isLocked(getLockingKey(order));
 	}
 	
 	private synchronized boolean lockAcquired(Order order) {
-		String key = String.format("order:%d", order.getId());
+		String key = getLockingKey(order);
 		
 		if (lockingService.isLocked(key)) {
 			return false;
@@ -137,6 +143,12 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 		lockingService.acquireLock(key);
 		return true;
 	}
-	
+
+	private static final String getLockingKey(Order order) {
+		if (null != order) {
+			return String.format("order:%d", order.getId());
+		}
+		return StringUtils.EMPTY;
+	}
 
 }

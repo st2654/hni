@@ -33,6 +33,7 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 
 		ActivationCode code = getByActivationCode(authCode);
 		return code != null
+			&& code.getUser() == null
             && code.getOrganizationId() != null
 			&& code.isEnabled()
 			&& code.getMealsRemaining() > 0

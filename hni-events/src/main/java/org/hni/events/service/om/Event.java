@@ -8,14 +8,14 @@ public class Event {
     // incoming media type
     // this is text/plain for SMS
     // but for the future it could be json or xml if the endpoint was called from web UI
-    private String mediaType;
+    private String incomingMediaType;
 
     private String phoneNumber;
 
     private String textMessage;
 
-    private Event(String mediaType, String phoneNumber, String textMessage) {
-        this.mediaType = mediaType;
+    private Event(String incomingMediaType, String phoneNumber, String textMessage) {
+        this.incomingMediaType = incomingMediaType;
         this.phoneNumber = phoneNumber;
         this.textMessage = textMessage;
     }
@@ -40,18 +40,18 @@ public class Event {
         this.textMessage = textMessage;
     }
 
-    public String getMediaType() {
-        return mediaType;
+    public String getIncomingMediaType() {
+        return incomingMediaType;
     }
 
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
+    public void setIncomingMediaType(String incomingMediaType) {
+        this.incomingMediaType = incomingMediaType;
     }
 
     @Override
     public String toString() {
         return "Event{" +
-                "mediaType='" + mediaType + '\'' +
+                "incomingMediaType='" + incomingMediaType + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", textMessage='" + textMessage + '\'' +
                 '}';

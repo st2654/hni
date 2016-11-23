@@ -8,6 +8,7 @@ import org.hni.events.service.om.RegistrationState;
 import org.hni.events.service.om.RegistrationStep;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.user.om.User;
+import org.hni.user.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -25,9 +26,8 @@ import static org.mockito.Mockito.*;
 @Ignore
 public class EventRouterIntTest {
 
-    //TODO FIX SESSION_ID and phoneNumber REFACTOR
-    private static final String SESSION_ID = "8188461238";
     private static final String MEDIA_TYPE = "text/plain";
+    private static final String SESSION_ID = "123";
     private static final String PHONE_NUMBER = "8188461238";
     private static final String AUTH_CODE = "123456";
 
@@ -42,7 +42,7 @@ public class EventRouterIntTest {
     private RegistrationStateDAO registrationStateDao = new DefaultRegistrationStateDAO();
 
     @Mock
-    private CustomerService customerService;
+    private UserService customerService;
 
     @Mock
     private ActivationCodeService activationCodeService;
@@ -63,7 +63,7 @@ public class EventRouterIntTest {
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         verify(registrationStateDao, times(1)).insert(any(RegistrationState.class));
         verify(registrationStateDao, times(1)).update(any(RegistrationState.class));
-        RegistrationState nextState = registrationStateDao.get(SESSION_ID);
+        RegistrationState nextState = registrationStateDao.get(PHONE_NUMBER);
         Assert.assertEquals(PHONE_NUMBER, nextState.getPhoneNumber());
         Assert.assertEquals(EventName.REGISTER, nextState.getEventName());
         Assert.assertEquals(RegistrationStep.STATE_REGISTER_GET_FIRST_NAME, nextState.getRegistrationStep());
@@ -76,7 +76,7 @@ public class EventRouterIntTest {
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
                 + "Any information you provide here will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
-        verify(registrationStateDao, times(1)).delete(eq(SESSION_ID));
+        verify(registrationStateDao, times(1)).delete(eq(PHONE_NUMBER));
         verify(registrationStateDao, times(2)).insert(any(RegistrationState.class));
     }
 
@@ -94,7 +94,7 @@ public class EventRouterIntTest {
         returnString = factory.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "doe"));
         Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Thanks", returnString);
+                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
         // email
         returnString = factory.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "

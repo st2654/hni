@@ -20,7 +20,8 @@ public interface UserService extends BaseService<User> {
                 && (!StringUtils.isNumeric(user.getMobilePhone()) || user.getMobilePhone().length() != 10)) {
             return false;
         }
-        if (user.getEmail() != null && !EmailValidator.getInstance().isValid(user.getEmail())) {
+        if (user.getEmail() != null
+                && (!"none".equalsIgnoreCase(user.getEmail()) && !EmailValidator.getInstance().isValid(user.getEmail()))) {
             return false;
         }
 
