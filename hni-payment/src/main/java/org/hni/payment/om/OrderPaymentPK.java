@@ -2,7 +2,11 @@ package org.hni.payment.om;
 
 import java.io.Serializable;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hni.order.om.Order;
@@ -11,8 +15,13 @@ import org.hni.order.om.Order;
 public class OrderPaymentPK implements Serializable {
 
 	private static final long serialVersionUID = 2751060551106019525L;
-	
+
+	@ManyToOne
+	@JoinColumn(name="order_id", referencedColumnName = "id")
 	private Order order;
+	
+	@ManyToOne
+	@JoinColumn(name="payment_instrument_id", referencedColumnName = "id")
 	private PaymentInstrument paymentInstrument;
 	
 	//@Column(name="order_id") private Long orderId;

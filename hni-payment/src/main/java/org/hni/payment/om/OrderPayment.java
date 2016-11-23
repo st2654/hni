@@ -3,6 +3,8 @@ package org.hni.payment.om;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -21,8 +23,8 @@ public class OrderPayment implements Serializable, Persistable {
 	@EmbeddedId private OrderPaymentPK id;
 
 	@Column(name="amount") private Double amount;
-	@Column(name="created_by_id") private Long createdById;
-	@Column(name="created_datetime") private Date createdDatetime;
+	@Column(name="created_by") private Long createdById;
+	@Column(name="created_date") private Date createdDatetime;
 	
 	public OrderPayment() {}
 	public OrderPayment(OrderPaymentPK id, Double amount, Long createdById, Date createdDatetime) {

@@ -14,8 +14,9 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import org.apache.log4j.BasicConfigurator;
-import org.hni.common.DateUtils;
 import org.hni.order.om.Order;
+import org.hni.order.om.OrderItem;
+import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
@@ -46,6 +47,24 @@ public class TestOrderService {
 		Order order2 = orderService.get(order.getId());
 
 		assertEquals(2, order2.getOrderItems().size());
+	}
+	
+	@Test
+	public void testAddItemsToOrder() {
+		Order order = OrderTestData.getTestOrder();
+		order.getOrderItems().add(createOrderItem(1L, 1L, 4.99));
+		orderService.save(order);
+		
+		Order orderCheck = orderService.get(order.getId());
+		assertEquals(3, orderCheck.getOrderItems().size());
+	}
+	
+	private OrderItem createOrderItem(Long id, Long qty, Double amount) {
+		OrderItem oi = new OrderItem();
+		oi.setMenuItem(new MenuItem(id));
+		oi.setQuantity(qty);
+		oi.setAmount(amount);
+		return oi;
 	}
 	
 	//@Test

@@ -36,6 +36,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 	public DefaultOrderPaymentService(OrderPaymentDAO orderPaymentDao, PaymentInstrumentDAO paymentInstrumentDao, LockingService lockingService) {
 		super(orderPaymentDao);
 		this.orderPaymentDao = orderPaymentDao;
+		this.paymentInstrumentDao = paymentInstrumentDao;
 		this.lockingService = lockingService;
 	}
 
@@ -47,24 +48,28 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
 		Collection<OrderPayment> orderPayments = new HashSet();
 		
-		BigDecimal amountDispensed = BigDecimal.ZERO;
+		BigDecimal theAmount = BigDecimal.valueOf(amount);
+		BigDecimal totalAmount = calcExistingPayments(order);
+		
 		// this is horribly crude, but will work for v1
+		// being ultra-careful to check that the amounts for an order do not exceed the total for the order.
 		for(PaymentInstrument paymentInstrument : providerCards) {
-			if (lockingService.acquireLock(lockingKey(paymentInstrument), FIVE_MINUTES)) {
+			if ( lockingService.acquireLock(lockingKey(paymentInstrument), FIVE_MINUTES) && (totalAmount.doubleValue() < order.getSubTotal()) ) {
 				logger.info("locking card "+lockingKey(paymentInstrument));
-				Double amountToDispense = calcAmountToDispense(paymentInstrument, amount);
-				amountDispensed.add(BigDecimal.valueOf(amountToDispense));
-				BigDecimal cardTotal = BigDecimal.valueOf(paymentInstrument.getBalance()).subtract(BigDecimal.valueOf(amountToDispense));
+				BigDecimal amountToDispense = calcAmountToDispense(paymentInstrument, theAmount);
+				theAmount = theAmount.subtract(amountToDispense);
+				totalAmount = totalAmount.add(amountToDispense);
 				
-				OrderPayment orderPayment = new OrderPayment(order, paymentInstrument, amountToDispense, user);
+				OrderPayment orderPayment = new OrderPayment(order, paymentInstrument, amountToDispense.doubleValue(), user);
 				orderPayments.add(orderPayment);
 				orderPaymentDao.save(orderPayment);
 				
+				BigDecimal cardTotal = BigDecimal.valueOf(paymentInstrument.getBalance()).subtract(amountToDispense);
 				paymentInstrument.setBalance(cardTotal.doubleValue());
 				paymentInstrument.setLastUsedDatetime(new Date());
 				paymentInstrumentDao.save(paymentInstrument);
 				
-				if (amountDispensed.doubleValue() >= amount) {
+				if ( theAmount.doubleValue() <= 0 || (totalAmount.doubleValue() >= order.getSubTotal()) ) {
 					break;
 				}
 			}
@@ -72,16 +77,26 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		return orderPayments;
 	}
 	
-	private Double calcAmountToDispense(PaymentInstrument paymentInstrument, Double amount) {
+	private BigDecimal calcAmountToDispense(PaymentInstrument paymentInstrument, BigDecimal amount) {
 		if (paymentInstrument.getBalance().doubleValue() >= amount.doubleValue()) {
 			return amount;
 		}
 		// the amount on the card is less than we need, so return the full amount on the card.
-		return paymentInstrument.getBalance();		
+		return BigDecimal.valueOf(paymentInstrument.getBalance());		
 	}
 	
 	private String lockingKey(PaymentInstrument paymentInstrument) {
 		return String.format("paymentInstrument:%d", paymentInstrument.getId());
+	}
+	
+	private BigDecimal calcExistingPayments(Order order) {
+		BigDecimal total = BigDecimal.ZERO;
+		for(OrderPayment op : orderPaymentDao.paymentsFor(order)) {
+			total = total.add(BigDecimal.valueOf(op.getAmount()));
+		}
+		total = total.multiply(BigDecimal.valueOf(1.1)); // add 10% for possible taxes
+		return total;
+				
 	}
 
 }

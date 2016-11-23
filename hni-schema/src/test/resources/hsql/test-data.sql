@@ -123,3 +123,13 @@ insert into provider_locations values(1, 'Subway #1', 1, 4, now(), 1);
 insert into provider_locations values(2, 'KFC #1', 2, 5, now(), 1);
 insert into provider_locations values(3, 'Wendy #1', 3, 6, now(), 1);
 
+insert into payment_instruments values(1, 1, 'gift', '1000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(2, 1, 'gift', '2000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(3, 1, 'gift', '3000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(4, 1, 'gift', '4000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(5, 1, 'gift', '5000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(6, 1, 'gift', '6000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(7, 1, 'gift', '7000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(8, 1, 'gift', '8000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(9, 1, 'gift', '9000-0000-0000-0001',1, 10, 10, 'A', '1234');
+insert into payment_instruments values(10, 1, 'gift', '1100-0000-0000-0001',1, 10, 10, 'A', '1234');
