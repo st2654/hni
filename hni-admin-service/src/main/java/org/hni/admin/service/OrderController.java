@@ -96,7 +96,7 @@ public class OrderController extends AbstractBaseController {
 		, notes = ""
 		, response = Order.class
 		, responseContainer = "")
-	public String resetOrder( Long id) {
+	public String resetOrder(@PathParam("id") Long id) {
 		if ( null != id ) {
 			Order order = orderService.get(id);
 			orderService.reset(order);
@@ -104,7 +104,8 @@ public class OrderController extends AbstractBaseController {
 				orderPaymentService.delete(op);
 			}
 		}
-		return serializeOrderToJson(orderService.next());
+		return String.format("{\"message\":\"reset order %d\"}", id);
+				
 	}
 
 	@DELETE
