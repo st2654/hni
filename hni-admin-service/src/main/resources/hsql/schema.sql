@@ -269,6 +269,7 @@ CREATE TABLE IF NOT EXISTS `payment_instruments` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `provider_id` INT NULL,
   `card_type` VARCHAR(45) NULL,
+  `card_serial_id` VARCHAR(255) NULL,  
   `card_number` VARCHAR(45) NULL COMMENT 'hashed value',
   `status` VARCHAR(45) NULL COMMENT 'activated or not',
   `orginal_balance` DECIMAL(10,2) NULL,
