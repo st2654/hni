@@ -14,6 +14,7 @@ import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.MenuService;
 import org.hni.provider.service.ProviderLocationService;
 import org.hni.user.dao.UserDAO;
+import org.hni.user.om.Address;
 import org.hni.user.om.User;
 import org.junit.Assert;
 import org.junit.Before;
@@ -96,21 +97,27 @@ public class TestDefaultOrderProcessorService {
         menuSet.add(menu);
         provider.setMenus(menuSet);
 
+        Address address = new Address();
+        address.setAddress1("123 Main St");
+
         ProviderLocation providerLocation = new ProviderLocation(1L);
         providerLocation.setName("Subway");
         providerLocation.setProvider(provider);
+        providerLocation.setAddress(address);
         menuItems.add(item);
         providerLocationList.add(providerLocation);
 
         providerLocation = new ProviderLocation(2L);
         providerLocation.setName("McDonalds");
         providerLocation.setProvider(provider);
+        providerLocation.setAddress(address);
         menuItems.add(item);
         providerLocationList.add(providerLocation);
 
         providerLocation = new ProviderLocation(3L);
         providerLocation.setName("Waffle House");
         providerLocation.setProvider(provider);
+        providerLocation.setAddress(address);
         menuItems.add(item);
         providerLocationList.add(providerLocation);
     }
@@ -144,10 +151,10 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide the number for your selection. "
-                + "1) Subway (Food). "
-                + "2) McDonalds (Food). "
-                + "3) Waffle House (Food). ";
+        String expectedOutput = "Please provide the number for your selection."
+                + " 1) Subway (Food) 123 Main St."
+                + " 2) McDonalds (Food) 123 Main St."
+                + " 3) Waffle House (Food) 123 Main St.";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -212,11 +219,11 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Invalid input! "
-                + "Please provide the number for your selection. "
-                + "1) Subway (Food). "
-                + "2) McDonalds (Food). "
-                + "3) Waffle House (Food). ";
+        String expectedOutput = "Invalid input!"
+                + "Please provide the number for your selection."
+                + " 1) Subway (Food) 123 Main St."
+                + " 2) McDonalds (Food) 123 Main St."
+                + " 3) Waffle House (Food) 123 Main St.";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
@@ -302,10 +309,10 @@ public class TestDefaultOrderProcessorService {
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide the number for your selection. "
-                + "1) Subway (Food). "
-                + "2) McDonalds (Food). "
-                + "3) Waffle House (Food). ";
+        String expectedOutput = "Please provide the number for your selection."
+                + " 1) Subway (Food) 123 Main St."
+                + " 2) McDonalds (Food) 123 Main St."
+                + " 3) Waffle House (Food) 123 Main St.";
         // Verify
         Assert.assertEquals(expectedOutput, output);
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
