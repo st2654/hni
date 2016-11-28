@@ -60,7 +60,8 @@
         <module>hni-admin-service</module>
         <module>hni-provider</module>
         <module>hni-order</module>
-        <module>hni-payment</module>
+	<module>hni-payment</module>
+        <module>hni-card-loader</module>
     </modules>
     <build>
         <plugins>
