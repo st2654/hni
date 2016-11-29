@@ -12,7 +12,7 @@ public class HNIException extends WebApplicationException {
 	}
 	
 	public HNIException(String message) {
-		super(Response.status(Response.Status.NOT_FOUND).entity(String.format("{\"message\":\"%s\"}", message.toString())).type(MediaType.APPLICATION_JSON).build());
+		super(Response.status(Response.Status.UNAUTHORIZED).entity(String.format("{\"message\":\"%s\"}", message.toString())).type(MediaType.APPLICATION_JSON).build());
 	}
 	
 
