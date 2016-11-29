@@ -3,6 +3,7 @@ package org.hni.order.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 
@@ -47,10 +48,15 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 		}
 		return super.save(order);
 	}
-	
+
+	@Override
+	public Collection<Order> get(User user) {
+		return orderDao.get(user);
+	}
+
 	@Override
 	public Collection<Order> get(User user, LocalDate startDate) {
-		return get(user, startDate, LocalDate.now());
+		return get(user, startDate, startDate.plus(1, ChronoUnit.DAYS));
 	}
 
 	@Override
