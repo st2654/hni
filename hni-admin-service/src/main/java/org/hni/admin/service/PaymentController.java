@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.shiro.SecurityUtils;
+import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
@@ -71,7 +72,7 @@ public class PaymentController extends AbstractBaseController {
 				// this exception indicates the user requested 25% more than the expected amount for the order.
 				// this will do an automatic lockout
 				User user = getLoggedInUser();
-				if (!SecurityUtils.getSubject().hasRole("Super User")) {					
+				if (!SecurityUtils.getSubject().hasRole(Constants.SUPER_USER.toString())) {					
 					logger.warn(String.format("** Funds request exceeded! Locking account for user[%d] %s %s (%s)", user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()));
 					organizationUserService.lock(getLoggedInUser());
 					logger.warn(String.format("Release locking on order %d", order.getId()));
