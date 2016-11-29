@@ -85,4 +85,11 @@ public interface OrganizationUserService extends UserService {
 	 * @return Collection<UserOrganizationRole>
 	 */
 	Collection<UserOrganizationRole> getUserOrganizationRoles(User user);
+	
+	/**
+	 * Return all users for all orgs with the given role
+	 * @param role
+	 * @return
+	 */
+	Collection<User> byRole(Role role);
 }

@@ -95,4 +95,14 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 		return uorDao.get(user);
 	}
 
+	@Override
+	public Collection<User> byRole(Role role) {
+		Collection<User> users = new HashSet<User>();
+		for (UserOrganizationRole uor : uorDao.byRole(role)) {
+			users.add(this.get(uor.getId().getUserId()));			
+		}
+		
+		return users;
+	}
+
 }
