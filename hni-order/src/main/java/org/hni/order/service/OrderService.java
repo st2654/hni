@@ -10,6 +10,13 @@ import org.hni.user.om.User;
 public interface OrderService extends BaseService<Order> {
 
 	/**
+	 * Returns a collection of orders for the user
+	 * @param user
+	 * @return
+	 */
+	Collection<Order> get(User user);
+
+	/**
 	 * Returns a collection of orders for the user created on the date.
 	 * @param user
 	 * @param startDate
