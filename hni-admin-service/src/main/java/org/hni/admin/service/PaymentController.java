@@ -11,19 +11,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import org.hni.common.exception.HNIException;
 import org.hni.order.om.Order;
-import org.hni.order.om.OrderItem;
 import org.hni.order.service.OrderService;
+import org.hni.organization.service.OrganizationUserService;
 import org.hni.payment.om.OrderPayment;
 import org.hni.payment.om.PaymentInfo;
 import org.hni.payment.service.OrderPaymentService;
-import org.hni.payment.service.PaymentInstrumentService;
-import org.hni.provider.om.Menu;
-import org.hni.provider.om.MenuItem;
+import org.hni.payment.service.PaymentsExceededException;
 import org.hni.provider.om.Provider;
-import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderService;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
@@ -53,7 +51,6 @@ public class PaymentController extends AbstractBaseController {
 	@Inject private ProviderService providerService;
 	@Inject private OrderService orderService;
 	@Inject private OrderPaymentService orderPaymentService;
-	@Inject private PaymentInstrumentService paymentInstrumentService;
 	
 	@GET
 	@Path("/payment-instruments/")
@@ -66,11 +63,20 @@ public class PaymentController extends AbstractBaseController {
 		Provider provider = providerService.get(providerId);
 		Order order = orderService.get(orderId);
 		if ( null != order && null != provider ) {
-			// TODO: encrypt!
-			Collection<OrderPayment> payments = orderPaymentService.paymentFor(order, provider, amount, getLoggedInUser());
-			return serializeOrderPaymentToJson(payments);
+			Collection<OrderPayment> payments;
+			try {
+				payments = orderPaymentService.paymentFor(order, provider, amount, getLoggedInUser());
+				return serializeOrderPaymentToJson(payments);
+			} catch (PaymentsExceededException e) {
+				// this exception indicates the user requested 25% more than the expected amount for the order.
+				// this will do an automatic lockout
+				organizationUserService.lock(getLoggedInUser());
+				orderService.releaseLock(order);
+				throw new HNIException(e.getMessage(), Status.FORBIDDEN);
+			}
+			
 		}
-		throw new HNIException("The provider specified is not valid");
+		throw new HNIException("The provider specified is not valid", Status.NO_CONTENT);
 	}
 
 	@POST
@@ -101,4 +107,10 @@ public class PaymentController extends AbstractBaseController {
 		}
 		return "{}";
 	}
+	
+	private Double addOrderAmount(Order order) {
+		double total = order.getOrderItems().stream().mapToDouble(o -> o.getMenuItem().getPrice()).sum();
+		return total;
+	}
+	
 }

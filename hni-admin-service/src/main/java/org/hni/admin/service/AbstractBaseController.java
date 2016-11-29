@@ -16,7 +16,7 @@ import com.monitorjbl.json.JsonViewSerializer;
 
 public class AbstractBaseController {
 
-	@Inject private OrganizationUserService organizationUserService;
+	@Inject protected OrganizationUserService organizationUserService;
 	
     protected ObjectMapper mapper = new ObjectMapper();
     protected SimpleModule module = new SimpleModule();

@@ -11,7 +11,7 @@ import org.hni.user.om.User;
 
 public interface OrderPaymentService extends BaseService<OrderPayment > {
 
-	Collection<OrderPayment> paymentFor(Order order, Provider provider, Double amount, User user);
+	Collection<OrderPayment> paymentFor(Order order, Provider provider, Double amount, User user) throws PaymentsExceededException;
 
 	Order assignPayment(Collection<PaymentInfo> paymentInfos, User user);
 

@@ -73,6 +73,16 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	}
 
 	@Override
+	public void lock(User user) {
+		for(UserOrganizationRole uor : uorDao.get(user)) {
+			uorDao.delete(uor);
+		}
+		user.setDeleted(true);
+		user.setToken("LOCKED");
+		save(user);
+	}
+	
+	@Override
 	public User archive(User user, Organization org) {
 		// TODO
 		return user;

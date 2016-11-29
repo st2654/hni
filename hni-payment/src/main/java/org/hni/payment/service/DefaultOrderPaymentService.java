@@ -1,6 +1,7 @@
 package org.hni.payment.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -23,8 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -68,17 +67,16 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		
 	/**
 	 * Return CARD, amount to use on this card
+	 * @throws PaymentsExceededException 
 	 */
 	@Override
-	public Collection<OrderPayment> paymentFor(Order order, Provider provider, Double amount, User user) {
+	public Collection<OrderPayment> paymentFor(Order order, Provider provider, Double amount, User user) throws PaymentsExceededException {
 		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
 		Collection<OrderPayment> orderPayments = new HashSet();
 		
 		BigDecimal theAmount = BigDecimal.valueOf(amount);
 		//BigDecimal totalAmount = calcExistingPayments(order);
 		
-		// this is horribly crude, but will work for v1
-		// being ultra-careful to check that the amounts for an order do not exceed the total for the order.
 		for(PaymentInstrument paymentInstrument : providerCards) {
 			if ( lockingService.acquireLock(lockingKey(paymentInstrument), DEFAULT_CARD_LOCKOUT_MINS)  ) {
 				logger.info("locking card "+lockingKey(paymentInstrument));
@@ -88,10 +86,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 				
 				OrderPayment orderPayment = new OrderPayment(order, paymentInstrument, amountToDispense.doubleValue(), user);
 				orderPayments.add(orderPayment);
-				//orderPaymentDao.save(orderPayment);
-				
-				//BigDecimal cardTotal = BigDecimal.valueOf(paymentInstrument.getBalance()).subtract(amountToDispense);
-				//paymentInstrument.setBalance(cardTotal.doubleValue());
+
 				paymentInstrument.setLastUsedDatetime(new Date());
 				paymentInstrumentDao.save(paymentInstrument);
 				
@@ -100,6 +95,10 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 				}
 			}
 		}
+		
+		if (totalAmountRequestedExceedsTotal(order, orderPayments)) {
+			throw new PaymentsExceededException("You have requested more funds than you really need.  Shutting down this account...");
+		}		
 		return orderPayments;
 	}
 	
@@ -120,14 +119,23 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		return String.format("paymentInstrument:%d", paymentInstrument.getId());
 	}
 	
-	private BigDecimal calcExistingPayments(Order order) {
-		BigDecimal total = BigDecimal.ZERO;
-		for(OrderPayment op : orderPaymentDao.paymentsFor(order)) {
-			total = total.add(BigDecimal.valueOf(op.getAmount()));
-		}
-		total = total.multiply(BigDecimal.valueOf(1.1)); // add 10% for possible taxes
+	private Double addOrderAmount(Order order) {
+		double total = order.getOrderItems().stream().mapToDouble(o -> o.getMenuItem().getPrice()).sum();
 		return total;
-				
+	}
+	
+	private boolean totalAmountRequestedExceedsTotal(Order order, Collection<OrderPayment> orderPayments) {
+		Double total = 1.25*addOrderAmount(order); // add 25%
+		Collection<OrderPayment> prevOrderPayments = (Collection<OrderPayment>) lockingService.getCache(orderPaymentsKey(order));
+		Collection<OrderPayment> allPayments = new ArrayList<OrderPayment>(orderPayments);
+		allPayments.addAll(prevOrderPayments);
+		lockingService.addCache(orderPaymentsKey(order), allPayments);
+		
+		double paymentTotal = allPayments.stream().mapToDouble(o -> o.getAmount()).sum(); 
+		return (paymentTotal > total);
 	}
 
+	private String orderPaymentsKey(Order order) {
+		return String.format("order-payments:%d", order.getId());
+	}
 }

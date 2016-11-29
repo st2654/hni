@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.redisson.Redisson;
+import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class RedisLockingService implements LockingService, Lifecycle {
 	private static final Logger logger = LoggerFactory.getLogger(RedisLockingService.class);
 	
-	private RedissonClient redisson;
+	protected RedissonClient redisson;
 	
 	public RedisLockingService(){
 	}
@@ -90,4 +91,14 @@ public class RedisLockingService implements LockingService, Lifecycle {
 		shutdown();
 	}
 
+	
+	public void addCache(String key, Object object) {
+		RBucket<Object> bucket = redisson.getBucket(key);
+		bucket.set(object);		
+	}
+	
+	public Object getCache(String key) {
+		RBucket<Object> bucket = redisson.getBucket(key);
+		return bucket.get();
+	}
 }

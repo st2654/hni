@@ -7,4 +7,7 @@ public interface LockingService {
 	boolean isLocked(String key);
 	void releaseLock(String key);
 	void shutdown();
+	
+	void addCache(String key, Object object);
+	Object getCache(String key);
 }

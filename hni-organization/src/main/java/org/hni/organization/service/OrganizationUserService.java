@@ -29,8 +29,13 @@ public interface OrganizationUserService extends UserService {
 	 * @return
 	 */
 	void delete(User user, Organization org);
-
 	void delete(User user, Organization org, Role role);
+	
+	/**
+	 * Lock out a user by removing all their roles.
+	 * @param user
+	 */
+	void lock(User user);
 
 	/**
 	 * Archives the user in the given organization. They are still associated
