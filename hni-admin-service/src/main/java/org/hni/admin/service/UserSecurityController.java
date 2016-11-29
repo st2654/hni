@@ -100,7 +100,7 @@ public class UserSecurityController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/authorization")
 	@ApiOperation(value = "Authorizes a user based on their token, returning a set of organization user permissions for that user and all organizations with which the user is associated .", notes = "Requires authentication token.  Returns Set<OrganizationUserPermission>", response = Set.class, responseContainer = "")
-	public Set<OrganizationUserRolePermission> authorize(@HeaderParam(UserTokenService.TOKEN_HEADER) String token) {
+	public UserAccessControls authorize(@HeaderParam(UserTokenService.TOKEN_HEADER) String token) {
 		return userTokenService.getPermissionsFromToken(token);
 	}
 
