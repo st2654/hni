@@ -219,7 +219,7 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Invalid input!"
+        String expectedOutput = "Invalid input! "
                 + "Please provide the number for your selection."
                 + " 1) Subway (Food) 123 Main St."
                 + " 2) McDonalds (Food) 123 Main St."
