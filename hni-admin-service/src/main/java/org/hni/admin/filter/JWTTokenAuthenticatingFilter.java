@@ -58,10 +58,6 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String tokenValue = httpRequest.getHeader(UserTokenService.TOKEN_HEADER);
 		Enumeration<String> headerNames = httpRequest.getHeaderNames();
-		while(headerNames.hasMoreElements()) {
-			String name = headerNames.nextElement();
-			logger.info(String.format("%s=%s", name, httpRequest.getHeader(name) ));
-		}
 		logger.info("ISSUER = "+tokenIssuer);
 		logger.info("validating token with " + tokenValue);
 		try {
