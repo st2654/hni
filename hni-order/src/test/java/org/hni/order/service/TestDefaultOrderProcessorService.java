@@ -1,9 +1,7 @@
 package org.hni.order.service;
 
 import org.hni.order.dao.DefaultPartialOrderDAO;
-import org.hni.order.dao.OrderDAO;
 import org.hni.order.om.Order;
-import org.hni.order.om.OrderItem;
 import org.hni.order.om.PartialOrder;
 import org.hni.order.om.TransactionPhase;
 import org.hni.provider.om.GeoCodingException;
@@ -56,7 +54,7 @@ public class TestDefaultOrderProcessorService {
     private MenuService menuService;
 
     @Mock
-    private OrderDAO orderDAO;
+    private OrderService orderService;
 
     @Inject
     @InjectMocks
@@ -204,7 +202,7 @@ public class TestDefaultOrderProcessorService {
         Assert.assertEquals(expectedOutput, output);
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
         Mockito.verify(partialOrderDAO, Mockito.times(1)).save(argumentCaptor.capture());
-        Assert.assertEquals(TransactionPhase.CONFIRM_OR_CONTINUE, argumentCaptor.getValue().getTransactionPhase());
+        Assert.assertEquals(TransactionPhase.CONFIRM_OR_REDO, argumentCaptor.getValue().getTransactionPhase());
     }
 
     @Test
@@ -239,25 +237,26 @@ public class TestDefaultOrderProcessorService {
 
         user.setId(1L);
         partialOrder.setUser(user);
-        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
         partialOrder.setProviderLocationsForSelection(providerLocationList);
         partialOrder.setMenuItemsForSelection(menuItems);
         partialOrder.setChosenProvider(providerLocationList.get(1));
         partialOrder.getMenuItemsSelected().add(menuItems.get(0));
 
         Mockito.when(partialOrderDAO.byUser(user)).thenReturn(partialOrder);
-        Mockito.when(orderDAO.save(Mockito.any())).thenReturn(null);
+        Mockito.when(orderService.save(Mockito.any())).thenReturn(null);
 
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Your order has been confirmed, please wait for more information about when to pick up your meal.";
+        String expectedOutput = "Your order has been confirmed, please respond with STATUS after 5 minutes to check to status of your order.";
 
         // Verify
         Assert.assertEquals(expectedOutput, output);
         Mockito.verify(partialOrderDAO, Mockito.times(1)).delete(partialOrder);
+        Mockito.verify(partialOrderDAO, Mockito.times(0)).save(partialOrder);
         ArgumentCaptor<Order> argumentCaptor = ArgumentCaptor.forClass(Order.class);
-        Mockito.verify(orderDAO, Mockito.times(1)).save(argumentCaptor.capture());
+        Mockito.verify(orderService, Mockito.times(1)).save(argumentCaptor.capture());
 
         Assert.assertEquals(user.getId(), argumentCaptor.getValue().getUser().getId());
         Assert.assertTrue(argumentCaptor.getValue().getOrderDate().getTime() >= orderDate.getTime());
@@ -273,11 +272,10 @@ public class TestDefaultOrderProcessorService {
 
         user.setId(1L);
         partialOrder.setUser(user);
-        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
         partialOrder.setProviderLocationsForSelection(providerLocationList);
 
         Mockito.when(partialOrderDAO.byUser(user)).thenReturn(partialOrder);
-        Mockito.when(orderDAO.save(Mockito.any())).thenReturn(null);
 
         Date orderDate = new Date();
         // Execute
@@ -296,7 +294,7 @@ public class TestDefaultOrderProcessorService {
 
         user.setId(1L);
         partialOrder.setUser(user);
-        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
         partialOrder.setProviderLocationsForSelection(providerLocationList);
         partialOrder.setMenuItemsForSelection(menuItems);
         partialOrder.setAddress("home");
@@ -327,7 +325,7 @@ public class TestDefaultOrderProcessorService {
 
         user.setId(1L);
         partialOrder.setUser(user);
-        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+        partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
         partialOrder.setProviderLocationsForSelection(providerLocationList);
         partialOrder.setMenuItemsForSelection(menuItems);
         partialOrder.setChosenProvider(providerLocationList.get(1));
@@ -343,7 +341,7 @@ public class TestDefaultOrderProcessorService {
         Assert.assertEquals(expectedOutput, output);
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
         Mockito.verify(partialOrderDAO, Mockito.times(0)).save(argumentCaptor.capture());
-        Assert.assertEquals(TransactionPhase.CONFIRM_OR_CONTINUE, partialOrder.getTransactionPhase());
+        Assert.assertEquals(TransactionPhase.CONFIRM_OR_REDO, partialOrder.getTransactionPhase());
     }
 
     @Test

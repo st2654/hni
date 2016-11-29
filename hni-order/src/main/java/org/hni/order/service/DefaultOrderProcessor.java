@@ -5,7 +5,6 @@ import org.hni.events.service.EventRouter;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.order.dao.DefaultPartialOrderDAO;
-import org.hni.order.dao.OrderDAO;
 import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
 import org.hni.order.om.PartialOrder;
@@ -25,8 +24,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +51,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     private ProviderLocationService locationService;
 
     @Inject
-    private OrderDAO orderDAO;
+    private OrderService orderService;
 
     @Inject
     private EventRouter eventRouter;
@@ -61,16 +64,18 @@ public class DefaultOrderProcessor implements OrderProcessor {
     }
 
     public String processMessage(User user, String message) {
-        //this partial order is the one I get for this user
         PartialOrder order = partialOrderDAO.byUser(user);
         boolean cancellation = message.equalsIgnoreCase("ENDMEAL");
 
         if (order == null && cancellation) {
             return "You are not currently ordering, please respond with MEAL to place an order.";
-        } else if (order == null) {
+        } else if (order == null && !message.equalsIgnoreCase("STATUS")) {
             order = new PartialOrder();
             order.setTransactionPhase(TransactionPhase.MEAL);
             order.setUser(user);
+        } else if (order == null) {
+            //status check
+            return checkOrderStatus(user);
         } else if (cancellation) {
             partialOrderDAO.delete(order);
             return "You have successfully cancelled your order.";
@@ -92,8 +97,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             case CHOOSING_MENU_ITEM:
                 //this is chosen w/ provider for now
                 break;
-            case CONFIRM_OR_CONTINUE:
-                //don't save here because the partial order is deleted
+            case CONFIRM_OR_REDO:
                 return confirmOrContinueOrder(message, order);
             default:
                 //shouldn't get here
@@ -162,7 +166,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             MenuItem chosenItem = order.getMenuItemsForSelection().get(index - 1);
             order.getMenuItemsSelected().add(chosenItem);
             logger.debug("Location {} has been chosen with item {}", location.getName(), chosenItem.getName());
-            order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
+            order.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
             output = String.format("You have chosen %s at %s. Respond with CONFIRM to place this order, REDO to try again, or ENDMEAL to end your order", chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             output += "Invalid input! ";
@@ -188,22 +192,40 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 finalOrder.setOrderItems(orderedItems);
                 finalOrder.setSubTotal(orderedItems.stream().map(item -> (item.getAmount() * item.getQuantity())).reduce(0.0, Double::sum));
                 finalOrder.setStatus(OrderStatus.OPEN);
-                orderDAO.save(finalOrder);
+                orderService.save(finalOrder);
                 partialOrderDAO.delete(order);
                 logger.info("Successfully created order {}", finalOrder.getId());
-                output = "Your order has been confirmed, please wait for more information about when to pick up your meal.";
+                output = "Your order has been confirmed, please respond with STATUS after 5 minutes to check to status of your order.";
                 break;
             case "REDO":
                 logger.info("Reset order choices for PartialOrder {} by user request", order.getId());
                 //clear out previous choices
                 output = findNearbyMeals(order.getAddress(), order);
-                //saved here, because I know caller returns, should be refactored to be cleaner
+                //save here because I know caller won't
                 partialOrderDAO.save(order);
                 break;
             default:
                 output += "Please respond with CONFIRM, REDO, or ENDMEAL";
         }
         return output;
+    }
+
+    private String checkOrderStatus(User user) {
+        Collection<Order> orders = orderService.get(user, LocalDate.now());
+        Optional<Order> order = orders.stream().sorted((a,b) -> b.getOrderDate().compareTo(a.getOrderDate())).findFirst();
+        if (order.isPresent()) {
+            OrderStatus status = order.get().getOrderStatus();
+            if (status.equals(OrderStatus.OPEN)) {
+                return "Your order is still open, please respond with STATUS in 5 minutes to check again.";
+            } else if (status.equals(OrderStatus.ORDERED)) {
+                return "Your order has been placed and should be ready to pick up shortly from " + order.get().getProviderLocation().getAddress().getAddress1();
+            } else {
+                //TODO should we say anything for if they suspect an error
+                return "Your order has been marked as closed";
+            }
+        } else {
+            return "I can not find a recent order for you, please respond with MEAL to place an order.";
+        }
     }
 
     /**
