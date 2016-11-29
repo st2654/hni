@@ -4,18 +4,45 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import javax.inject.Inject;
+
+import org.hni.organization.om.Organization;
+import org.hni.security.om.UserAccessControls;
+import org.hni.security.service.AccessControlService;
+import org.hni.user.om.User;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.IncorrectClaimException;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:test-applicationContext.xml"} )
+@Transactional
 public class TestTokenFactory {
 
 	private static final String KEY = "YbpWo521Z/aF7DqpiIpIHQ==";
 	private static final String ISSUER = "test-issuer";
 	private static final Long TTL_MILLIS = 3600000L * 3; // 3 hrs
+	protected ObjectMapper mapper = new ObjectMapper();
+	 
+	@Inject private AccessControlService accessControlService;
 	
+	@Test
+	public void testCreateToken() throws Exception {
+		String subject = "testtoken";
+		User user = new User(7L);
+		Organization organization = new Organization(3L);
+		UserAccessControls acl = accessControlService.getUserAccess(user, organization);
+		String token = JWTTokenFactory.encode(KEY, ISSUER, subject, TTL_MILLIS, user.getId(), mapper.writeValueAsString(acl));
+		System.out.println(token);
+	}
 	@Test
 	public void testValidateToken() {
 		String subject = "testtoken";

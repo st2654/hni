@@ -30,6 +30,7 @@ insert into user_organization_role values(6, 2, 5);
 insert into user_organization_role values(6, 2, 2);
 insert into user_organization_role values(7, 3, 3);
 insert into user_organization_role values(8, 3, 3);
+
 truncate table menus;
 truncate table menu_items;
 insert into menus values(1, '"Subway Lunch', 1, 10, 16); /* 10am to 4pm */

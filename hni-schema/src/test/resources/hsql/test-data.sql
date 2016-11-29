@@ -7,6 +7,8 @@ insert into users values(3,'Mikey','Multiphone','M','479-555-4321', '', 0, '', '
 insert into users values(4,'Mikey','Multiphone','M','479-555-5678', '', 0, '', '', now(), '0');
 insert into users values(5, 'Ericka', 'Energy', 'F', '123-456-7830', '' ,0, '', '', now(), '0');
 insert into users values(6, 'Barbara', 'Bollingsworth', 'F', '123-456-7830', '' ,0, '', '', now(), '0');
+insert into users values(7, 'VOLUNTEER1', 'voliunteer', 'F', '123-456-7830', '' ,0, '', '', now(), '0');
+insert into users values(8, 'VOLUNTEER2', 'voliunteer', 'F', '123-456-7830', '' ,0, '', '', now(), '0');
 
 truncate table organizations;
 insert into organizations values(1, 'Not Impossible', 'phone', 'website', 'logo', now(), 1);
@@ -26,6 +28,8 @@ insert into user_organization_role values(6, 4, 5);
 insert into user_organization_role values(6, 4, 2);
 insert into user_organization_role values(6, 2, 5);
 insert into user_organization_role values(6, 2, 2);
+insert into user_organization_role values(7, 3, 3);
+insert into user_organization_role values(8, 3, 3);
 
 truncate table menus;
 truncate table menu_items;

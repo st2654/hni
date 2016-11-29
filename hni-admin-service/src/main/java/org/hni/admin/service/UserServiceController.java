@@ -153,7 +153,7 @@ public class UserServiceController {
 	, responseContainer = "")
 	public Collection<User> getUsersByRole(@QueryParam("roleId") Long roleId) {
 		// TODO: MUST add this security layer
-		if (SecurityUtils.getSubject().hasRole("1")) {		
+		if (SecurityUtils.getSubject().hasRole("Super User")) {		
 			return orgUserService.byRole(Role.get(roleId));
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
