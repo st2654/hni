@@ -165,7 +165,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_CONTINUE);
             output = String.format("You have chosen %s at %s. Respond with CONFIRM to place this order, REDO to try again, or ENDMEAL to end your order", chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output += "Invalid input!";
+            output += "Invalid input! ";
             output += providerLocationMenuOutput(order);
         }
         return output;
@@ -220,7 +220,12 @@ public class DefaultOrderProcessor implements OrderProcessor {
             ProviderLocation location = order.getProviderLocationsForSelection().get(i);
             output += " " + (i + 1) + ") " + location.getName()
                     + " (" + order.getMenuItemsForSelection().get(i).getName() + ") "
-                    + location.getAddress().getAddress1() + ".";
+                    + location.getAddress().getAddress1();
+            String line2 = location.getAddress().getAddress2();
+            if (line2 != null && !line2.isEmpty()) {
+                output += " " + line2;
+            }
+            output += ".";
         }
         return output;
     }
