@@ -47,11 +47,15 @@ public class TokenRealm extends PasswordRealm {
 			user = userDao.get(jwtToken.getUserId());
 			if (null == user) {
 				logger.warn("Could not find User for principal:" + token.getPrincipal());
-				return new SimpleAuthenticationInfo("", "", new SimpleByteSource(REALM_NAME.getBytes()), REALM_NAME);
+				throw new AuthenticationException("Could not find User for principal:" + token.getPrincipal());
+			}
+			if (user.isDeleted() || user.getHashedSecret().equals("LOCKED")) {
+				logger.warn(String.format("User[%d] %s %s %s attempting to use token on locked account!", user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()));
+				throw new AuthenticationException(String.format("User[%d] %s %s %s attempting to use token on locked account!", user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()));
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			return new SimpleAuthenticationInfo("", "", new SimpleByteSource(REALM_NAME.getBytes()), REALM_NAME);
+			throw new AuthenticationException("Could not authenticate:"+e.getMessage());
 		}
 		ByteSource salt = new SimpleByteSource(Base64.decodeBase64(user.getSalt()));
 		logger.info("Auth info = " + user.getEmail() + " - " + user.getHashedSecret());

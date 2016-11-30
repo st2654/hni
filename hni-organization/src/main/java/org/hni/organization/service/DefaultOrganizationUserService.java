@@ -79,7 +79,7 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 			uorDao.delete(uor);
 		}
 		user.setDeleted(true);
-		user.setToken("LOCKED");
+		user.setHashedSecret("LOCKED");
 		save(user);
 	}
 	
