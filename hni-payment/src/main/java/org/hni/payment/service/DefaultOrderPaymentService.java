@@ -77,20 +77,30 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 	public Collection<OrderPayment> paymentFor(Order order, Provider provider, Double amount, User user) throws PaymentsExceededException {
 		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
 		Collection<OrderPayment> orderPayments = new HashSet<>();
+
 		Double total = addOrderAmount(order);
+		BigDecimal amountNeeded = BigDecimal.valueOf(amount);
+		Double alreadyRequestedAmount = fromCache(order);
+		
 		if (addOrderAmount(order) <= 0) {
-			logger.info(String.format("Order[%d] total amount is $%.2f ...returning no payments", order.getId(), total));
+			logger.info(String.format("Order[%d] total amount is $%.2f.  Returning no payments", order.getId(), total));
 			return orderPayments;
 		}
 		
-		BigDecimal theAmount = BigDecimal.valueOf(amount);
-		logger.info(String.format("Order[%d] total amount is $%.2f ...requested amount is $%.2f", order.getId(), total, amount));
+		logger.info(String.format("Order[%d] total amount is $%.2f.  Requested amount is $%.2f", order.getId(), total, amount));
 		
+		// force the amount to be the max needed to finish the order payment.
+		BigDecimal adjustedNeeded = BigDecimal.valueOf(total).subtract(BigDecimal.valueOf(alreadyRequestedAmount));
+		if (adjustedNeeded.doubleValue() > amountNeeded.doubleValue()) {
+			logger.info(String.format("Order[%d] total=$%.2f, alreadyRequestdPayments=$%.2f.  The amount needed $%.2f is greather than requested $%.2f, setting to greater value."
+					, order.getId(), total, alreadyRequestedAmount, adjustedNeeded, amount));
+			amountNeeded = adjustedNeeded;
+		}
 		for(PaymentInstrument paymentInstrument : providerCards) {
 			if ( lockingService.acquireLock(lockingKey(paymentInstrument), DEFAULT_CARD_LOCKOUT_MINS)  ) {
 				logger.info("locking card "+lockingKey(paymentInstrument));
-				BigDecimal amountToDispense = calcAmountToDispense(paymentInstrument, theAmount);
-				theAmount = theAmount.subtract(amountToDispense);
+				BigDecimal amountToDispense = calcAmountToDispense(paymentInstrument, amountNeeded);
+				amountNeeded = amountNeeded.subtract(amountToDispense);
 				
 				OrderPayment orderPayment = new OrderPayment(order, paymentInstrument, amountToDispense.doubleValue(), user);
 				orderPayments.add(orderPayment);
@@ -98,7 +108,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 				paymentInstrument.setLastUsedDatetime(new Date());
 				paymentInstrumentDao.save(paymentInstrument);
 				
-				if ( theAmount.doubleValue() <= 0 ) {
+				if ( amountNeeded.doubleValue() <= 0 ) {
 					break;
 				}
 			}
@@ -177,7 +187,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 	}
 	
 	private void clearCache(Order order) {
-		lockingService.getNativeClient().getBucket(orderPaymentsKey(order)).clearExpire();
+		lockingService.getNativeClient().getBucket(orderPaymentsKey(order)).delete();
 	}
 	
 }
