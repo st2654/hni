@@ -25,6 +25,7 @@ import org.hni.provider.om.Menu;
 import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
+import org.hni.provider.om.ProviderLocationHour;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,6 +177,7 @@ public class OrderController extends AbstractBaseController {
 			String json = mapper.writeValueAsString(JsonView.with(order)
 					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName"))
 					.onClass(ProviderLocation.class, Match.match().include("*").exclude("created", "createdById"))
+					.onClass(ProviderLocationHour.class, Match.match().exclude("*").include("dow", "openHour", "closeHour"))
 					.onClass(Provider.class, Match.match().include("*").exclude("created", "createdById"))
 					.onClass(OrderItem.class, Match.match().include("*").exclude("order"))
 					.onClass(Menu.class, Match.match().include("*").exclude("provider"))

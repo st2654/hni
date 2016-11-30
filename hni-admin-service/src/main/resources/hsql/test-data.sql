@@ -139,3 +139,7 @@ insert into payment_instruments values(9, 1, 'gift', '9', '9000-0000-0000-0001',
 insert into payment_instruments values(10, 1, 'gift', '10', '1100-0000-0000-0001','A', 10, 10, null, '1234');
 
 insert into order_items values(null, 1, 1, 1, 6.99);
+
+insert into provider_location_hours values(1,1,'Mon',8,20,);
+insert into provider_location_hours values(2,2,'Mon',8,20,);
+insert into provider_location_hours values(3,3,'Mon',8,20,);
