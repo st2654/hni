@@ -44,6 +44,11 @@ insert into orders values(1, 2, 1, now(), now(), null, 9.95, 1.20, 1, 1);
 insert into orders values(2, 2, 1, now(), now(), null, 9.95, 1.20, 1, 1);
 insert into orders values(3, 2, 1, now(), now(), null, 9.95, 1.20, 1, 1);
 
+truncate table order_items;
+insert into order_items values(null, 1, 1, 1, 6.99);
+insert into order_items values(null, 2, 2, 1, 7.99);
+insert into order_items values(null, 2, 3, 1, 8.99);
+
 truncate table security_roles;
 insert into security_roles values(1,'Super User');
 insert into security_roles values(2,'Administrator');

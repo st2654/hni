@@ -59,7 +59,7 @@ public class PaymentController extends AbstractBaseController {
 	@GET
 	@Path("/payment-instruments/")
 	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns a collectio of payment instruments that can be used to pay for an order"
+	@ApiOperation(value = "Returns a collection of payment instruments that can be used to pay for an order"
 		, notes = "encrypted"
 		, response = Order.class
 		, responseContainer = "")

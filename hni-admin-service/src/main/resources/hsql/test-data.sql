@@ -44,6 +44,11 @@ insert into orders values(1, 2, 1, now(), now(), null, 9.95, 1.20, 1, 1);
 insert into orders values(2, 2, 1, now(), now(), null, 9.95, 1.20, 1, 1);
 insert into orders values(3, 2, 1, now(), now(), null, 9.95, 1.20, 1, 1);
 
+truncate table order_items;
+insert into order_items values(null, 1, 1, 1, 6.99);
+insert into order_items values(null, 2, 2, 1, 7.99);
+insert into order_items values(null, 2, 3, 1, 8.99);
+
 truncate table security_roles;
 insert into security_roles values(1,'Super User');
 insert into security_roles values(2,'Administrator');
@@ -137,8 +142,6 @@ insert into payment_instruments values(7, 1, 'gift', '7', '7000-0000-0000-0001',
 insert into payment_instruments values(8, 1, 'gift', '8', '8000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(9, 1, 'gift', '9', '9000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(10, 1, 'gift', '10', '1100-0000-0000-0001','A', 10, 10, null, '1234');
-
-insert into order_items values(null, 1, 1, 1, 6.99);
 
 insert into provider_location_hours values(1,1,'Mon',8,20,);
 insert into provider_location_hours values(2,2,'Mon',8,20,);

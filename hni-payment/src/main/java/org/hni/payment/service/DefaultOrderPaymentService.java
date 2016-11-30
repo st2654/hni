@@ -1,11 +1,12 @@
 package org.hni.payment.service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -19,34 +20,28 @@ import org.hni.payment.om.OrderPayment;
 import org.hni.payment.om.PaymentInfo;
 import org.hni.payment.om.PaymentInstrument;
 import org.hni.provider.om.Provider;
-import org.hni.provider.om.ProviderLocation;
-import org.hni.provider.om.ProviderLocationHour;
 import org.hni.user.om.User;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.monitorjbl.json.JsonView;
-import com.monitorjbl.json.Match;
-
 @Component
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class DefaultOrderPaymentService extends AbstractService<OrderPayment> implements OrderPaymentService {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultOrderPaymentService.class);
 	private static final Long DEFAULT_CARD_LOCKOUT_MINS = 5L;
-	private ObjectMapper mapper = new ObjectMapper();
 	
 	private OrderPaymentDAO orderPaymentDao;
 	private PaymentInstrumentDAO paymentInstrumentDao;
-	private LockingService lockingService;
+	private LockingService<RedissonClient> lockingService;
 	private OrderDAO orderDao;
 	
 	@Inject
-	public DefaultOrderPaymentService(OrderPaymentDAO orderPaymentDao, PaymentInstrumentDAO paymentInstrumentDao, OrderDAO orderDao, LockingService lockingService) {
+	public DefaultOrderPaymentService(OrderPaymentDAO orderPaymentDao, PaymentInstrumentDAO paymentInstrumentDao, OrderDAO orderDao, LockingService<RedissonClient> lockingService) {
 		super(orderPaymentDao);
 		this.orderPaymentDao = orderPaymentDao;
 		this.paymentInstrumentDao = paymentInstrumentDao;
@@ -81,17 +76,21 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 	@Override
 	public Collection<OrderPayment> paymentFor(Order order, Provider provider, Double amount, User user) throws PaymentsExceededException {
 		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
-		Collection<OrderPayment> orderPayments = new HashSet();
+		Collection<OrderPayment> orderPayments = new HashSet<>();
+		Double total = addOrderAmount(order);
+		if (addOrderAmount(order) <= 0) {
+			logger.info(String.format("Order[%d] total amount is $%.2f ...returning no payments", order.getId(), total));
+			return orderPayments;
+		}
 		
 		BigDecimal theAmount = BigDecimal.valueOf(amount);
-		//BigDecimal totalAmount = calcExistingPayments(order);
+		logger.info(String.format("Order[%d] total amount is $%.2f ...requested amount is $%.2f", order.getId(), total, amount));
 		
 		for(PaymentInstrument paymentInstrument : providerCards) {
 			if ( lockingService.acquireLock(lockingKey(paymentInstrument), DEFAULT_CARD_LOCKOUT_MINS)  ) {
 				logger.info("locking card "+lockingKey(paymentInstrument));
 				BigDecimal amountToDispense = calcAmountToDispense(paymentInstrument, theAmount);
 				theAmount = theAmount.subtract(amountToDispense);
-				//totalAmount = totalAmount.add(amountToDispense);
 				
 				OrderPayment orderPayment = new OrderPayment(order, paymentInstrument, amountToDispense.doubleValue(), user);
 				orderPayments.add(orderPayment);
@@ -106,6 +105,8 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		}
 		
 		if (totalAmountRequestedExceedsTotal(order, orderPayments)) {
+			logger.warn("You have requested more funds than you really need.  Shutting down this account...");
+			clearCache(order); // clear payment info so somebody else doesn't get locked out for the same issue
 			throw new PaymentsExceededException("You have requested more funds than you really need.  Shutting down this account...");
 		}		
 		return orderPayments;
@@ -135,14 +136,14 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 	
 	private boolean totalAmountRequestedExceedsTotal(Order order, Collection<OrderPayment> orderPayments) {
 		Double total = 1.25*addOrderAmount(order); // add 25%
-		Collection<OrderPayment> prevOrderPayments = fromCache(order);
-		Collection<OrderPayment> allPayments = new ArrayList<OrderPayment>(orderPayments);
-		if ( null != prevOrderPayments) {
-			allPayments.addAll(prevOrderPayments);
-		}
-		//lockingService.addCache(orderPaymentsKey(order), serializeOrderPaymentToJson(allPayments));
+		Double totalPrevPayments = fromCache(order);
 		
-		double paymentTotal = allPayments.stream().mapToDouble(o -> o.getAmount()).sum(); 
+		double paymentTotal = totalPrevPayments + orderPayments.stream().mapToDouble(o -> o.getAmount()).sum();
+		// push all payments into cache
+		toCache(order, paymentTotal);
+		
+		 
+		logger.info(String.format("Order amount = $%.2f (+25%%) and total payments dispensed = $%.2f", total, paymentTotal ));
 		return (paymentTotal > total);
 	}
 
@@ -150,32 +151,33 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		return String.format("order-payments:%d", order.getId());
 	}
 	
-	private Collection<OrderPayment> fromCache(Order order) {
-		/*
+	private void toCache(Order order, Double paymentTotal) {
+		
 		try {
-			String data = (String)lockingService.getCache(orderPaymentsKey(order));
-			Collection<OrderPayment> list;
-			list = (Collection<OrderPayment>)mapper.readValue(data, Collection.class);
-			return list;
-		} catch (IOException e) {
-			logger.warn("cannot pull from cache for "+orderPaymentsKey(order));
+			RBucket<Double> bucket = lockingService.getNativeClient().getBucket(orderPaymentsKey(order));
+			bucket.set(paymentTotal, 2*DEFAULT_CARD_LOCKOUT_MINS, TimeUnit.MINUTES);
+		} catch(Exception e) {
+			// log it and move on
+			logger.warn("Unable to push orderPayments into cache for "+orderPaymentsKey(order));
 		}
-		*/
-		return null;
 	}
-	private String serializeOrderPaymentToJson(Collection<OrderPayment> orderPayments) {
+	
+	private Double fromCache(Order order) {	
 		try {
-			String json = mapper.writeValueAsString(JsonView.with(orderPayments)
-					.onClass(Order.class, Match.match().exclude("*").include("id", "subtotal"))
-					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName"))
-					.onClass(ProviderLocation.class, Match.match().exclude("*"))
-					.onClass(ProviderLocationHour.class, Match.match().exclude("*").include("dow", "openHour", "closeHour"))
-					.onClass(Provider.class, Match.match().exclude("*").include("id", "name"))
-					.onClass(PaymentInstrument.class, Match.match().exclude("*").include("id", "cardNumber", "pinNumber")));
-			return json;
-		} catch (JsonProcessingException e) {
-			logger.error("Serializing User object:"+e.getMessage(), e);
+			RBucket<Double> bucket = lockingService.getNativeClient().getBucket(orderPaymentsKey(order));
+			Double value = bucket.get();
+			if (null == value) {
+				return value = 0.0;
+			}
+			return value;
+		} catch(Exception e) {
+			logger.warn("Unable to get orderPayments from cache for "+orderPaymentsKey(order));
+			return 0.0;
 		}
-		return "{}";
 	}
+	
+	private void clearCache(Order order) {
+		lockingService.getNativeClient().getBucket(orderPaymentsKey(order)).clearExpire();
+	}
+	
 }
