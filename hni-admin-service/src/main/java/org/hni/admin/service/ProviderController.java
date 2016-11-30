@@ -3,6 +3,8 @@ package org.hni.admin.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.hni.common.Constants;
+import org.hni.common.exception.HNIException;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
@@ -30,7 +32,7 @@ import java.util.Collection;
 @Api(value = "/providers", description = "Operations on Providers and ProviderLocations")
 @Component
 @Path("/providers")
-public class ProviderController {
+public class ProviderController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(ProviderController.class);
 	
 	@Inject private ProviderService providerService;
@@ -56,7 +58,10 @@ public class ProviderController {
 		, response = Provider.class
 		, responseContainer = "")
 	public Provider saveProvider(Provider provider) {
-		return providerService.save(provider);
+		if (isPermitted(Constants.PROVIDER, Constants.CREATE, 0L)) {
+			return providerService.save(provider);
+		}
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
 	@DELETE
@@ -67,7 +72,10 @@ public class ProviderController {
 		, response = Provider.class
 		, responseContainer = "")
 	public Provider getDelete(@PathParam("id") Long id) {
-		return providerService.delete(new Provider(id));
+		if (isPermitted(Constants.PROVIDER, Constants.DELETE, id)) {
+			return providerService.delete(new Provider(id));
+		}
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
 	@POST
@@ -78,12 +86,15 @@ public class ProviderController {
 		, response = Provider.class
 		, responseContainer = "")
 	public Provider addAddressToProvider(@PathParam("id") Long id, Address address) {
-		Provider provider = providerService.get(id);
-		if (null != provider) {
-			provider.setAddress(address);
-			providerService.save(provider);
+		if (isPermitted(Constants.PROVIDER, Constants.UPDATE, id)) {
+			Provider provider = providerService.get(id);
+			if (null != provider) {
+				provider.setAddress(address);
+				providerService.save(provider);
+			}
+			return provider;
 		}
-		return provider;
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
 	@DELETE
@@ -94,15 +105,18 @@ public class ProviderController {
 		, response = Provider.class
 		, responseContainer = "")
 	public Provider removeAddressFromProvider(@PathParam("id") Long id, @PathParam("addressId") Long addressId) {
-		Provider provider = providerService.get(id);
-		if (null != provider) {
-			Address address = addressDao.get(addressId);
-			if ( null != address ) {
-				provider.setAddress(null); // Hibernate will manage the mapping table for us.
-				providerService.save(provider);
+		if (isPermitted(Constants.PROVIDER, Constants.DELETE, id)) {
+			Provider provider = providerService.get(id);
+			if (null != provider) {
+				Address address = addressDao.get(addressId);
+				if ( null != address ) {
+					provider.setAddress(null); // Hibernate will manage the mapping table for us.
+					providerService.save(provider);
+				}
 			}
+			return provider;
 		}
-		return provider;
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 	
 	/** Provider Locations **/
@@ -145,8 +159,11 @@ public class ProviderController {
 	, response = ProviderLocation.class
 	, responseContainer = "")
 	public ProviderLocation addProviderLocation(@PathParam("id") Long id, ProviderLocation providerLocation) {
-		providerLocation.setProvider(new Provider(id));
-		return providerLocationService.save(providerLocation);
+		if (isPermitted(Constants.PROVIDER, Constants.UPDATE, id)) {
+			providerLocation.setProvider(new Provider(id));
+			return providerLocationService.save(providerLocation);
+		}
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
 	@DELETE
@@ -157,12 +174,15 @@ public class ProviderController {
 	, response = ProviderLocation.class
 	, responseContainer = "")
 	public ProviderLocation addProviderLocation(@PathParam("id") Long id, @PathParam("plid") Long plid) {
-		ProviderLocation providerLocation = providerLocationService.get(plid);
-		if (providerLocation.getProvider().getId().equals(id)) {
-			providerLocationService.delete(new ProviderLocation(plid));
+		if (isPermitted(Constants.PROVIDER, Constants.DELETE, id)) {
+			ProviderLocation providerLocation = providerLocationService.get(plid);
+			if (providerLocation.getProvider().getId().equals(id)) {
+				providerLocationService.delete(new ProviderLocation(plid));
+			}
+			//TODO: throw error?
+			return null;
 		}
-		//TODO: throw error?
-		return null;
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 	
 	@POST
@@ -173,13 +193,16 @@ public class ProviderController {
 		, response = Provider.class
 		, responseContainer = "")
 	public ProviderLocation addAddressToProviderLocation(@PathParam("id") Long id, @PathParam("plid") Long plid, Address address) {
-		ProviderLocation providerLocation = providerLocationService.get(plid);
-		if (providerLocation.getProvider().getId().equals(id)) {
-			providerLocation.setAddress(address);
-			providerLocationService.save(providerLocation);
+		if (isPermitted(Constants.PROVIDER, Constants.UPDATE, id)) {
+			ProviderLocation providerLocation = providerLocationService.get(plid);
+			if (providerLocation.getProvider().getId().equals(id)) {
+				providerLocation.setAddress(address);
+				providerLocationService.save(providerLocation);
+			}
+	
+			return providerLocation;
 		}
-
-		return providerLocation;
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
 	@DELETE
@@ -190,15 +213,18 @@ public class ProviderController {
 		, response = Provider.class
 		, responseContainer = "")
 	public ProviderLocation removeAddressFromProviderLocation(@PathParam("id") Long id, @PathParam("plid") Long plid, @PathParam("addressId") Long addressId) {
-		ProviderLocation providerLocation = providerLocationService.get(plid);
-		if (providerLocation.getProvider().getId().equals(id)) {
-			Address address = addressDao.get(addressId);
-			if ( null != address ) {
-				providerLocation.setAddress(null); // Hibernate will manage the mapping table for us.
-				providerLocationService.save(providerLocation);
-			}			
+		if (isPermitted(Constants.PROVIDER, Constants.DELETE, id)) {
+			ProviderLocation providerLocation = providerLocationService.get(plid);
+			if (providerLocation.getProvider().getId().equals(id)) {
+				Address address = addressDao.get(addressId);
+				if ( null != address ) {
+					providerLocation.setAddress(null); // Hibernate will manage the mapping table for us.
+					providerLocationService.save(providerLocation);
+				}			
+			}
+	
+			return providerLocation;
 		}
-
-		return providerLocation;
+		throw new HNIException("You must have elevated permissions to do this.");
 	}	
 }
