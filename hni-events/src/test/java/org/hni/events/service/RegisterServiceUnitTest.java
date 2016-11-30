@@ -60,6 +60,18 @@ public class RegisterServiceUnitTest {
     }
 
     @Test
+    public void testPrivacy() throws Exception {
+        state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_FIRST_NAME);
+        when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
+        event.setTextMessage("privacy");
+        String returnString = registerService.handleEvent(event);
+        Assert.assertEquals("HNI respects your privacy and protects your data. "
+                        + "For more details on our privacy please visit http://hungernotimpossible.com/Privacy. "
+                        + "In order to continue the registration. Please send us your first name.", returnString);
+        verify(registrationStateDAO, never()).update(any(RegistrationState.class));
+    }
+
+    @Test
     public void testGetFirstName() throws Exception {
         state = new RegistrationState(EventName.REGISTER, PHONE_NUMBER, payload, RegistrationStep.STATE_REGISTER_GET_FIRST_NAME);
         event.setTextMessage("firstname");
