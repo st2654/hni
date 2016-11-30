@@ -20,9 +20,12 @@ import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
 import org.hni.payment.om.OrderPayment;
 import org.hni.payment.om.PaymentInfo;
+import org.hni.payment.om.PaymentInstrument;
 import org.hni.payment.service.OrderPaymentService;
 import org.hni.payment.service.PaymentsExceededException;
 import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
+import org.hni.provider.om.ProviderLocationHour;
 import org.hni.provider.service.ProviderService;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
@@ -108,7 +111,10 @@ public class PaymentController extends AbstractBaseController {
 			String json = mapper.writeValueAsString(JsonView.with(orderPayments)
 					.onClass(Order.class, Match.match().exclude("*").include("id", "subtotal"))
 					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName"))
-			.onClass(Provider.class, Match.match().exclude("*").include("id", "name")));
+					.onClass(ProviderLocation.class, Match.match().exclude("*"))
+					.onClass(ProviderLocationHour.class, Match.match().exclude("*").include("dow", "openHour", "closeHour"))
+					.onClass(Provider.class, Match.match().exclude("*").include("id", "name"))
+					.onClass(PaymentInstrument.class, Match.match().exclude("*").include("id", "cardNumber", "pinNumber")));
 			return json;
 		} catch (JsonProcessingException e) {
 			logger.error("Serializing User object:"+e.getMessage(), e);

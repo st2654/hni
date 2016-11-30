@@ -1,5 +1,6 @@
 package org.hni.payment.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,8 @@ import org.hni.payment.om.OrderPayment;
 import org.hni.payment.om.PaymentInfo;
 import org.hni.payment.om.PaymentInstrument;
 import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
+import org.hni.provider.om.ProviderLocationHour;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +28,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.monitorjbl.json.JsonView;
+import com.monitorjbl.json.Match;
+
 @Component
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class DefaultOrderPaymentService extends AbstractService<OrderPayment> implements OrderPaymentService {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultOrderPaymentService.class);
 	private static final Long DEFAULT_CARD_LOCKOUT_MINS = 5L;
+	private ObjectMapper mapper = new ObjectMapper();
 	
 	private OrderPaymentDAO orderPaymentDao;
 	private PaymentInstrumentDAO paymentInstrumentDao;
@@ -126,10 +135,12 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 	
 	private boolean totalAmountRequestedExceedsTotal(Order order, Collection<OrderPayment> orderPayments) {
 		Double total = 1.25*addOrderAmount(order); // add 25%
-		Collection<OrderPayment> prevOrderPayments = (Collection<OrderPayment>) lockingService.getCache(orderPaymentsKey(order));
+		Collection<OrderPayment> prevOrderPayments = fromCache(order);
 		Collection<OrderPayment> allPayments = new ArrayList<OrderPayment>(orderPayments);
-		allPayments.addAll(prevOrderPayments);
-		lockingService.addCache(orderPaymentsKey(order), allPayments);
+		if ( null != prevOrderPayments) {
+			allPayments.addAll(prevOrderPayments);
+		}
+		//lockingService.addCache(orderPaymentsKey(order), serializeOrderPaymentToJson(allPayments));
 		
 		double paymentTotal = allPayments.stream().mapToDouble(o -> o.getAmount()).sum(); 
 		return (paymentTotal > total);
@@ -137,5 +148,34 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 
 	private String orderPaymentsKey(Order order) {
 		return String.format("order-payments:%d", order.getId());
+	}
+	
+	private Collection<OrderPayment> fromCache(Order order) {
+		/*
+		try {
+			String data = (String)lockingService.getCache(orderPaymentsKey(order));
+			Collection<OrderPayment> list;
+			list = (Collection<OrderPayment>)mapper.readValue(data, Collection.class);
+			return list;
+		} catch (IOException e) {
+			logger.warn("cannot pull from cache for "+orderPaymentsKey(order));
+		}
+		*/
+		return null;
+	}
+	private String serializeOrderPaymentToJson(Collection<OrderPayment> orderPayments) {
+		try {
+			String json = mapper.writeValueAsString(JsonView.with(orderPayments)
+					.onClass(Order.class, Match.match().exclude("*").include("id", "subtotal"))
+					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName"))
+					.onClass(ProviderLocation.class, Match.match().exclude("*"))
+					.onClass(ProviderLocationHour.class, Match.match().exclude("*").include("dow", "openHour", "closeHour"))
+					.onClass(Provider.class, Match.match().exclude("*").include("id", "name"))
+					.onClass(PaymentInstrument.class, Match.match().exclude("*").include("id", "cardNumber", "pinNumber")));
+			return json;
+		} catch (JsonProcessingException e) {
+			logger.error("Serializing User object:"+e.getMessage(), e);
+		}
+		return "{}";
 	}
 }
