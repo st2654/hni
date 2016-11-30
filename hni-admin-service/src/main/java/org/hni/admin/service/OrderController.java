@@ -15,7 +15,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hni.common.Constants;
 import org.hni.common.DateUtils;
+import org.hni.common.exception.HNIException;
 import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
 import org.hni.order.service.OrderService;
@@ -64,7 +66,10 @@ public class OrderController extends AbstractBaseController {
 		, response = Order.class
 		, responseContainer = "")
 	public String saveOrder(Order order) {
-		return serializeOrderToJson(orderService.save(order));
+		if (isPermitted(Constants.ORDER, Constants.CREATE, 0L)) {
+			return serializeOrderToJson(orderService.save(order));
+		}
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
 	@DELETE
@@ -75,7 +80,10 @@ public class OrderController extends AbstractBaseController {
 		, response = Order.class
 		, responseContainer = "")
 	public String getDelete(@PathParam("id") Long id) {
-		return serializeOrderToJson(orderService.delete(new Order(id)));
+		if (isPermitted(Constants.ORDER, Constants.DELETE, 0L)) {
+			return serializeOrderToJson(orderService.delete(new Order(id)));
+		}
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
 	@GET
@@ -116,14 +124,17 @@ public class OrderController extends AbstractBaseController {
 		, response = Order.class
 		, responseContainer = "")
 	public String resetOrder(@PathParam("id") Long id) {
-		if ( null != id ) {
-			Order order = orderService.get(id);
-			orderService.reset(order);
-			for(OrderPayment op : orderPaymentService.paymentsFor(order)) {
-				orderPaymentService.delete(op);
+		if (isPermitted(Constants.ORDER, Constants.CREATE, 0L)) {
+			if ( null != id ) {
+				Order order = orderService.get(id);
+				orderService.reset(order);
+				for(OrderPayment op : orderPaymentService.paymentsFor(order)) {
+					orderPaymentService.delete(op);
+				}
 			}
+			return String.format("{\"message\":\"reset order %d\"}", id);
 		}
-		return String.format("{\"message\":\"reset order %d\"}", id);
+		throw new HNIException("You must have elevated permissions to do this.");
 				
 	}
 
@@ -135,8 +146,11 @@ public class OrderController extends AbstractBaseController {
 		, response = Order.class
 		, responseContainer = "")
 	public void removeLock(@PathParam("id") Long id) {
-		logger.info("Unlocking Order "+id);
-		orderService.releaseLock(orderService.get(id));
+		if (isPermitted(Constants.ORDER, Constants.CREATE, 0L)) {
+			logger.info("Unlocking Order "+id);
+			orderService.releaseLock(orderService.get(id));
+		}
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
 	private static final String ORDER_COUNT = "{\"order-count\":\"%d\"}";
