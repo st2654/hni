@@ -68,7 +68,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     
     public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with MEAL to place an order.";
     public static String REPLY_INVALID_INPUT = "Invalid input! ";
-    public static String REPLY_EXCEPTION_REGISTER_FIRST = "Reply with REGISTER to sign up.";
+    public static String REPLY_EXCEPTION_REGISTER_FIRST = "Youll need to reply with REGISTER to sign up first.";
     
     @Inject
     private UserDAO userDao;
@@ -315,7 +315,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         } else {
             String message = "OrderProcessor failed to lookup user by phone " + phoneNumber;
             logger.error(message);
-            throw new HNIException(REPLY_EXCEPTION_REGISTER_FIRST);
+            return REPLY_EXCEPTION_REGISTER_FIRST;
         }
     }
 }

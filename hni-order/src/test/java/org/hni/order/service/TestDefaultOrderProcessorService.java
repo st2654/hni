@@ -1,5 +1,6 @@
 package org.hni.order.service;
 
+import org.hni.events.service.om.Event;
 import org.hni.order.dao.DefaultPartialOrderDAO;
 import org.hni.order.om.Order;
 import org.hni.order.om.PartialOrder;
@@ -118,6 +119,14 @@ public class TestDefaultOrderProcessorService {
         providerLocation.setAddress(address);
         menuItems.add(item);
         providerLocationList.add(providerLocation);
+    }
+
+    @Test
+    public void handleEvent_user_notexist_fail() {
+        Event event = Event.createEvent("text/plain", "1234567890", "MEAL");
+        Mockito.when(userDAO.byMobilePhone(Mockito.eq("1234567890"))).thenReturn(null);
+
+        Assert.assertEquals("Please sign up first by saying REGISTER before ordering a meal.", orderProcessor.handleEvent(event));
     }
 
     @Test
