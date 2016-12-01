@@ -289,7 +289,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         } else {
             String message = "OrderProcessor failed to lookup user by phone " + phoneNumber;
             logger.error(message);
-            throw new HNIException("Please sign up first by saying REGISTER");
+            return "Please sign up first by saying REGISTER before ordering a meal.";
         }
     }
 }
