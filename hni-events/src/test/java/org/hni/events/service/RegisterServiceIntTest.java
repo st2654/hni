@@ -60,7 +60,7 @@ public class RegisterServiceIntTest {
     public void testStartRegister() throws Exception {
         String returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "message"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
-                + "Any information you provide here will be kept private. "
+                + "Information you provide will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
 
         RegistrationState nextState = registrationStateDAO.get(PHONE_NUMBER);
@@ -75,16 +75,22 @@ public class RegisterServiceIntTest {
         // enroll keyword to start register workflow
         String returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "ENROLL"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
-                + "Any information you provide here will be kept private. "
+                + "Information you provide will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         // first name
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "john"));
         Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
         // last name
-        returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "doe"));
-        Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
+        
+        returnString = "Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
+                + "number. Type 'none' if you "
+                + "don't have an email.";
+        
+        returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "doe"));
+        Assert.assertEquals("Lastly, I'd like to get your email address "
+                + "to verify your account in case you text me from a new "
+                + "number. Type 'none' if you don't have an email.", returnString);
         // email
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
@@ -94,7 +100,7 @@ public class RegisterServiceIntTest {
         Assert.assertEquals("Please enter the 6 digit authorization code provided to you for this program.", returnString);
         // auth code
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "123456"));
-        Assert.assertEquals("Ok. You're all setup for yourself. If you have additional family"
+        Assert.assertEquals("Ok. You're all setup for yourself. If you have family"
                 + " members to register please enter the additional authorization"
                 + " codes now. When you need a meal just text MEAL back to this number.", returnString);
         // addition auth code
@@ -109,7 +115,7 @@ public class RegisterServiceIntTest {
         // enroll keyword to start register workflow
         String returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "ENROLL"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
-                + "Any information you provide here will be kept private. "
+                + "Information you provide will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         //privacy
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "privacy"));
@@ -121,9 +127,9 @@ public class RegisterServiceIntTest {
         Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
         // last name
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "doe"));
-        Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
+        Assert.assertEquals("Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
+                + "number. Type 'none' if you don't have an email.", returnString);
         // email
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
@@ -133,7 +139,7 @@ public class RegisterServiceIntTest {
         Assert.assertEquals("Please enter the 6 digit authorization code provided to you for this program.", returnString);
         // auth code
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "123456"));
-        Assert.assertEquals("Ok. You're all setup for yourself. If you have additional family"
+        Assert.assertEquals("Ok. You're all setup for yourself. If you have family"
                 + " members to register please enter the additional authorization"
                 + " codes now. When you need a meal just text MEAL back to this number.", returnString);
         // addition auth code
@@ -148,16 +154,16 @@ public class RegisterServiceIntTest {
         // enroll keyword to start register workflow
         String returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "ENROLL"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
-                + "Any information you provide here will be kept private. "
+                + "Information you provide will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         // first name
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "john"));
         Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
         // last name
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "doe"));
-        Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
+        Assert.assertEquals("Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
+                + "number. Type 'none' if you don't have an email.", returnString);
         // wrong email
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
@@ -174,7 +180,7 @@ public class RegisterServiceIntTest {
         Assert.assertEquals("Please enter the 6 digit authorization code provided to you for this program.", returnString);
         // auth code
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "123456"));
-        Assert.assertEquals("Ok. You're all setup for yourself. If you have additional family"
+        Assert.assertEquals("Ok. You're all setup for yourself. If you have family"
                 + " members to register please enter the additional authorization"
                 + " codes now. When you need a meal just text MEAL back to this number.", returnString);
     }
@@ -184,16 +190,16 @@ public class RegisterServiceIntTest {
         // enroll keyword to start register workflow
         String returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "ENROLL"));
         Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
-                + "Any information you provide here will be kept private. "
+                + "Information you provide will be kept private. "
                 + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
         // first name
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "john"));
         Assert.assertEquals("Thanks " + "john" + ". What's your last name?", returnString);
         // last name
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "doe"));
-        Assert.assertEquals("Perfect! Lastly, I'd like to get your email address "
+        Assert.assertEquals("Lastly, I'd like to get your email address "
                 + "to verify your account in case you text me from a new "
-                + "number. So what's your email address? Type 'none' if you don't have an email. Thanks", returnString);
+                + "number. Type 'none' if you don't have an email.", returnString);
         // email
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "johndoe@gmail.com"));
         Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
@@ -203,7 +209,7 @@ public class RegisterServiceIntTest {
         Assert.assertEquals("Please enter the 6 digit authorization code provided to you for this program.", returnString);
         // auth code
         returnString = registerService.handleEvent(Event.createEvent(MEDIA_TYPE, PHONE_NUMBER, "123456"));
-        Assert.assertEquals("Ok. You're all setup for yourself. If you have additional family"
+        Assert.assertEquals("Ok. You're all setup for yourself. If you have family"
                 + " members to register please enter the additional authorization"
                 + " codes now. When you need a meal just text MEAL back to this number.", returnString);
         // addition auth code

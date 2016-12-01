@@ -45,7 +45,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
                 user.setMobilePhone(event.getPhoneNumber());
                 nextStateCode = RegistrationStep.STATE_REGISTER_GET_FIRST_NAME;
                 returnString = "Welcome to Hunger Not Impossible! Msg & data rates may apply. "
-                        + "Any information you provide here will be kept private. "
+                        + "Information you provide will be kept private. "
                         + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?";
                 break;
             case STATE_REGISTER_GET_FIRST_NAME:
@@ -69,10 +69,10 @@ public class RegisterService extends AbstractRegistrationService<User> {
                 // validate the last name
                 if (customerService.validate(user)) {
                     nextStateCode = RegistrationStep.STATE_REGISTER_GET_EMAIL;
-                    returnString = "Perfect! Lastly, I'd like to get your email address "
+                    returnString = "Lastly, I'd like to get your email address "
                             + "to verify your account in case you text me from a new "
-                            + "number. So what's your email address? Type 'none' if you "
-                            + "don't have an email. Thanks";
+                            + "number. Type 'none' if you "
+                            + "don't have an email.";
                 } else {
                     returnString = "We didn't get that. Please send your last name again.";
                 }
@@ -90,7 +90,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
                                 + "Is that correct? Reply 1 for yes and 2 for no";
                     }
                 } else {
-                    returnString = "I'm sorry that is not a valid email. Please send a valid email addresss.";
+                    returnString = "I'm sorry that is not a valid email. Try again or type 'none' if don't have an email.";
                 }
                 break;
             case STATE_REGISTER_CONFIRM_EMAIL:
@@ -117,9 +117,9 @@ public class RegisterService extends AbstractRegistrationService<User> {
                     //we are sure that text message is a long at this point
                     customerService.registerCustomer(user, textMessage);
                     nextStateCode = RegistrationStep.STATE_REGISTER_MORE_AUTH_CODES;
-                    returnString = "Ok. You're all setup for yourself. If you have additional family"
+                    returnString = "Ok. You're all set up for yourself. If you have family"
                             + " members to register please enter the additional authorization"
-                            + " codes now. When you need a meal just text MEAL back to this number.";
+                            + " codes now, one at a time. When you need a meal just text MEAL back to this number.";
                 } else {
                     returnString = "The authorization code you entered (" + textMessage + ") is not valid."
                             + " Please resend a valid unused authorization code";
@@ -133,7 +133,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
                             + " send any additional codes you need for your family.";
                 } else {
                     returnString = "The authorization code you entered (" + textMessage + ") is not valid."
-                            + " Please resend a valid unused authorization code";
+                            + " Please resend a valid unused authorization code. Enter one at a time.";
                 }
                 // no longer need to change the state at this moment.
                 break;
