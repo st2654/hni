@@ -42,6 +42,34 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private static Logger logger = LoggerFactory.getLogger(DefaultOrderProcessor.class);
 
+    public static String MSG_ENDMEAL = "ENDMEAL";
+    public static String MSG_STATUS = "STATUS";
+    public static String MSG_MEAL = "MEAL";
+    public static String MSG_ORDER = "ORDER";
+    public static String MSG_CONFIRM = "CONFIRM";
+    public static String MSG_REDO = "REDO";
+    
+	public static String REPLY_NOT_CURRENTLY_ORDERING = "You're not currently ordering, please respond with MEAL to place an order.";
+    public static String REPLY_ORDER_CANCELLED = "You've cancelled your order.";
+    public static String REPLY_ORDER_GET_STARTED = "Yes! Let's get started to order a meal for you. ";
+	public static String REPLY_ORDER_REQUEST_ADDRESS = "Reply with your location (e.g. #3 Smith St. 72758) or ENDMEAL to quit";
+    public static String REPLY_PROVIDERS_UNAVAILABLE = "Providers currently unavailable. Reply with new location or try again later. Reply ENDMEAL to quit. ";
+    public static String REPLY_NO_PROVIDERS = "There are no providers near your location. Reply with new location or ENDMEAL to quit.";
+    public static String REPLY_CONFIRM_ORDER = "You've chosen %s at %s. Reply CONFIRM to place this order, REDO to try again or ENDMEAL to quit.";
+    public static String REPLY_ORDER_COMPLETE = "Success! Order confirmed. Reply with STATUS after 5 minutes to check to status of your order.";
+    public static String REPLY_NEED_VALID_RESPONSE = "Please respond with CONFIRM, REDO, or ENDMEAL";
+    public static String REPLY_ORDER_PENDING = "Your order is still open, please respond with STATUS in 5 minutes to check again.";
+    public static String REPLY_ORDER_READY = "Your order has been placed and should be ready to pick up shortly from %s.";
+    public static String REPLY_ORDER_CLOSED = "Your order has been marked as closed.";
+    public static String REPLY_ORDER_NOT_FOUND = "I can't find a recent order for you, please reply MEAL to place an order.";
+    
+    public static String REPLY_ORDER_ITEM = "%d) %s from %s %s. ";
+    public static String REPLY_ORDER_CHOICE = "Reply %s to choose your meal. ";
+    
+    public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with MEAL to place an order.";
+    public static String REPLY_INVALID_INPUT = "Invalid input! ";
+    public static String REPLY_EXCEPTION_REGISTER_FIRST = "Youll need to reply with REGISTER to sign up first.";
+    
     @Inject
     private UserDAO userDao;
 
@@ -66,11 +94,11 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     public String processMessage(User user, String message) {
         PartialOrder order = partialOrderDAO.byUser(user);
-        boolean cancellation = message.equalsIgnoreCase("ENDMEAL");
+        boolean cancellation = message.equalsIgnoreCase(MSG_ENDMEAL);
 
         if (order == null && cancellation) {
-            return "You're not currently ordering, please respond with MEAL to place an order.";
-        } else if (order == null && !message.equalsIgnoreCase("STATUS")) {
+            return REPLY_NOT_CURRENTLY_ORDERING;
+        } else if (order == null && !message.equalsIgnoreCase(MSG_STATUS)) {
             order = new PartialOrder();
             order.setTransactionPhase(TransactionPhase.MEAL);
             order.setUser(user);
@@ -79,7 +107,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             return checkOrderStatus(user);
         } else if (cancellation) {
             partialOrderDAO.delete(order);
-            return "You've cancelled your order.";
+            return REPLY_ORDER_CANCELLED;
         }
 
         TransactionPhase phase = order.getTransactionPhase();
@@ -113,10 +141,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String requestingMeal(String request, PartialOrder order) {
         order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
-        if (request.equalsIgnoreCase("MEAL") || request.equalsIgnoreCase("ORDER")) {
-            return "Reply with your address (e.g. #3 Smith St. 72758) or ENDMEAL to quit";
+        if (request.equalsIgnoreCase(MSG_MEAL) || request.equalsIgnoreCase(MSG_ORDER)) {
+            return REPLY_ORDER_GET_STARTED + REPLY_ORDER_REQUEST_ADDRESS;
         } else {
-            return "I don't understand that. Reply with MEAL to place an order.";
+            return REPLY_NO_UNDERSTAND;
         }
     }
 
@@ -142,10 +170,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
                     output += providerLocationMenuOutput(order);
                     order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
                 } else {
-                    output = "Providers currently unavailable. Reply with new address or try again later. Reply ENDMEAL to quit. ";
+                    output = REPLY_PROVIDERS_UNAVAILABLE;
                 }
             } else {
-                output = "There are no providers near this address. Reply with new address or reply ENDMEAL to quit.";
+                output = REPLY_NO_PROVIDERS;
             }
         } catch (GeoCodingException e) {
             output = e.getMessage();
@@ -168,9 +196,9 @@ public class DefaultOrderProcessor implements OrderProcessor {
             order.getMenuItemsSelected().add(chosenItem);
             logger.debug("Location {} has been chosen with item {}", location.getName(), chosenItem.getName());
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
-            output = String.format("You've chosen %s at %s. Reply CONFIRM to place this order, REDO to try again. Reply ENDMEAL to quit.", chosenItem.getName(), location.getName());
+            output = String.format(REPLY_CONFIRM_ORDER, chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output += "Invalid input! ";
+            output += REPLY_INVALID_INPUT;
             output += providerLocationMenuOutput(order);
         }
         return output;
@@ -178,8 +206,8 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String confirmOrContinueOrder(String message, PartialOrder order) {
         String output = "";
-        switch (message.toUpperCase()) {
-            case "CONFIRM":
+        
+        if (message.equalsIgnoreCase(MSG_CONFIRM)) {
                 //create a final order and set initial info
                 Order finalOrder = new Order();
                 finalOrder.setUserId(order.getUser().getId());
@@ -196,17 +224,17 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 orderService.save(finalOrder);
                 partialOrderDAO.delete(order);
                 logger.info("Successfully created order {}", finalOrder.getId());
-                output = "Success! Order confirmed. Reply with STATUS after 5 minutes to check to status of your order.";
-                break;
-            case "REDO":
-                logger.info("Reset order choices for PartialOrder {} by user request", order.getId());
+                output = REPLY_ORDER_COMPLETE;
+ 	    }
+        else if (message.equalsIgnoreCase(MSG_REDO)) {
+                 logger.info("Reset order choices for PartialOrder {} by user request", order.getId());
                 //clear out previous choices
                 output = findNearbyMeals(order.getAddress(), order);
                 //save here because I know caller won't
                 partialOrderDAO.save(order);
-                break;
-            default:
-                output += "Please respond with CONFIRM, REDO, or ENDMEAL";
+        }
+        else {
+                output += REPLY_NEED_VALID_RESPONSE;
         }
         return output;
     }
@@ -217,15 +245,15 @@ public class DefaultOrderProcessor implements OrderProcessor {
         if (order.isPresent()) {
             OrderStatus status = order.get().getOrderStatus();
             if (status.equals(OrderStatus.OPEN)) {
-                return "Your order is still open, please respond with STATUS in 5 minutes to check again.";
+                return REPLY_ORDER_PENDING;
             } else if (status.equals(OrderStatus.ORDERED)) {
-                return "Your order has been placed and should be ready to pick up shortly from " + order.get().getProviderLocation().getAddress().getAddress1() + ".";
+                return String.format(REPLY_ORDER_READY, order.get().getProviderLocation().getAddress().getAddress1());
             } else {
                 //TODO should we say anything for if they suspect an error
-                return "Your order has been marked as closed.";
+                return REPLY_ORDER_CLOSED;
             }
         } else {
-            return "I can not find a recent order for you, please reply MEAL to place an order.";
+            return REPLY_ORDER_NOT_FOUND;
         }
     }
 
@@ -239,15 +267,13 @@ public class DefaultOrderProcessor implements OrderProcessor {
     private String providerLocationMenuOutput(PartialOrder order) {
     	
     	// Note: spaces are significant in the Strings below! 
-    	String s = "%d) %s from %s %s. ";
-    	String choose = "Reply %s to choose your meal. ";
     	String options = "";
     	
         String meals = "";
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
             ProviderLocation location = order.getProviderLocationsForSelection().get(i);
             options += (i+1) + ", ";
-            meals += String.format(s, (i+1), order.getMenuItemsForSelection().get(i).getName(), location.getName(), location.getAddress().getAddress1() + (StringUtils.isNotEmpty(location.getAddress().getAddress2())?" " + location.getAddress().getAddress2():""));
+            meals += String.format(REPLY_ORDER_ITEM, (i+1), order.getMenuItemsForSelection().get(i).getName(), location.getName(), location.getAddress().getAddress1() + (StringUtils.isNotEmpty(location.getAddress().getAddress2())?" " + location.getAddress().getAddress2():""));
         }
         // remove training comma and space
         options = options.substring(0, options.length() - 2);
@@ -257,7 +283,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         	options = options.substring(0, options.length() - 3 );
         	options += " or " + order.getProviderLocationsForSelection().size();
         }
-        return String.format(choose, options) + meals;
+        return String.format(REPLY_ORDER_CHOICE, options) + meals;
     }
 
     private boolean isCurrent(Menu menu) {
@@ -289,7 +315,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         } else {
             String message = "OrderProcessor failed to lookup user by phone " + phoneNumber;
             logger.error(message);
-            return "Please sign up first by saying REGISTER before ordering a meal.";
+            return REPLY_EXCEPTION_REGISTER_FIRST;
         }
     }
 }
