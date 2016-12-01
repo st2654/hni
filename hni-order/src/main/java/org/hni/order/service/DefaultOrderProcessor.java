@@ -1,5 +1,6 @@
 package org.hni.order.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.hni.common.exception.HNIException;
 import org.hni.events.service.EventRouter;
 import org.hni.events.service.om.Event;
@@ -68,7 +69,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         boolean cancellation = message.equalsIgnoreCase("ENDMEAL");
 
         if (order == null && cancellation) {
-            return "You are not currently ordering, please respond with MEAL to place an order.";
+            return "You're not currently ordering, please respond with MEAL to place an order.";
         } else if (order == null && !message.equalsIgnoreCase("STATUS")) {
             order = new PartialOrder();
             order.setTransactionPhase(TransactionPhase.MEAL);
@@ -78,7 +79,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             return checkOrderStatus(user);
         } else if (cancellation) {
             partialOrderDAO.delete(order);
-            return "You have successfully cancelled your order.";
+            return "You've cancelled your order.";
         }
 
         TransactionPhase phase = order.getTransactionPhase();
@@ -113,9 +114,9 @@ public class DefaultOrderProcessor implements OrderProcessor {
     private String requestingMeal(String request, PartialOrder order) {
         order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
         if (request.equalsIgnoreCase("MEAL") || request.equalsIgnoreCase("ORDER")) {
-            return "Please provide your address or ENDMEAL to quit";
+            return "Reply with your address (e.g. #3 Smith St. 72758) or ENDMEAL to quit";
         } else {
-            return "I don't understand that, please say MEAL to request a meal.";
+            return "I don't understand that. Reply with MEAL to place an order.";
         }
     }
 
@@ -141,10 +142,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
                     output += providerLocationMenuOutput(order);
                     order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
                 } else {
-                    output = "All providers there are not currently available. Please try again later, provide a different address or reply ENDMEAL to quit";
+                    output = "Providers currently unavailable. Reply with new address or try again later. Reply ENDMEAL to quit. ";
                 }
             } else {
-                output = "No provider locations near this address. Please provide another address or ENDMEAL to quit";
+                output = "There are no providers near this address. Reply with new address or reply ENDMEAL to quit.";
             }
         } catch (GeoCodingException e) {
             output = e.getMessage();
@@ -167,7 +168,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             order.getMenuItemsSelected().add(chosenItem);
             logger.debug("Location {} has been chosen with item {}", location.getName(), chosenItem.getName());
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
-            output = String.format("You have chosen %s at %s. Respond with CONFIRM to place this order, REDO to try again, or ENDMEAL to end your order", chosenItem.getName(), location.getName());
+            output = String.format("You've chosen %s at %s. Reply CONFIRM to place this order, REDO to try again. Reply ENDMEAL to quit.", chosenItem.getName(), location.getName());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             output += "Invalid input! ";
             output += providerLocationMenuOutput(order);
@@ -195,7 +196,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 orderService.save(finalOrder);
                 partialOrderDAO.delete(order);
                 logger.info("Successfully created order {}", finalOrder.getId());
-                output = "Your order has been confirmed, please respond with STATUS after 5 minutes to check to status of your order.";
+                output = "Success! Order confirmed. Reply with STATUS after 5 minutes to check to status of your order.";
                 break;
             case "REDO":
                 logger.info("Reset order choices for PartialOrder {} by user request", order.getId());
@@ -218,13 +219,13 @@ public class DefaultOrderProcessor implements OrderProcessor {
             if (status.equals(OrderStatus.OPEN)) {
                 return "Your order is still open, please respond with STATUS in 5 minutes to check again.";
             } else if (status.equals(OrderStatus.ORDERED)) {
-                return "Your order has been placed and should be ready to pick up shortly from " + order.get().getProviderLocation().getAddress().getAddress1();
+                return "Your order has been placed and should be ready to pick up shortly from " + order.get().getProviderLocation().getAddress().getAddress1() + ".";
             } else {
                 //TODO should we say anything for if they suspect an error
-                return "Your order has been marked as closed";
+                return "Your order has been marked as closed.";
             }
         } else {
-            return "I can not find a recent order for you, please respond with MEAL to place an order.";
+            return "I can not find a recent order for you, please reply MEAL to place an order.";
         }
     }
 
@@ -236,20 +237,27 @@ public class DefaultOrderProcessor implements OrderProcessor {
      * @return
      */
     private String providerLocationMenuOutput(PartialOrder order) {
-        String output = "";
-        output += "Please provide the number for your selection.";
+    	
+    	// Note: spaces are significant in the Strings below! 
+    	String s = "%d) %s from %s %s. ";
+    	String choose = "Reply %s to choose your meal. ";
+    	String options = "";
+    	
+        String meals = "";
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
             ProviderLocation location = order.getProviderLocationsForSelection().get(i);
-            output += " " + (i + 1) + ") " + location.getName()
-                    + " (" + order.getMenuItemsForSelection().get(i).getName() + ") "
-                    + location.getAddress().getAddress1();
-            String line2 = location.getAddress().getAddress2();
-            if (line2 != null && !line2.isEmpty()) {
-                output += " " + line2;
-            }
-            output += ".";
+            options += (i+1) + ", ";
+            meals += String.format(s, (i+1), order.getMenuItemsForSelection().get(i).getName(), location.getName(), location.getAddress().getAddress1() + (StringUtils.isNotEmpty(location.getAddress().getAddress2())?" " + location.getAddress().getAddress2():""));
         }
-        return output;
+        // remove training comma and space
+        options = options.substring(0, options.length() - 2);
+        
+        // if there's more than 1 option remove the last number, space and comma and replace with or #
+        if (options.length() > 1) { 
+        	options = options.substring(0, options.length() - 3 );
+        	options += " or " + order.getProviderLocationsForSelection().size();
+        }
+        return String.format(choose, options) + meals;
     }
 
     private boolean isCurrent(Menu menu) {
