@@ -96,6 +96,9 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 					, order.getId(), total, alreadyRequestedAmount, adjustedNeeded, amount));
 			amountNeeded = adjustedNeeded;
 		}
+		if (providerCards.size() == 0) {
+			logger.warn(String.format("There are no cards available for provider[%d] - %s", provider.getId(), provider.getName()));
+		}
 		for(PaymentInstrument paymentInstrument : providerCards) {
 			if ( lockingService.acquireLock(lockingKey(paymentInstrument), DEFAULT_CARD_LOCKOUT_MINS)  ) {
 				logger.info("locking card "+lockingKey(paymentInstrument));
@@ -115,7 +118,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		}
 		
 		if (totalAmountRequestedExceedsTotal(order, orderPayments)) {
-			logger.warn("You have requested more funds than you really need.  Shutting down this account...");
+			logger.warn(String.format("You have requested more funds for order[%d] than you really need.  Shutting down this account...", order.getId()));
 			clearCache(order); // clear payment info so somebody else doesn't get locked out for the same issue
 			throw new PaymentsExceededException("You have requested more funds than you really need.  Shutting down this account...");
 		}		
@@ -179,6 +182,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 			if (null == value) {
 				return value = 0.0;
 			}
+			logger.info(String.format("Returning previously dispensed payments for %s of $%.2f", orderPaymentsKey(order), order.getId(), value));
 			return value;
 		} catch(Exception e) {
 			logger.warn("Unable to get orderPayments from cache for "+orderPaymentsKey(order));
