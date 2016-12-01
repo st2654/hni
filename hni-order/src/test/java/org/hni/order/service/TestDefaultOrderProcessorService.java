@@ -123,15 +123,13 @@ public class TestDefaultOrderProcessorService {
     @Test
     public void processMessage_meal_success() {
         // Setup
-        String message = "MEAL";
         Mockito.when(partialOrderDAO.byUser(user)).thenReturn(null);
 
         // Execute
-        String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please provide your address or ENDMEAL to quit";
+        String output = orderProcessor.processMessage(user, DefaultOrderProcessor.MSG_MEAL);
 
         // Verify
-        //Assert.assertEquals(expectedOutput, output);
+        Assert.assertEquals(DefaultOrderProcessor.REPLY_ORDER_GET_STARTED + DefaultOrderProcessor.REPLY_ORDER_REQUEST_ADDRESS, output);
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
         Mockito.verify(partialOrderDAO, Mockito.times(1)).save(argumentCaptor.capture());
         Assert.assertEquals(TransactionPhase.PROVIDING_ADDRESS, argumentCaptor.getValue().getTransactionPhase());
@@ -229,8 +227,6 @@ public class TestDefaultOrderProcessorService {
     @Test
     public void processMessage_confirmOrRedo_confirm() {
         // Setup
-        String message = "CONFIRM";
-
         user.setId(1L);
         partialOrder.setUser(user);
         partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
@@ -244,11 +240,10 @@ public class TestDefaultOrderProcessorService {
 
         Date orderDate = new Date();
         // Execute
-        String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Success! Order confirmed. Reply with STATUS after 5 minutes to check to status of your order.";
-
+        String output = orderProcessor.processMessage(user, DefaultOrderProcessor.MSG_CONFIRM);
+ 
         // Verify
-        Assert.assertEquals(expectedOutput, output);
+        Assert.assertEquals(DefaultOrderProcessor.REPLY_ORDER_COMPLETE, output);
         Mockito.verify(partialOrderDAO, Mockito.times(1)).delete(partialOrder);
         Mockito.verify(partialOrderDAO, Mockito.times(0)).save(partialOrder);
         ArgumentCaptor<Order> argumentCaptor = ArgumentCaptor.forClass(Order.class);
@@ -264,8 +259,6 @@ public class TestDefaultOrderProcessorService {
     @Test
     public void processMessage_confirmOrRedo_cancel() {
         // Setup
-        String message = "endmeal";
-
         user.setId(1L);
         partialOrder.setUser(user);
         partialOrder.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
@@ -275,18 +268,17 @@ public class TestDefaultOrderProcessorService {
 
         Date orderDate = new Date();
         // Execute
-        String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "You've cancelled your order.";
+        String output = orderProcessor.processMessage(user, DefaultOrderProcessor.MSG_ENDMEAL);
 
         // Verify
-        Assert.assertEquals(expectedOutput, output);
+        Assert.assertEquals(DefaultOrderProcessor.REPLY_ORDER_CANCELLED, output);
         Mockito.verify(partialOrderDAO, Mockito.times(1)).delete(partialOrder);
     }
 
     @Test
     public void processMessage_confirmOrRedo_redo() {
         // Setup
-        String message = "REDO";
+        String message = DefaultOrderProcessor.MSG_REDO;
 
         user.setId(1L);
         partialOrder.setUser(user);
@@ -329,9 +321,8 @@ public class TestDefaultOrderProcessorService {
         Date orderDate = new Date();
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "Please respond with CONFIRM, REDO, or ENDMEAL";
         // Verify
-        Assert.assertEquals(expectedOutput, output);
+        Assert.assertEquals(DefaultOrderProcessor.REPLY_NEED_VALID_RESPONSE, output);
         ArgumentCaptor<PartialOrder> argumentCaptor = ArgumentCaptor.forClass(PartialOrder.class);
         Mockito.verify(partialOrderDAO, Mockito.times(0)).save(argumentCaptor.capture());
         Assert.assertEquals(TransactionPhase.CONFIRM_OR_REDO, partialOrder.getTransactionPhase());
@@ -340,7 +331,7 @@ public class TestDefaultOrderProcessorService {
     @Test
     public void processMessage_cancel_noOrder() {
         // Setup
-        String message = "ENDMEAL";
+        String message = DefaultOrderProcessor.MSG_ENDMEAL;
 
         user.setId(1L);
 
@@ -348,10 +339,9 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "You're not currently ordering, please respond with MEAL to place an order.";
 
         // Verify
-        Assert.assertEquals(expectedOutput, output);
+        Assert.assertEquals(DefaultOrderProcessor.REPLY_NOT_CURRENTLY_ORDERING, output);
     }
 
     @Test
@@ -365,10 +355,9 @@ public class TestDefaultOrderProcessorService {
 
         // Execute
         String output = orderProcessor.processMessage(user, message);
-        String expectedOutput = "I don't understand that. Reply with MEAL to place an order.";
 
         // Verify
-        Assert.assertEquals(expectedOutput, output);
+        Assert.assertEquals(DefaultOrderProcessor.REPLY_NO_UNDERSTAND, output);
     }
 
 }

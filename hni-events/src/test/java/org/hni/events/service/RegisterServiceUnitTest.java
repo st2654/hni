@@ -53,9 +53,7 @@ public class RegisterServiceUnitTest {
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
 
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("Welcome to Hunger Not Impossible! Msg & data rates may apply. "
-                + "Information you provide will be kept private. "
-                + "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?", returnString);
+        Assert.assertEquals(RegisterService.REPLY_WELCOME, returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 
@@ -65,9 +63,7 @@ public class RegisterServiceUnitTest {
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         event.setTextMessage("privacy");
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("HNI respects your privacy and protects your data. "
-                        + "For more details on our privacy please visit http://hungernotimpossible.com/Privacy. "
-                        + "In order to continue the registration. Please send us your first name.", returnString);
+        Assert.assertEquals(RegisterService.REPLY_PRIVACY + RegisterService.REPLY_REQUEST_FIRST_NAME, returnString);
         verify(registrationStateDAO, never()).update(any(RegistrationState.class));
     }
 
@@ -78,7 +74,7 @@ public class RegisterServiceUnitTest {
 
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("Thanks " + "firstname" + ". What's your last name?", returnString);
+        Assert.assertEquals(String.format(RegisterService.REPLY_REQUEST_LAST_NAME, "firstname"), returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 
@@ -89,9 +85,7 @@ public class RegisterServiceUnitTest {
 
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("Lastly, I'd like to get your email address "
-                + "to verify your account in case you text me from a new "
-                + "number. Type 'none' if you don't have an email.", returnString);
+        Assert.assertEquals(String.format(RegisterService.REPLY_REQUEST_EMAIL, RegisterService.MSG_NONE), returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 
@@ -102,8 +96,7 @@ public class RegisterServiceUnitTest {
 
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("Okay! I have " + "johndoe@gmail.com" + " as your email address. "
-                + "Is that correct? Reply 1 for yes and 2 for no", returnString);
+        Assert.assertEquals(String.format(RegisterService.REPLY_EMAIL_CONFIRM, "johndoe@gmail.com"), returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 
@@ -114,8 +107,7 @@ public class RegisterServiceUnitTest {
 
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("Okay! You don't have an email address. "
-                + "Is that correct? Reply 1 for yes and 2 for no", returnString);
+        Assert.assertEquals(RegisterService.REPLY_EMAIL_NONE, returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 
@@ -126,7 +118,7 @@ public class RegisterServiceUnitTest {
 
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("Please enter the 6 digit authorization code provided to you for this program.", returnString);
+        Assert.assertEquals(RegisterService.REPLY_AUTHCODE_REQUEST, returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 
@@ -138,9 +130,7 @@ public class RegisterServiceUnitTest {
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
         System.out.println(returnString);
-        Assert.assertEquals("Ok. You're all set up for yourself. If you have family"
-                + " members to register please enter the additional authorization"
-                + " codes now, one at a time. When you need a meal just text MEAL back to this number.", returnString);
+        Assert.assertEquals(RegisterService.REPLY_REGISTRATION_COMPLETE + RegisterService.REPLY_AUTHCODE_ADDITIONAL, returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 
@@ -151,8 +141,7 @@ public class RegisterServiceUnitTest {
 
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("We have added that authorization code to your family account. Please"
-                + " send any additional codes you need for your family.", returnString);
+        Assert.assertEquals(RegisterService.REPLY_AUTHCODE_ADDED + RegisterService.REPLY_AUTHCODE_ADDITIONAL, returnString);
         verify(registrationStateDAO, never()).update(any(RegistrationState.class));
     }
 }
