@@ -137,9 +137,10 @@ public class RegisterServiceUnitTest {
 
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals("Ok. You're all setup for yourself. If you have family"
+        System.out.println(returnString);
+        Assert.assertEquals("Ok. You're all set up for yourself. If you have family"
                 + " members to register please enter the additional authorization"
-                + " codes now. When you need a meal just text MEAL back to this number.", returnString);
+                + " codes now, one at a time. When you need a meal just text MEAL back to this number.", returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 
