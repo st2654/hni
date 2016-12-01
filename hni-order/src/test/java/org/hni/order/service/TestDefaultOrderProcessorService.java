@@ -126,7 +126,7 @@ public class TestDefaultOrderProcessorService {
         Event event = Event.createEvent("text/plain", "1234567890", "MEAL");
         Mockito.when(userDAO.byMobilePhone(Mockito.eq("1234567890"))).thenReturn(null);
 
-        Assert.assertEquals("Please sign up first by saying REGISTER before ordering a meal.", orderProcessor.handleEvent(event));
+        Assert.assertEquals(DefaultOrderProcessor.REPLY_EXCEPTION_REGISTER_FIRST, orderProcessor.handleEvent(event));
     }
 
     @Test
