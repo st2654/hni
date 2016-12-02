@@ -18,6 +18,8 @@ import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -69,6 +71,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with MEAL to place an order.";
     public static String REPLY_INVALID_INPUT = "Invalid input! ";
     public static String REPLY_EXCEPTION_REGISTER_FIRST = "Youll need to reply with REGISTER to sign up first.";
+    public static String REPLY_MAX_ORDERS_REACHED = "You've reached the maximum number of orders for today. Please come back tomorrow.";
     
     @Inject
     private UserDAO userDao;
@@ -99,6 +102,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
         if (order == null && cancellation) {
             return REPLY_NOT_CURRENTLY_ORDERING;
         } else if (order == null && !message.equalsIgnoreCase(MSG_STATUS)) {
+        	
+        	if (orderService.maxDailyOrdersReached(user)) {
+        		return REPLY_MAX_ORDERS_REACHED;
+        	}
             order = new PartialOrder();
             order.setTransactionPhase(TransactionPhase.MEAL);
             order.setUser(user);
@@ -115,7 +122,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
         switch (phase) {
             case MEAL:
-                output = requestingMeal(message, order);
+                output = requestingMeal(user, message, order);
                 break;
             case PROVIDING_ADDRESS:
                 output = findNearbyMeals(message, order);
@@ -139,9 +146,9 @@ public class DefaultOrderProcessor implements OrderProcessor {
         return processMessage(userDao.get(userId), message);
     }
 
-    private String requestingMeal(String request, PartialOrder order) {
-        order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
+    private String requestingMeal(User user, String request, PartialOrder order) {
         if (request.equalsIgnoreCase(MSG_MEAL) || request.equalsIgnoreCase(MSG_ORDER)) {
+        	order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
             return REPLY_ORDER_GET_STARTED + REPLY_ORDER_REQUEST_ADDRESS;
         } else {
             return REPLY_NO_UNDERSTAND;
