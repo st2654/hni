@@ -237,11 +237,17 @@ public class DefaultOrderProcessor implements OrderProcessor {
     private String handleMultipleOrders(User user, String message, PartialOrder order) {
     	String output = "" ;
     	
-    	int num = Integer.parseInt(message);
+    	int num;
+		try {
+			num = Integer.parseInt(message);
+		} catch (NumberFormatException e) {
+			// if they can't type in a valid number, set to ZERO and next phase is REDO
+			num = 0;
+		}
     	
     	List<ActivationCode> activationCodes = activationCodeService.getByUser(user);
     	logger.debug("# activationCodes=" + activationCodes.size());
-    	if (num == 0) {
+    	if (num <= 0) {
 			logger.info("Reset order choices for PartialOrder {} by user request", order.getId());
 			//clear out previous choices
 			output = findNearbyMeals(order.getAddress(), order);
