@@ -59,11 +59,11 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public static String REPLY_ORDER_COMPLETE = "Success! Order confirmed. Reply with STATUS after 5 minutes to check to status of your order.";
     public static String REPLY_NEED_VALID_RESPONSE = "Please respond with CONFIRM, REDO, or ENDMEAL";
     public static String REPLY_ORDER_PENDING = "Your order is still open, please respond with STATUS in 5 minutes to check again.";
-    public static String REPLY_ORDER_READY = "Your order has been placed and should be ready to pick up shortly from %s.";
+    public static String REPLY_ORDER_READY = "Your order has been placed and should be ready to pick up shortly from %s at %s %s.";
     public static String REPLY_ORDER_CLOSED = "Your order has been marked as closed.";
     public static String REPLY_ORDER_NOT_FOUND = "I can't find a recent order for you, please reply MEAL to place an order.";
     
-    public static String REPLY_ORDER_ITEM = "%d) %s from %s %s. ";
+    public static String REPLY_ORDER_ITEM = "%d) %s from %s %s %s. ";
     public static String REPLY_ORDER_CHOICE = "Reply %s to choose your meal. ";
     
     public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with MEAL to place an order.";
@@ -247,7 +247,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             if (status.equals(OrderStatus.OPEN)) {
                 return REPLY_ORDER_PENDING;
             } else if (status.equals(OrderStatus.ORDERED)) {
-                return String.format(REPLY_ORDER_READY, order.get().getProviderLocation().getAddress().getAddress1());
+                return String.format(REPLY_ORDER_READY, order.get().getProviderLocation().getAddress().getAddress1(), order.get().getProviderLocation().getAddress().getCity());
             } else {
                 //TODO should we say anything for if they suspect an error
                 return REPLY_ORDER_CLOSED;
@@ -273,7 +273,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i ++) {
             ProviderLocation location = order.getProviderLocationsForSelection().get(i);
             options += (i+1) + ", ";
-            meals += String.format(REPLY_ORDER_ITEM, (i+1), order.getMenuItemsForSelection().get(i).getName(), location.getName(), location.getAddress().getAddress1() + (StringUtils.isNotEmpty(location.getAddress().getAddress2())?" " + location.getAddress().getAddress2():""));
+            meals += String.format(REPLY_ORDER_ITEM, (i+1), order.getMenuItemsForSelection().get(i).getName(), location.getName(), location.getAddress().getAddress1() + (StringUtils.isNotEmpty(location.getAddress().getAddress2())?" " + location.getAddress().getAddress2():""), location.getAddress().getCity());
         }
         // remove training comma and space
         options = options.substring(0, options.length() - 2);
