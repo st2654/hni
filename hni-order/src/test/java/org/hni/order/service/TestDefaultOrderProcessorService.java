@@ -456,4 +456,32 @@ public class TestDefaultOrderProcessorService {
         Assert.assertTrue((partialOrder.getMenuItemsSelected().size() == 1));
     }
 
+    @Test
+    public void processMessage_multipleOrders_InvalidNumber() {
+        // Setup
+    	User user = new User(); 
+    	
+        user.setId(10L);
+        partialOrder.setUser(user);
+        partialOrder.setTransactionPhase(TransactionPhase.MULTIPLE_ORDER);
+        partialOrder.setProviderLocationsForSelection(providerLocationList);
+        partialOrder.setMenuItemsForSelection(menuItems);
+        partialOrder.setAddress("home");
+        partialOrder.setChosenProvider(providerLocationList.get(1));       
+        partialOrder.getMenuItemsSelected().add(menuItems.get(0));
+         
+        Mockito.when(partialOrderDAO.byUser(user)).thenReturn(partialOrder);
+        Mockito.when(providerLocationService.providersNearCustomer(Mockito.anyString(), Mockito.anyInt(), Mockito.anyDouble()
+                , Mockito.anyDouble()))
+                .thenReturn(providerLocationList);
+        Date orderDate = new Date();
+        // Execute
+        String message = "ONE";  // user sent invalid data and has 3 activation codes
+        String output = orderProcessor.processMessage(user, message);
+        
+        // Expected output is meals were duplicated
+        logger.debug("PartialOrder #items=" + partialOrder.getMenuItemsSelected().size());
+        Assert.assertTrue((partialOrder.getMenuItemsSelected().size() == 1));
+    }
+
 }
