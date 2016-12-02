@@ -2,6 +2,7 @@ package org.hni.order.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -357,7 +358,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private boolean isCurrent(Menu menu) {
         //TODO this has issues between 11:00 and 11:59 pm because minutes are not stored in db
-        LocalTime now = LocalTime.now();
+        LocalTime now = LocalTime.now(ZoneId.of("America/Chicago"));
         LocalTime start = LocalTime.of(menu.getStartHourAvailable().intValue(), 0);
         LocalTime end = LocalTime.of(menu.getEndHourAvailable().intValue(), 0);
 
