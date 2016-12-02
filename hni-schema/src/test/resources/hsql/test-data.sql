@@ -124,6 +124,7 @@ insert into activation_codes values(4, '987654', 2, 10, 10, 0, null, now(), null
 insert into activation_codes values(5, 'x1987654', 2, 10, 10, 1, 'test for no more meals', now(), 9);
 insert into activation_codes values(6, 'y1987654', 2, 10, 10, 1, 'test for more meals', now(), 10);
 insert into activation_codes values(7, 'z1987654', 2, 10, 10, 1, 'test for more meals', now(), 10);
+insert into activation_codes values(8, 'a1987654', 2, 10, 10, 1, 'test for more meals', now(), 10);
 
 truncate table addresses;
 insert into addresses values (1, 'subway corp addr', '1251 Phoenician way', '', 'columbus','oh','43240', -82.98402279999999, 40.138686,'etc');
