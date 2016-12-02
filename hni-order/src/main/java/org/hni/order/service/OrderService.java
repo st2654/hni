@@ -69,4 +69,18 @@ public interface OrderService extends BaseService<Order> {
 	long countOrders(Provider provider);
 
 	Order reset(Order order);
+	
+	/**
+	 * Returns true if the user has reached maximum daily allowed orders
+	 * @param user
+	 * @return
+	 */
+	public boolean maxDailyOrdersReached(User user);
+	
+	/**
+	 * Returns true if the user has one or more active authorization codes (not expired or used up)
+	 * @param user
+	 * @return
+	 */
+	public boolean hasActiveActivationCodes(User user);
 }
